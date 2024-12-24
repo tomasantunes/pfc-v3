@@ -7,6 +7,8 @@ var mysql = require("mysql2");
 var mysql2 = require('mysql2/promise');
 var secretConfig = require('./secret-config');
 var session = require('express-session');
+const readerXLS = require('xlsx');
+var fileUpload = require('express-fileupload');
 
 var app = express();
 
@@ -19,6 +21,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(fileUpload({
+  limits: { fileSize: 50 * 1024 * 1024 },
+  useTempFiles : true,
+  tempFileDir : '/tmp/'
+}));
 
 app.use(session({
   secret: secretConfig.SESSION_KEY,
@@ -78,6 +85,38 @@ else if (secretConfig.ENVIRONMENT == "UBUNTU") {
     dateStrings: true
   });
 }
+
+app.post("/import-bpi-xls", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+  if (!req.files) {
+    console.log("No file has been detected.");
+    res.json({status: "NOK", error: "No file has been detected."});
+    return;
+  }
+
+  try {
+    const file = req.files.excelFile.tempFilePath;
+    const xlsFile = readerXLS.readFile(file);
+    let xls = [];
+    const sheets = xlsFile.SheetNames;
+
+    for(let i = 0; i < sheets.length; i++) {
+      const temp = readerXLS.utils.sheet_to_json(xlsFile.Sheets[xlsFile.SheetNames[i]])
+      temp.forEach((res) => {
+        xls.push(res);
+      });
+    }
+    console.log(JSON.stringify(xls, null, 4));
+  } catch(exception) {
+    console.log(exception);
+    res.json({status: "NOK", error: "Error importing file."});
+    return;
+  }
+  res.json({status: "OK", data: "XLS has been imported successfully."});
+});
 
 app.post("/api/check-login", (req, res) => {
   var user = req.body.user;
