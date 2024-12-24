@@ -9,6 +9,8 @@ var secretConfig = require('./secret-config');
 var session = require('express-session');
 const readerXLS = require('xlsx');
 var fileUpload = require('express-fileupload');
+const fs = require("fs");
+const { parse } = require("csv-parse");
 
 var app = express();
 
@@ -164,6 +166,40 @@ app.get("/get-bpi-mov", (req, res) => {
   });
 });
 
+app.post("/import-paypal-csv", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+  if (!req.files) {
+    console.log("No file has been detected.");
+    res.json({status: "NOK", error: "No file has been detected."});
+    return;
+  }
+
+  try {
+    const file = req.files.csvFile.tempFilePath;
+
+    fs.createReadStream(file)
+    .pipe(parse({ delimiter: ",", relax_quotes: true, columns: true }))
+    .on("data", function (row) {
+      console.log(row);
+    })
+    .on("end", function () {
+      console.log("finished");
+      res.json({status: "OK", data: "CSV has been imported successfully."});
+    })
+    .on("error", function (error) {
+      console.log(error.message);
+    });
+
+  } catch(exception) {
+    console.log(exception);
+    res.json({status: "NOK", error: "Error importing file."});
+    return;
+  }
+});
+
 app.post("/api/check-login", (req, res) => {
   var user = req.body.user;
   var pass = req.body.pass;
@@ -215,6 +251,15 @@ app.get('/home', (req, res) => {
 });
 
 app.get('/bpi', (req, res) => {
+  if(req.session.isLoggedIn) {
+    res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
+  }
+  else {
+    res.redirect('/login');
+  }
+});
+
+app.get('/paypal', (req, res) => {
   if(req.session.isLoggedIn) {
     res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
   }
