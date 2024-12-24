@@ -86,6 +86,12 @@ else if (secretConfig.ENVIRONMENT == "UBUNTU") {
   });
 }
 
+function convertBpiDate(dateStr) {
+  if (dateStr == "") return "1900-01-01";
+  const [day, month, year] = dateStr.split('-'); // Split the input string by '-'
+  return `${year}-${month}-${day}`; // Rearrange and return the new format
+}
+
 app.post("/import-bpi-xls", (req, res) => {
   if (!req.session.isLoggedIn) {
     res.json({status: "NOK", error: "Invalid Authorization."});
@@ -109,7 +115,25 @@ app.post("/import-bpi-xls", (req, res) => {
         xls.push(res);
       });
     }
-    console.log(JSON.stringify(xls, null, 4));
+
+    for (var i in xls) {
+      if (
+        xls[i].hasOwnProperty("BPI Net") && 
+        xls[i].hasOwnProperty("__EMPTY") && 
+        xls[i].hasOwnProperty("__EMPTY_1") &&
+        xls[i].hasOwnProperty("__EMPTY_2") &&
+        xls[i].hasOwnProperty("__EMPTY_3") &&
+        xls[i]["BPI Net"] != "Data Mov."
+      ) {
+        var data_mov = convertBpiDate(xls[i]["BPI Net"]);
+        var data_valor = convertBpiDate(xls[i]["__EMPTY"]);
+        var desc_mov = xls[i]["__EMPTY_1"];
+        var valor = xls[i]["__EMPTY_2"];
+        var saldo = xls[i]["__EMPTY_3"];
+        var sql = "INSERT INTO bpi_mov (data_mov, data_valor, desc_mov, valor, saldo) VALUES (?, ?, ?, ?, ?)";
+        con.query(sql, [data_mov, data_valor, desc_mov, valor, saldo]);
+      }
+    }
   } catch(exception) {
     console.log(exception);
     res.json({status: "NOK", error: "Error importing file."});
