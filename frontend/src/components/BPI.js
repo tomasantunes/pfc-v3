@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import FileUploader from './FileUploader';
 import Navbar from './Navbar';
 import axios from 'axios';
@@ -13,6 +13,7 @@ var bootprompt = require('bootprompt');
 
 export default function BPI() {
   const [excelFile, setExcelFile] = useState("");
+  const [mov, setMov] = useState([]);
 
   function changeExcelFile({file}) {
     setExcelFile(file);
@@ -38,6 +39,25 @@ export default function BPI() {
     })
     .catch((err) => bootprompt.alert("File Upload Error"));
   }
+
+  function getMov() {
+    axios.get(config.BASE_URL + "/get-bpi-mov")
+    .then(function(response) {
+      if (response.data.status == "OK") {
+        setMov(response.data.data);
+      }
+      else {
+        bootprompt.alert(response.data.error);
+      }
+    })
+    .catch(function(err) {
+      bootprompt.alert(err.message);
+    });
+  }
+
+  useEffect(() => {
+    getMov();
+  }, []);
   
   return (
     <>
@@ -53,6 +73,28 @@ export default function BPI() {
               </div>
           </div>
         </form>
+
+        <table className="table">
+          <tr>
+            <th>Data Mov.</th>
+            <th>Data Valor</th>
+            <th>Descrição</th>
+            <th>Valor</th>
+            <th>Saldo</th>
+          </tr>
+          <tbody>
+            {mov.map((m) => (
+              <tr>
+                <td>{m.data_mov}</td>
+                <td>{m.data_valor}</td>
+                <td>{m.desc_mov}</td>
+                <td>{m.valor}</td>
+                <td>{m.saldo}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
       </div>
     </>
   )

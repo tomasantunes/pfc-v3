@@ -142,6 +142,23 @@ app.post("/import-bpi-xls", (req, res) => {
   res.json({status: "OK", data: "XLS has been imported successfully."});
 });
 
+app.get("/get-bpi-mov", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var sql = "SELECT * FROM bpi_mov ORDER BY data_mov DESC, id ASC LIMIT 25";
+  con.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: "There was an error getting movements."});
+      return;
+    }
+    res.json({status: "OK", data: result});
+  });
+});
+
 app.post("/api/check-login", (req, res) => {
   var user = req.body.user;
   var pass = req.body.pass;
