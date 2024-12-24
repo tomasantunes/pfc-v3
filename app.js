@@ -130,8 +130,13 @@ app.post("/import-bpi-xls", (req, res) => {
         var desc_mov = xls[i]["__EMPTY_1"];
         var valor = xls[i]["__EMPTY_2"];
         var saldo = xls[i]["__EMPTY_3"];
-        var sql = "INSERT INTO bpi_mov (data_mov, data_valor, desc_mov, valor, saldo) VALUES (?, ?, ?, ?, ?)";
-        con.query(sql, [data_mov, data_valor, desc_mov, valor, saldo]);
+        var sql1 = "SELECT * FROM bpi_mov WHERE data_mov = ? AND data_valor = ? AND desc_mov = ? AND valor = ? AND saldo = ?"
+        con.query(sql1, [data_mov, data_valor, desc_mov, valor, saldo], function(err, result) {
+          if (result.length < 1) {
+            var sql2 = "INSERT INTO bpi_mov (data_mov, data_valor, desc_mov, valor, saldo) VALUES (?, ?, ?, ?, ?)";
+            con.query(sql2, [data_mov, data_valor, desc_mov, valor, saldo]);
+          }
+        });
       }
     }
   } catch(exception) {
