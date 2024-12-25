@@ -31,6 +31,7 @@ export default function BPI() {
         bootprompt.alert("CSV has been imported successfully.");
         setCsvFile("");
         $("input[type=file]").val('');
+        getMov();
       }
       else {
         console.log(response.data.error);
@@ -56,7 +57,7 @@ export default function BPI() {
   }
 
   useEffect(() => {
-    //getMov();
+    getMov();
   }, []);
   
   return (
@@ -83,7 +84,7 @@ export default function BPI() {
           <tbody>
             {mov.map((m) => (
               <tr>
-                <td>{m.date}</td>
+                <td>{m.date_mov}</td>
                 <td>{m.name}</td>
                 <td>{m.value}</td>
               </tr>

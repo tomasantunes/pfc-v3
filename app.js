@@ -94,7 +94,12 @@ function convertBpiDate(dateStr) {
   return `${year}-${month}-${day}`; // Rearrange and return the new format
 }
 
-app.post("/import-bpi-xls", (req, res) => {
+function convertPaypalDate(dateStr) {
+  const [day, month, year] = dateStr.split("/");
+  return `${year}-${month}-${day}`;
+}
+
+app.post("/import-bpi-xls", async (req, res) => {
   if (!req.session.isLoggedIn) {
     res.json({status: "NOK", error: "Invalid Authorization."});
     return;
@@ -118,6 +123,8 @@ app.post("/import-bpi-xls", (req, res) => {
       });
     }
 
+    xls.reverse();
+
     for (var i in xls) {
       if (
         xls[i].hasOwnProperty("BPI Net") && 
@@ -132,13 +139,12 @@ app.post("/import-bpi-xls", (req, res) => {
         var desc_mov = xls[i]["__EMPTY_1"];
         var valor = xls[i]["__EMPTY_2"];
         var saldo = xls[i]["__EMPTY_3"];
-        var sql1 = "SELECT * FROM bpi_mov WHERE data_mov = ? AND data_valor = ? AND desc_mov = ? AND valor = ? AND saldo = ?"
-        con.query(sql1, [data_mov, data_valor, desc_mov, valor, saldo], function(err, result) {
-          if (result.length < 1) {
-            var sql2 = "INSERT INTO bpi_mov (data_mov, data_valor, desc_mov, valor, saldo) VALUES (?, ?, ?, ?, ?)";
+        var sql1 = "SELECT * FROM bpi_mov WHERE data_mov = ? AND data_valor = ? AND desc_mov = ? AND valor = ? AND saldo = ?";
+        var result = await con2.query(sql1, [data_mov, data_valor, desc_mov, valor, saldo]);
+        if (result[0].length < 1) {
+          var sql2 = "INSERT INTO bpi_mov (data_mov, data_valor, desc_mov, valor, saldo) VALUES (?, ?, ?, ?, ?)";
             con.query(sql2, [data_mov, data_valor, desc_mov, valor, saldo]);
-          }
-        });
+        }
       }
     }
   } catch(exception) {
@@ -155,7 +161,7 @@ app.get("/get-bpi-mov", (req, res) => {
     return;
   }
 
-  var sql = "SELECT * FROM bpi_mov ORDER BY data_mov DESC, id ASC LIMIT 25";
+  var sql = "SELECT * FROM bpi_mov ORDER BY data_mov DESC, id DESC LIMIT 25";
   con.query(sql, function(err, result) {
     if (err) {
       console.log(err);
@@ -183,9 +189,18 @@ app.post("/import-paypal-csv", (req, res) => {
     fs.createReadStream(file)
     .pipe(csv.parse({ headers: true }))
     .on("data", function (row) {
-      var date = row["Date"];
-      var value = row["Net"];
+      var date = convertPaypalDate(row["Date"]);
+      var value = row["Net"].replace(",", ".");
       var name = row["Name"];
+
+      if (name != "") {
+        var sql = "INSERT INTO paypal_mov (name, value, date_mov) VALUES (?, ?, ?)";
+        con.query(sql, [name, value, date], function(err, result) {
+          if (err) {
+            console.log(err);
+          }
+        });
+      }
     })
     .on("end", function () {
       console.log("finished");
@@ -200,6 +215,24 @@ app.post("/import-paypal-csv", (req, res) => {
     res.json({status: "NOK", error: "Error importing file."});
     return;
   }
+});
+
+app.get("/get-paypal-mov", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var sql = "SELECT * FROM paypal_mov ORDER BY date_mov DESC, id DESC LIMIT 25";
+  con.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: "There was an error getting movements."});
+      return;
+    }
+    res.json({status: "OK", data: result});
+  });
+
 });
 
 app.post("/api/check-login", (req, res) => {

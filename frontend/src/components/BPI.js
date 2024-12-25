@@ -45,6 +45,7 @@ export default function BPI() {
     .then(function(response) {
       if (response.data.status == "OK") {
         setMov(response.data.data);
+        getMov();
       }
       else {
         bootprompt.alert(response.data.error);
