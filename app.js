@@ -10,7 +10,7 @@ var session = require('express-session');
 const readerXLS = require('xlsx');
 var fileUpload = require('express-fileupload');
 const fs = require("fs");
-const { parse } = require("csv-parse");
+const csv = require('fast-csv');
 
 var app = express();
 
@@ -181,9 +181,11 @@ app.post("/import-paypal-csv", (req, res) => {
     const file = req.files.csvFile.tempFilePath;
 
     fs.createReadStream(file)
-    .pipe(parse({ delimiter: ",", relax_quotes: true, columns: true }))
+    .pipe(csv.parse({ headers: true }))
     .on("data", function (row) {
-      console.log(row);
+      var date = row["Date"];
+      var value = row["Net"];
+      var name = row["Name"];
     })
     .on("end", function () {
       console.log("finished");

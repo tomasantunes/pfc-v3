@@ -69,27 +69,23 @@ export default function BPI() {
           </div>
           <div className="form-group">
               <div>
-                  <button type="submit" className="btn btn-primary">Import XLS</button>
+                  <button type="submit" className="btn btn-primary">Import CSV</button>
               </div>
           </div>
         </form>
 
         <table className="table">
           <tr>
-            <th>Data Mov.</th>
-            <th>Data Valor</th>
-            <th>Descrição</th>
-            <th>Valor</th>
-            <th>Saldo</th>
+            <th>Date</th>
+            <th>Name</th>
+            <th>Value</th>
           </tr>
           <tbody>
             {mov.map((m) => (
               <tr>
-                <td>{m.data_mov}</td>
-                <td>{m.data_valor}</td>
-                <td>{m.desc_mov}</td>
-                <td>{m.valor}</td>
-                <td>{m.saldo}</td>
+                <td>{m.date}</td>
+                <td>{m.name}</td>
+                <td>{m.value}</td>
               </tr>
             ))}
           </tbody>
