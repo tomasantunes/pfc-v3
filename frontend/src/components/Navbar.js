@@ -20,6 +20,9 @@ export default function Navbar() {
                 <li class="nav-item">
                     <NavLink to="/paypal" className="nav-link">Paypal</NavLink>
                 </li>
+                <li class="nav-item">
+                    <NavLink to="/trading212" className="nav-link">Trading212</NavLink>
+                </li>
             </ul>
             </div>
         </div>

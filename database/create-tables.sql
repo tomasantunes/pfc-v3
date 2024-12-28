@@ -19,3 +19,19 @@ CREATE TABLE paypal_mov (
     value DECIMAL(17,2),
     date_mov DATE
 );
+
+CREATE TABLE t212_portfolio_snapshot_headers (
+    id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    balance DECIMAL(17,2),
+    profit DECIMAL(17,2),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE t212_portfolio_snapshot_positions (
+    id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    snapshot_id INT(11) NOT NULL,
+    name VARCHAR(256),
+    price DECIMAL(17,2),
+    quantity DECIMAL(17, 5),
+    balance DECIMAL(17, 2)
+);

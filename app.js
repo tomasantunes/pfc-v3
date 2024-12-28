@@ -232,7 +232,28 @@ app.get("/get-paypal-mov", (req, res) => {
     }
     res.json({status: "OK", data: result});
   });
+});
 
+app.post("/insert-portfolio-snapshot-t212", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var balance = req.body.balance;
+  var profit = req.body.profit;
+  var positions = req.body.positions;
+
+  var sql1 = "INSERT INTO t212_portfolio_snapshot_headers (balance, profit) VALUES (?, ?)";
+  var result1 = await con2.query(sql1, [balance, profit]);
+  var headerId = result1[0].insertId;
+
+  for (var i in positions) {
+    var sql2 = "INSERT INTO t212_portfolio_snapshot_positions (snapshot_id, name, price, quantity, balance) VALUES (?, ?, ?, ?, ?)";
+    await con2.query(sql2, [headerId, positions[i].name, positions[i].price, positions[i].quantity, positions[i].balance]);
+  }
+
+  res.json({status: "OK", data: "Portfolio snapshot has been inserted successfully."});
 });
 
 app.post("/api/check-login", (req, res) => {
@@ -295,6 +316,15 @@ app.get('/bpi', (req, res) => {
 });
 
 app.get('/paypal', (req, res) => {
+  if(req.session.isLoggedIn) {
+    res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
+  }
+  else {
+    res.redirect('/login');
+  }
+});
+
+app.get('/trading212', (req, res) => {
   if(req.session.isLoggedIn) {
     res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
   }

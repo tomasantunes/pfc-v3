@@ -4,6 +4,7 @@ import Login from './components/Login';
 import Home from './components/Home';
 import BPI from './components/BPI';
 import Paypal from './components/Paypal';
+import Trading212 from './components/Trading212';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/bpi" element={<BPI />} />
         <Route path="/paypal" element={<Paypal />} />
+        <Route path="/trading212" element={<Trading212 />} />
       </Routes>
     </BrowserRouter>
   );
