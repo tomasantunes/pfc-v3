@@ -31,6 +31,7 @@ export default function BPI() {
         bootprompt.alert("XLS has been imported successfully.");
         setExcelFile("");
         $("input[type=file]").val('');
+        getMov();
       }
       else {
         console.log(response.data.error);
@@ -45,7 +46,6 @@ export default function BPI() {
     .then(function(response) {
       if (response.data.status == "OK") {
         setMov(response.data.data);
-        getMov();
       }
       else {
         bootprompt.alert(response.data.error);
