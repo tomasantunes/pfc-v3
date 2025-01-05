@@ -355,7 +355,12 @@ app.get("/get-average-monthly-expense", async (req, res) => {
             MONTH(data_mov) AS mnth,
             SUM(ABS(valor)) AS monthly_sum
         FROM bpi_mov
-        WHERE valor < 0
+        WHERE 
+          valor < 0
+          AND (
+              YEAR(data_mov) <> YEAR(CURDATE())
+              OR MONTH(data_mov) <> MONTH(CURDATE())
+          )
         GROUP BY YEAR(data_mov), MONTH(data_mov)
     ) AS monthly_expenses
   `);
