@@ -17,14 +17,17 @@ export default function Navbar() {
                 <li class="nav-item">
                     <NavLink to="/bpi" className="nav-link">BPI</NavLink>
                 </li>
-                <li class="nav-item">
+                {/*<li class="nav-item">
                     <NavLink to="/paypal" className="nav-link">Paypal</NavLink>
-                </li>
+                </li>*/}
                 <li class="nav-item">
                     <NavLink to="/trading212" className="nav-link">Trading212</NavLink>
                 </li>
                 <li class="nav-item">
                     <NavLink to="/coinbase" className="nav-link">Coinbase</NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink to="/binance" className="nav-link">Binance</NavLink>
                 </li>
             </ul>
             </div>

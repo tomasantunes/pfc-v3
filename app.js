@@ -277,6 +277,27 @@ app.post("/insert-portfolio-snapshot-coinbase", async (req, res) => {
   res.json({status: "OK", data: "Portfolio snapshot has been inserted successfully."});
 });
 
+app.post("/insert-portfolio-snapshot-binance", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var balance = req.body.balance;
+  var assets = req.body.assets;
+
+  var sql1 = "INSERT INTO binance_portfolio_snapshot_headers (balance) VALUES (?)";
+  var result1 = await con2.query(sql1, [balance]);
+  var headerId = result1[0].insertId;
+
+  for (var i in assets) {
+    var sql2 = "INSERT INTO binance_portfolio_snapshot_assets (snapshot_id, name, deposit, quantity, value) VALUES (?, ?, ?, ?, ?)";
+    await con2.query(sql2, [headerId, assets[i].name, assets[i].deposit, assets[i].quantity, assets[i].value]);
+  }
+
+  res.json({status: "OK", data: "Portfolio snapshot has been inserted successfully."});
+});
+
 app.post("/api/check-login", (req, res) => {
   var user = req.body.user;
   var pass = req.body.pass;
@@ -355,6 +376,15 @@ app.get('/trading212', (req, res) => {
 });
 
 app.get('/coinbase', (req, res) => {
+  if(req.session.isLoggedIn) {
+    res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
+  }
+  else {
+    res.redirect('/login');
+  }
+});
+
+app.get('/binance', (req, res) => {
   if(req.session.isLoggedIn) {
     res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
   }

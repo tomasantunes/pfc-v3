@@ -6,6 +6,7 @@ import BPI from './components/BPI';
 import Paypal from './components/Paypal';
 import Trading212 from './components/Trading212';
 import Coinbase from './components/Coinbase';
+import Binance from './components/Binance';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/paypal" element={<Paypal />} />
         <Route path="/trading212" element={<Trading212 />} />
         <Route path="/coinbase" element={<Coinbase />} />
+        <Route path="/binance" element={<Binance />} />
       </Routes>
     </BrowserRouter>
   );
