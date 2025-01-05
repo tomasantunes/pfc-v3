@@ -369,6 +369,71 @@ app.get("/get-average-monthly-expense", async (req, res) => {
   res.json({status: "OK", data: averageMonthlyExpense});
 });
 
+app.get("/get-total-profit", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var sql1 = "SELECT * FROM t212_portfolio_snapshot_headers ORDER BY created_at DESC LIMIT 1";
+  var result1 = await con2.query(sql1);
+  var profit_t212 = 0;
+  if (result1[0].length > 0) {
+    profit_t212 = Number(result1[0][0].profit);
+  }
+
+  const [lastCoinbaseSnapshotRows] = await con2.execute(
+    `SELECT id, balance, created_at 
+     FROM coinbase_portfolio_snapshot_headers
+     ORDER BY created_at DESC
+     LIMIT 1`
+  );
+
+  var coinbaseProfit = 0;
+
+  if (lastCoinbaseSnapshotRows.length > 0) {
+    const lastCoinbaseSnapshot = lastCoinbaseSnapshotRows[0];
+
+    const [coinbaseAssetRows] = await con2.execute(
+      `SELECT deposit, value
+      FROM coinbase_portfolio_snapshot_assets
+      WHERE snapshot_id = ?`,
+      [lastCoinbaseSnapshot.id]
+    );
+
+    for (const asset of coinbaseAssetRows) {
+      coinbaseProfit += (Number(asset.value) - Number(asset.deposit));
+    }
+  }
+
+  const [lastBinanceSnapshotRows] = await con2.execute(
+    `SELECT id, balance, created_at 
+     FROM binance_portfolio_snapshot_headers
+     ORDER BY created_at DESC
+     LIMIT 1`
+  );
+
+  var binanceProfit = 0;
+
+  if (lastBinanceSnapshotRows.length > 0) {
+    const lastBinanceSnapshot = lastBinanceSnapshotRows[0];
+
+    const [binanceAssetRows] = await con2.execute(
+      `SELECT deposit, value
+      FROM binance_portfolio_snapshot_assets
+      WHERE snapshot_id = ?`,
+      [lastBinanceSnapshot.id]
+    );
+
+    for (const asset of binanceAssetRows) {
+      binanceProfit += (Number(asset.value) - Number(asset.deposit));
+    }
+  }
+
+  var total_profit = (profit_t212 + coinbaseProfit + binanceProfit).toFixed(2);
+  res.json({status: "OK", data: total_profit});
+});
+
 app.post("/api/check-login", (req, res) => {
   var user = req.body.user;
   var pass = req.body.pass;
