@@ -340,6 +340,30 @@ app.get("/get-net-worth", async (req, res) => {
 
 });
 
+app.get("/get-average-monthly-expense", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  const [rows] = await con2.execute(`
+    SELECT
+        AVG(monthly_expenses.monthly_sum) AS average_monthly_expense
+    FROM (
+        SELECT
+            YEAR(data_mov) AS yr,
+            MONTH(data_mov) AS mnth,
+            SUM(ABS(valor)) AS monthly_sum
+        FROM bpi_mov
+        WHERE valor < 0
+        GROUP BY YEAR(data_mov), MONTH(data_mov)
+    ) AS monthly_expenses
+  `);
+
+  const averageMonthlyExpense = Number(rows[0].average_monthly_expense).toFixed(2) || 0;
+  res.json({status: "OK", data: averageMonthlyExpense});
+});
+
 app.post("/api/check-login", (req, res) => {
   var user = req.body.user;
   var pass = req.body.pass;

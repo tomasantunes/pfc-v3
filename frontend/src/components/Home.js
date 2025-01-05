@@ -12,6 +12,7 @@ var bootprompt = require('bootprompt');
 
 export default function Home() {
   const [netWorth, setNetWorth] = useState("");
+  const [averageMonthlyExpense, setAverageMonthlyExpense] = useState("");
 
   function getNetWorth() {
     axios.get(config.BASE_URL + "/get-net-worth")
@@ -23,8 +24,19 @@ export default function Home() {
     });
   }
 
+  function getAverageMonthlyExpense() {
+    axios.get(config.BASE_URL + "/get-average-monthly-expense")
+    .then(function(response) {
+      setAverageMonthlyExpense(response.data.data.toString() + "€");
+    })
+    .catch(function(err) {
+      bootprompt.alert("Error: " + err.message);
+    });
+  }
+
   useEffect(() => {
     getNetWorth();
+    getAverageMonthlyExpense();
   }, []);
 
   return (
@@ -33,6 +45,7 @@ export default function Home() {
       <div className="container">
         <h3>Dashboard</h3>
         <p><b>Net Worth:</b> {netWorth}</p>
+        <p><b>Average Monthly Expense:</b> {averageMonthlyExpense}</p>
       </div>
       
     </>
