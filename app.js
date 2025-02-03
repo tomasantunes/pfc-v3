@@ -277,6 +277,24 @@ app.post("/insert-portfolio-snapshot-coinbase", async (req, res) => {
   res.json({status: "OK", data: "Portfolio snapshot has been inserted successfully."});
 });
 
+app.get("/get-last-snapshot-coinbase", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var sql = "SELECT * FROM coinbase_portfolio_snapshot_assets WHERE snapshot_id = (SELECT MAX(snapshot_id) FROM coinbase_portfolio_snapshot_assets)";
+
+  con.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: "There was an error getting the last snapshot."});
+      return;
+    }
+    res.json({status: "OK", data: result});
+  });
+});
+
 app.post("/insert-portfolio-snapshot-binance", async (req, res) => {
   if (!req.session.isLoggedIn) {
     res.json({status: "NOK", error: "Invalid Authorization."});
@@ -296,6 +314,24 @@ app.post("/insert-portfolio-snapshot-binance", async (req, res) => {
   }
 
   res.json({status: "OK", data: "Portfolio snapshot has been inserted successfully."});
+});
+
+app.get("/get-last-snapshot-binance", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var sql = "SELECT * FROM binance_portfolio_snapshot_assets WHERE snapshot_id = (SELECT MAX(snapshot_id) FROM binance_portfolio_snapshot_assets)";
+
+  con.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: "There was an error getting the last snapshot."});
+      return;
+    }
+    res.json({status: "OK", data: result});
+  });
 });
 
 app.get("/get-net-worth", async (req, res) => {

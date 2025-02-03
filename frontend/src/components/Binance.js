@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Navbar from './Navbar';
 import axios from 'axios';
 import config from '../config';
@@ -13,6 +13,7 @@ var bootprompt = require('bootprompt');
 export default function Binance() {
   const [newBalance, setNewBalance] = useState();
   const [newAssets, setNewAssets] = useState([]);
+  const [lastSnapshot, setLastSnapshot] = useState([]);
   const [newAsset, setNewAsset] = useState({
     name: "",
     deposit: "",
@@ -87,6 +88,21 @@ export default function Binance() {
     });
   }
 
+  function getLastSnapshot() {
+    axios.get(config.BASE_URL + "/get-last-snapshot-binance")
+    .then(function (response) {
+      console.log(response.data.data);
+      setLastSnapshot(response.data.data);
+    })
+    .catch(function(err) {
+      bootprompt.alert("Error: " + err.message);
+    });
+  }
+
+  useEffect(() => {
+    getLastSnapshot();
+  }, []);
+
   return (
     <>
     <Navbar />
@@ -138,6 +154,31 @@ export default function Binance() {
         <div style={{textAlign: "right"}}>
           <button className="btn btn-primary" onClick={submitPortfolioSnapshot}>Submit</button>
         </div>
+      </div>
+      <div className="row">
+        <label><b>Last Snapshot</b></label>
+        <table className="table table-striped">
+          <thead>
+              <tr>
+                  <th>Name</th>
+                  <th>Deposit</th>
+                  <th>Quantity</th>
+                  <th>Value</th>
+                  <th></th>
+              </tr>
+          </thead>
+          <tbody>
+            {lastSnapshot.map((asset) => (
+              <tr>
+                <td>{asset.name}</td>
+                <td>{asset.deposit}</td>
+                <td>{asset.quantity}</td>
+                <td>{asset.value}</td>
+                <td></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
     </>
