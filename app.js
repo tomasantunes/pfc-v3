@@ -142,8 +142,9 @@ app.post("/import-bpi-xls", async (req, res) => {
         var sql1 = "SELECT * FROM bpi_mov WHERE data_mov = ? AND data_valor = ? AND desc_mov = ? AND valor = ? AND saldo = ?";
         var result = await con2.query(sql1, [data_mov, data_valor, desc_mov, valor, saldo]);
         if (result[0].length < 1) {
-          var sql2 = "INSERT INTO bpi_mov (data_mov, data_valor, desc_mov, valor, saldo) VALUES (?, ?, ?, ?, ?)";
-            con.query(sql2, [data_mov, data_valor, desc_mov, valor, saldo]);
+          var is_expense = (Number(valor) < 0) ? 1 : 0;
+          var sql2 = "INSERT INTO bpi_mov (data_mov, data_valor, desc_mov, valor, saldo, is_expense) VALUES (?, ?, ?, ?, ?)";
+            con.query(sql2, [data_mov, data_valor, desc_mov, valor, saldo, is_expense]);
         }
       }
     }
@@ -252,6 +253,21 @@ app.post("/insert-portfolio-snapshot-t212", async (req, res) => {
     var sql2 = "INSERT INTO t212_portfolio_snapshot_positions (snapshot_id, name, price, quantity, balance) VALUES (?, ?, ?, ?, ?)";
     await con2.query(sql2, [headerId, positions[i].name, positions[i].price, positions[i].quantity, positions[i].balance]);
   }
+
+  res.json({status: "OK", data: "Portfolio snapshot has been inserted successfully."});
+});
+
+app.post("/insert-portfolio-snapshot-polymarket", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var balance = req.body.balance;
+  var profit = req.body.profit;
+
+  var sql1 = "INSERT INTO polymarket_portfolio_snapshot (balance, profit) VALUES (?, ?)";
+  await con2.query(sql1, [balance, profit]);
 
   res.json({status: "OK", data: "Portfolio snapshot has been inserted successfully."});
 });
@@ -370,7 +386,14 @@ app.get("/get-net-worth", async (req, res) => {
     saldo_binance = result4[0][0].balance;
   }
 
-  var total = (Number(saldo_bpi) + Number(saldo_t212) + Number(saldo_coinbase) + Number(saldo_binance)).toFixed(2);
+  var sql5 = "SELECT * FROM polymarket_portfolio_snapshot ORDER BY created_at DESC LIMIT 1";
+  var result5 = await con2.query(sql5);
+  var saldo_polymarket = 0;
+  if (result5[0].length > 0) {
+    saldo_polymarket = result5[0][0].balance;
+  }
+
+  var total = (Number(saldo_bpi) + Number(saldo_t212) + Number(saldo_coinbase) + Number(saldo_binance) + Number(saldo_polymarket)).toFixed(2);
 
   res.json({status: "OK", data: total});
 
@@ -416,6 +439,13 @@ app.get("/get-total-profit", async (req, res) => {
   var profit_t212 = 0;
   if (result1[0].length > 0) {
     profit_t212 = Number(result1[0][0].profit);
+  }
+
+  var sql2 = "SELECT * FROM polymarket_portfolio_snapshot ORDER BY created_at DESC LIMIT 1";
+  var result2 = await con2.query(sql2);
+  var profit_polymarket = 0;
+  if (result2[0].length > 0) {
+    profit_polymarket = Number(result2[0][0].profit);
   }
 
   const [lastCoinbaseSnapshotRows] = await con2.execute(
@@ -466,7 +496,7 @@ app.get("/get-total-profit", async (req, res) => {
     }
   }
 
-  var total_profit = (profit_t212 + coinbaseProfit + binanceProfit).toFixed(2);
+  var total_profit = (profit_t212 + profit_polymarket + coinbaseProfit + binanceProfit).toFixed(2);
   res.json({status: "OK", data: total_profit});
 });
 

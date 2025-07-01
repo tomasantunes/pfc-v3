@@ -29,6 +29,9 @@ export default function Navbar() {
                 <li class="nav-item">
                     <NavLink to="/binance" className="nav-link">Binance</NavLink>
                 </li>
+                <li class="nav-item">
+                    <NavLink to="/polymarket" className="nav-link">Polymarket</NavLink>
+                </li>
             </ul>
             </div>
         </div>

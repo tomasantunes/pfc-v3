@@ -3,10 +3,10 @@ import './App.css';
 import Login from './components/Login';
 import Home from './components/Home';
 import BPI from './components/BPI';
-import Paypal from './components/Paypal';
 import Trading212 from './components/Trading212';
 import Coinbase from './components/Coinbase';
 import Binance from './components/Binance';
+import Polymarket from './components/Polymarket';
 
 function App() {
   return (
@@ -15,10 +15,10 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
         <Route path="/bpi" element={<BPI />} />
-        <Route path="/paypal" element={<Paypal />} />
         <Route path="/trading212" element={<Trading212 />} />
         <Route path="/coinbase" element={<Coinbase />} />
         <Route path="/binance" element={<Binance />} />
+        <Route path="/polymarket" element={<Polymarket />} />
       </Routes>
     </BrowserRouter>
   );

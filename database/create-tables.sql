@@ -65,3 +65,12 @@ CREATE TABLE binance_portfolio_snapshot_assets (
     quantity DECIMAL(17, 10),
     value DECIMAL(17, 2)
 );
+
+CREATE TABLE polymarket_portfolio_snapshot (
+    id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    balance DECIMAL(17,2),
+    profit DECIMAL(17,2),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE bpi_mov ADD COLUMN is_expense BOOLEAN DEFAULT 0;
