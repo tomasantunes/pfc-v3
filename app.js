@@ -414,8 +414,9 @@ app.get("/get-average-monthly-expense", async (req, res) => {
             MONTH(data_mov) AS mnth,
             SUM(ABS(valor)) AS monthly_sum
         FROM bpi_mov
-        WHERE 
+        WHERE
           valor < 0
+          AND is_expense = 1
           AND (
               YEAR(data_mov) <> YEAR(CURDATE())
               OR MONTH(data_mov) <> MONTH(CURDATE())
@@ -528,6 +529,39 @@ app.post("/api/check-login", (req, res) => {
     else {
       res.json({status: "NOK", error: "Too many login attempts."});
     }
+  });
+});
+
+app.post("/toggle-is-expense", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var id = req.body.id;
+
+  var sql = "SELECT * FROM bpi_mov WHERE id = ?";
+  con.query(sql, [id], function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: "There was an error getting the movement."});
+      return;
+    }
+    if (result.length < 1) {
+      res.json({status: "NOK", error: "Movement not found."});
+      return;
+    }
+
+    var is_expense = (result[0].is_expense == 1) ? 0 : 1;
+    var sql2 = "UPDATE bpi_mov SET is_expense = ? WHERE id = ?";
+    con.query(sql2, [is_expense, id], function(err, result2) {
+      if (err) {
+        console.log(err);
+        res.json({status: "NOK", error: "There was an error updating the movement."});
+        return;
+      }
+      res.json({status: "OK", data: "Movement updated successfully."});
+    });
   });
 });
 

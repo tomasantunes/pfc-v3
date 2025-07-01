@@ -41,6 +41,22 @@ export default function BPI() {
     .catch((err) => bootprompt.alert("File Upload Error"));
   }
 
+  function toggleIsExpense(id) {
+    axios.post(config.BASE_URL + "/toggle-is-expense", {id: id})
+    .then(function(response) {
+      if (response.data.status == "OK") {
+        bootprompt.alert("Movimento atualizado com sucesso.");
+        getMov();
+      }
+      else {
+        bootprompt.alert(response.data.error);
+      }
+    })
+    .catch(function(err) {
+      bootprompt.alert(err.message);
+    });
+  }
+
   function getMov() {
     axios.get(config.BASE_URL + "/get-bpi-mov")
     .then(function(response) {
@@ -82,15 +98,19 @@ export default function BPI() {
             <th>Descrição</th>
             <th>Valor</th>
             <th>Saldo</th>
+            <th>Despesa</th>
+            <th>Ações</th>
           </tr>
           <tbody>
             {mov.map((m) => (
-              <tr>
+              <tr key={m.id}>
                 <td>{m.data_mov}</td>
                 <td>{m.data_valor}</td>
                 <td>{m.desc_mov}</td>
                 <td>{m.valor}</td>
                 <td>{m.saldo}</td>
+                <td>{m.is_expense == 1 ? "Sim" : "Não"}</td>
+                <td>{Number(m.valor) < 0 && <button className={"btn btn-sm" + (m.is_expense) ? "btn-success" : "btn-danger"} onClick={() => toggleIsExpense(m.id)}>{(m.is_expense) ? "+" : "-"}</button>}</td>
               </tr>
             ))}
           </tbody>
