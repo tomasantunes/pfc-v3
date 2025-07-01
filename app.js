@@ -162,7 +162,7 @@ app.get("/get-bpi-mov", (req, res) => {
     return;
   }
 
-  var sql = "SELECT * FROM bpi_mov ORDER BY data_mov DESC, id DESC LIMIT 25";
+  var sql = "SELECT * FROM bpi_mov ORDER BY data_mov DESC, id DESC";
   con.query(sql, function(err, result) {
     if (err) {
       console.log(err);
