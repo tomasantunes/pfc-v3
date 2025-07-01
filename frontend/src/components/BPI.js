@@ -110,7 +110,7 @@ export default function BPI() {
                 <td>{m.valor}</td>
                 <td>{m.saldo}</td>
                 <td>{m.is_expense == 1 ? "Sim" : "Não"}</td>
-                <td>{Number(m.valor) < 0 && <button className={"btn btn-sm" + (m.is_expense) ? "btn-success" : "btn-danger"} onClick={() => toggleIsExpense(m.id)}>{(m.is_expense) ? "+" : "-"}</button>}</td>
+                <td>{Number(m.valor) < 0 && <button className={"btn btn-sm" + ((m.is_expense) ? "btn-success" : "btn-danger")} onClick={() => toggleIsExpense(m.id)}>{(m.is_expense) ? "+" : "-"}</button>}</td>
               </tr>
             ))}
           </tbody>
