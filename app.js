@@ -125,6 +125,8 @@ app.post("/import-bpi-xls", async (req, res) => {
 
     xls.reverse();
 
+    console.log(xls);
+
     for (var i in xls) {
       if (
         xls[i].hasOwnProperty("BPI Net") && 
@@ -143,8 +145,15 @@ app.post("/import-bpi-xls", async (req, res) => {
         var result = await con2.query(sql1, [data_mov, data_valor, desc_mov, valor, saldo]);
         if (result[0].length < 1) {
           var is_expense = (Number(valor) < 0) ? 1 : 0;
-          var sql2 = "INSERT INTO bpi_mov (data_mov, data_valor, desc_mov, valor, saldo, is_expense) VALUES (?, ?, ?, ?, ?)";
-            con.query(sql2, [data_mov, data_valor, desc_mov, valor, saldo, is_expense]);
+          var sql2 = "INSERT INTO bpi_mov (data_mov, data_valor, desc_mov, valor, saldo, is_expense) VALUES (?, ?, ?, ?, ?, ?)";
+          con.query(sql2, [data_mov, data_valor, desc_mov, valor, saldo, is_expense], function(err, result) {
+            if (err) {
+              console.log("Error inserting to MySQL.");
+              console.log(err.message);
+              throw new Error("Error inserting to MySQL.");
+            }
+            console.log("Successfully inserted to MySQL");
+          });
         }
       }
     }
