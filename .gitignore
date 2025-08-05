@@ -2,4 +2,3 @@ node_modules
 secret-config.json
 bpi.json
 paypal.txt
-bin/www
