@@ -74,3 +74,4 @@ CREATE TABLE polymarket_portfolio_snapshot (
 );
 
 ALTER TABLE bpi_mov ADD COLUMN is_expense BOOLEAN DEFAULT 0;
+ALTER TABLE polymarket_portfolio_snapshot ADD COLUMN deposit DECIMAL(17, 2) DEFAULT 0;

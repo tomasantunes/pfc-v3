@@ -13,6 +13,7 @@ var bootprompt = require('bootprompt');
 export default function Polymarket() {
   const [newBalance, setNewBalance] = useState();
   const [newProfit, setNewProfit] = useState();
+  const [newDeposit, setNewDeposit] = useState();
 
   function changeNewBalance(e) {
     setNewBalance(e.target.value);
@@ -22,10 +23,15 @@ export default function Polymarket() {
     setNewProfit(e.target.value);
   }
 
+  function changeNewDeposit(e) {
+    setNewDeposit(e.target.value);
+  }
+
   function submitPortfolioSnapshot() {
     var data = {
       balance: newBalance,
       profit: newProfit,
+      deposit: newDeposit
     };
 
     axios.post(config.BASE_URL + "/insert-portfolio-snapshot-polymarket", data)
@@ -34,6 +40,7 @@ export default function Polymarket() {
         bootprompt.alert("Portfolio snapshot has been submitted.");
         setNewBalance("");
         setNewProfit("");
+        setNewDeposit("");
       }
       else {
         bootprompt.alert("Error: " + response.data.error);
@@ -58,6 +65,10 @@ export default function Polymarket() {
           <div className="form-group mb-2">
               <label><b>Profit</b></label>
               <input type="text" className="form-control" value={newProfit} onChange={changeNewProfit} />
+          </div>
+          <div className="form-group mb-2">
+              <label><b>Deposit</b></label>
+              <input type="text" className="form-control" value={newDeposit} onChange={changeNewDeposit} />
           </div>
         </div>
       </div>

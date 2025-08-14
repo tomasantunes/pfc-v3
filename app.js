@@ -274,9 +274,10 @@ app.post("/insert-portfolio-snapshot-polymarket", async (req, res) => {
 
   var balance = req.body.balance;
   var profit = req.body.profit;
+  var deposit = req.body.deposit;
 
-  var sql1 = "INSERT INTO polymarket_portfolio_snapshot (balance, profit) VALUES (?, ?)";
-  await con2.query(sql1, [balance, profit]);
+  var sql1 = "INSERT INTO polymarket_portfolio_snapshot (balance, profit, deposit) VALUES (?, ?, ?)";
+  await con2.query(sql1, [balance, profit, deposit]);
 
   res.json({status: "OK", data: "Portfolio snapshot has been inserted successfully."});
 });
