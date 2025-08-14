@@ -58,6 +58,13 @@ export default function Trading212() {
     })
   }
 
+  function changeNewPositionReturn(e) {
+    setNewPosition({
+      ...newPosition,
+      return: e.target.value
+    })
+  }
+
   function addNewPosition() {
     setNewPositions([
       ...newPositions,
