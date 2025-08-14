@@ -18,7 +18,8 @@ export default function Trading212() {
     name: "",
     price: "",
     quantity: "",
-    balance: ""
+    value: "",
+    return: ""
   });
 
   function changeNewBalance(e) {
@@ -50,10 +51,10 @@ export default function Trading212() {
     });
   }
 
-  function changeNewPositionBalance(e) {
+  function changeNewPositionValue(e) {
     setNewPosition({
       ...newPosition,
-      balance: e.target.value
+      value: e.target.value
     })
   }
 
@@ -66,7 +67,8 @@ export default function Trading212() {
       name: "",
       price: "",
       quantity: "",
-      balance: ""
+      value: "",
+      return: ""
     })
   }
 
@@ -120,7 +122,8 @@ export default function Trading212() {
                         <th>Name</th>
                         <th>Price</th>
                         <th>Quantity</th>
-                        <th>Balance</th>
+                        <th>Value</th>
+                        <th>Return</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -130,7 +133,8 @@ export default function Trading212() {
                       <td>{position.name}</td>
                       <td>{position.price}</td>
                       <td>{position.quantity}</td>
-                      <td>{position.balance}</td>
+                      <td>{position.value}</td>
+                      <td>{position.return}</td>
                       <td></td>
                     </tr>
                   ))}
@@ -140,7 +144,8 @@ export default function Trading212() {
                         <td><input type="text" className="form-control" value={newPosition.name} onChange={changeNewPositionName} /></td>
                         <td><input type="text" className="form-control" value={newPosition.price} onChange={changeNewPositionPrice} /></td>
                         <td><input type="text" className="form-control" value={newPosition.quantity} onChange={changeNewPositionQuantity} /></td>
-                        <td><input type="text" className="form-control" value={newPosition.balance} onChange={changeNewPositionBalance} /></td>
+                        <td><input type="text" className="form-control" value={newPosition.value} onChange={changeNewPositionValue} /></td>
+                        <td><input type="text" className="form-control" value={newPosition.return} onChange={changeNewPositionReturn} /></td>
                         <td><button className="btn btn-success" onClick={addNewPosition}>Add</button></td>
                     </tr>
                 </tfoot>

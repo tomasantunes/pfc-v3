@@ -259,8 +259,8 @@ app.post("/insert-portfolio-snapshot-t212", async (req, res) => {
   var headerId = result1[0].insertId;
 
   for (var i in positions) {
-    var sql2 = "INSERT INTO t212_portfolio_snapshot_positions (snapshot_id, name, price, quantity, balance) VALUES (?, ?, ?, ?, ?)";
-    await con2.query(sql2, [headerId, positions[i].name, positions[i].price, positions[i].quantity, positions[i].balance]);
+    var sql2 = "INSERT INTO t212_portfolio_snapshot_positions (snapshot_id, name, price, quantity, value, return) VALUES (?, ?, ?, ?, ?, ?)";
+    await con2.query(sql2, [headerId, positions[i].name, positions[i].price, positions[i].quantity, positions[i].value, positions[i].return]);
   }
 
   res.json({status: "OK", data: "Portfolio snapshot has been inserted successfully."});
