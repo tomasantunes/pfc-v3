@@ -77,3 +77,4 @@ ALTER TABLE bpi_mov ADD COLUMN is_expense BOOLEAN DEFAULT 0;
 ALTER TABLE polymarket_portfolio_snapshot ADD COLUMN deposit DECIMAL(17, 2) DEFAULT 0;
 ALTER TABLE t212_portfolio_snapshot_positions RENAME COLUMN balance TO value;
 ALTER TABLE t212_portfolio_snapshot_positions ADD COLUMN `return` DECIMAL(17, 2) DEFAULT NULL;
+ALTER TABLE bpi_mov ADD COLUMN is_original BOOLEAN DEFAULT 1;

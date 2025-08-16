@@ -165,6 +165,30 @@ app.post("/import-bpi-xls", async (req, res) => {
   res.json({status: "OK", data: "XLS has been imported successfully."});
 });
 
+app.post("/add-bpi-mov", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var data_mov = req.body.data_mov;
+  var data_valor = req.body.data_valor;
+  var desc_mov = req.body.desc_mov;
+  var valor = req.body.valor;
+  var saldo = req.body.saldo;
+  var is_expense = req.body.is_expense == true ? 1 : 0;
+
+  var sql = "INSERT INTO bpi_mov (data_mov, data_valor, desc_mov, valor, saldo, is_expense, is_original) VALUES (?, ?, ?, ?, ?, ?, ?)";
+  con.query(sql, [data_mov, data_valor, desc_mov, Number(valor), Number(saldo), is_expense, 0], function(err, result) {
+    if (err) {
+      console.log("Error inserting to MySQL.");
+      console.log(err.message);
+      res.json({status: "NOK", error: "Error inserting to MySQL."});
+    }
+    res.json({status: "OK", data: "BPI movement has been added."});
+  });
+});
+
 app.get("/get-bpi-mov", (req, res) => {
   if (!req.session.isLoggedIn) {
     res.json({status: "NOK", error: "Invalid Authorization."});
@@ -570,6 +594,16 @@ app.post("/api/check-login", (req, res) => {
   });
 });
 
+app.get("/api/logout", (req, res) => {
+  if (req.session.isLoggedIn) {
+    req.session.isLoggedIn = false;
+    res.json({status: "OK", data: "You have logged out successfully."});
+  }
+  else {
+    res.json({status: "NOK", error: "You can't logout because you are not logged in."});
+  }
+});
+
 app.post("/toggle-is-expense", (req, res) => {
   if (!req.session.isLoggedIn) {
     res.json({status: "NOK", error: "Invalid Authorization."});
@@ -659,6 +693,15 @@ app.get('/coinbase', (req, res) => {
 });
 
 app.get('/binance', (req, res) => {
+  if(req.session.isLoggedIn) {
+    res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
+  }
+  else {
+    res.redirect('/login');
+  }
+});
+
+app.get('/polymarket', (req, res) => {
   if(req.session.isLoggedIn) {
     res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
   }

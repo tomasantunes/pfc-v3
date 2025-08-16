@@ -17,3 +17,9 @@
   background-color: transparent;
   float: right;
 }
+
+.bpi-form {
+  padding: 25px;
+  background-color: #ccc;
+  border-radius: 10px;
+}
