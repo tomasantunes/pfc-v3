@@ -8,7 +8,8 @@ PFC (Personal Finance Center) v3
 - Install MySQL and create a database called "pfc_v3".
 - Run the file database/create-tables.sql on your new database.
 - Copy the file "secret-config-base.json" and rename it "secret-config.json".
-- Fill out the necessary fields on this file.
+- Copy the file "frontend/src/config-base.json" and rename it "frontend/src/config.json".
+- Fill out the necessary fields on these files.
 - Run the command "npm install" on the root folder.
 - Run the command "npm install" on the frontend folder.
 - Run the command "npm run build" on the frontend folder.
@@ -29,7 +30,7 @@ O PFC3 deve ser preenchido mensalmente.
 - Fazer scroll para baixo até ver o botão "Ver mais"
 - Clicar de modo a que apareçam todos os movimentos do mês passado.
 - No canto superior direito clicar em "Exportar XLS"
-- O ficheiro irá ser descarregado para a pasta de trabsferências.
+- O ficheiro irá ser descarregado para a pasta de transferências.
 
 #### Importar o extrato mensal no PFC3
 
@@ -43,7 +44,7 @@ O PFC3 deve ser preenchido mensalmente.
 
 - Preencher o campo "Balance" com o saldo total da conta Trading212 em euros.
 - Preencher o campo "Profit" com o retorno, seja ele positivo ou negativo.
-- Para cada posição que tiver de momento preencher os campos "Name" (Nome da ação), "Price" (preço atual da ação), "Quantity" (quantidade de ações) e "Balance" (valor atual da posição).
+- Para cada posição que tiver de momento preencher os campos "Name" (Nome da ação), "Price" (preço atual da ação), "Quantity" (quantidade de ações), "Value" (valor atual da posição) e "Return" (lucro ou perda atual da ação).
 - Clicar no botão "Add" para cada posição.
 - Quando terminar clique em "Submit" para inserir o snapshot do seu portfolio na base de dados.
 
@@ -63,6 +64,7 @@ O PFC3 deve ser preenchido mensalmente.
 
 - Preencher o campo "Balance" com o saldo total da sua conta Polymarket em euros.
 - Preencher o campo "Profit" com o retorno atual, seja ele positivo ou negativo.
+- Preencher o campo "Deposit" com o valor total de depósito que efetuou neste site.
 
 ## ROADMAP
 
