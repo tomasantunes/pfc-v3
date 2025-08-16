@@ -14,6 +14,7 @@ export default function Home() {
   const [netWorth, setNetWorth] = useState("");
   const [averageMonthlyExpense, setAverageMonthlyExpense] = useState("");
   const [totalProfit, setTotalProfit] = useState("");
+  const [expenseLast3Months, setExpenseLast3Months] = useState();
 
   function getNetWorth() {
     axios.get(config.BASE_URL + "/get-net-worth")
@@ -45,20 +46,40 @@ export default function Home() {
     });
   }
 
+  function getExpenseLast3Months() {
+    axios.get(config.BASE_URL + "/get-expense-last-3-months")
+    .then(function(response) {
+      setExpenseLast3Months(response.data.data);
+    })
+    .catch(function(err) {
+      bootprompt.alert("Error: " + err.message);
+    });
+  }
+
   useEffect(() => {
     getNetWorth();
     getAverageMonthlyExpense();
     getTotalProfit();
+    getExpenseLast3Months();
   }, []);
 
   return (
     <>
       <Navbar />
       <div className="container">
-        <h3>Dashboard</h3>
-        <p><b>Net Worth:</b> {netWorth}</p>
-        <p><b>Average Monthly Expense:</b> {averageMonthlyExpense}</p>
-        <p><b>Total Profit:</b> {totalProfit}</p>
+        <div class="row">
+          <h3>Dashboard</h3>
+          <p><b>Net Worth:</b> {netWorth}</p>
+          <p><b>Average Monthly Expense:</b> {averageMonthlyExpense}</p>
+          <p><b>Total Profit:</b> {totalProfit}</p>
+        </div>
+
+        <div class="row">
+          <h4>Expense Last 3 Months</h4>
+          {expenseLast3Months && expenseLast3Months.map((exp) => (
+            <p><b>{exp.mnth}/{exp.yr}</b> {exp.monthly_sum}€</p>
+          ))}
+        </div>
       </div>
       
     </>

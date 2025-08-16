@@ -439,6 +439,34 @@ app.get("/get-average-monthly-expense", async (req, res) => {
   res.json({status: "OK", data: averageMonthlyExpense});
 });
 
+app.get("/get-expense-last-3-months", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  const [rows] = await con2.execute(`
+    SELECT 
+        YEAR(data_mov) AS yr,
+        MONTH(data_mov) AS mnth,
+        SUM(ABS(valor)) AS monthly_sum
+    FROM bpi_mov
+    WHERE 
+        valor < 0
+        AND is_expense = 1
+        AND (
+            YEAR(data_mov) <> YEAR(CURDATE())
+            OR MONTH(data_mov) <> MONTH(CURDATE())
+        )
+    GROUP BY YEAR(data_mov), MONTH(data_mov)
+    ORDER BY yr DESC, mnth DESC
+    LIMIT 3;
+  `);
+
+  const expenseLast3Months = rows;
+  res.json({status: "OK", data: expenseLast3Months});
+});
+
 app.get("/get-total-profit", async (req, res) => {
   if (!req.session.isLoggedIn) {
     res.json({status: "NOK", error: "Invalid Authorization."});
