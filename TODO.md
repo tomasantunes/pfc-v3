@@ -9,3 +9,5 @@
 - No Dashboard mostrar despesa média por dia.
 - No Dashboard mostrar despesa média anual.
 - No Dashboard mostrar despesa anual do ano passado.
+- Criar menu lateral esquerdo
+- Criar página de definições
