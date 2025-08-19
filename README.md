@@ -76,3 +76,5 @@ O PFC3 deve ser preenchido mensalmente.
 - Criar tabelas paginadas para todos os movimentos e snapshots.
 - Adicionar opções para editar e apagar movimentos e snapshots.
 - Criar calendário anual de despesas
+- Criar sistema para o Santander
+- Criar sistema para o Revolut
