@@ -75,5 +75,4 @@ O PFC3 deve ser preenchido mensalmente.
 
 - Criar tabelas paginadas para todos os movimentos e snapshots.
 - Adicionar opções para editar e apagar movimentos e snapshots.
-- Adicionar formulário para inserir movimentos singulares na página BPI.
 - Criar calendário anual de despesas
