@@ -78,3 +78,4 @@ O PFC3 deve ser preenchido mensalmente.
 - Criar calendário anual de despesas
 - Criar sistema para o Santander
 - Criar sistema para o Revolut
+- Reativar sistema Paypal
