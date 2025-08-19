@@ -16,6 +16,11 @@ PFC (Personal Finance Center) v3
 - Run the command "npm start" on the root folder to start the application.
 - On your browser go to localhost:3000
 
+### (Optional)
+
+- Create a file ".env" on the root of the project.
+- Set the port on this file like this: PORT=1234
+
 ## Como utilizar o PFC3
 
 O PFC3 deve ser preenchido mensalmente.
@@ -71,3 +76,4 @@ O PFC3 deve ser preenchido mensalmente.
 - Criar tabelas paginadas para todos os movimentos e snapshots.
 - Adicionar opções para editar e apagar movimentos e snapshots.
 - Adicionar formulário para inserir movimentos singulares na página BPI.
+- Criar calendário anual de despesas
