@@ -125,8 +125,6 @@ app.post("/import-bpi-xls", async (req, res) => {
 
     xls.reverse();
 
-    console.log(xls);
-
     for (var i in xls) {
       if (
         xls[i].hasOwnProperty("BPI Net") && 
@@ -441,7 +439,14 @@ app.get("/get-net-worth", async (req, res) => {
     saldo_polymarket = result5[0][0].balance;
   }
 
-  var total = (Number(saldo_bpi) + Number(saldo_t212) + Number(saldo_coinbase) + Number(saldo_binance) + Number(saldo_polymarket)).toFixed(2);
+  var sql6 = "SELECT * FROM santander ORDER BY created_at DESC LIMIT 1";
+  var result6 = await con2.query(sql6);
+  var saldo_santander = 0;
+  if (result6[0].length > 0) {
+    saldo_santander = result6[0][0].balance;
+  }
+
+  var total = (Number(saldo_bpi) + Number(saldo_t212) + Number(saldo_coinbase) + Number(saldo_binance) + Number(saldo_polymarket) + Number(saldo_santander)).toFixed(2);
 
   res.json({status: "OK", data: total});
 
