@@ -73,6 +73,12 @@ CREATE TABLE polymarket_portfolio_snapshot (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE santander (
+    id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    balance DECIMAL(17,2),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 ALTER TABLE bpi_mov ADD COLUMN is_expense BOOLEAN DEFAULT 0;
 ALTER TABLE polymarket_portfolio_snapshot ADD COLUMN deposit DECIMAL(17, 2) DEFAULT 0;
 ALTER TABLE t212_portfolio_snapshot_positions RENAME COLUMN balance TO value;

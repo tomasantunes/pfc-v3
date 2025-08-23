@@ -251,6 +251,20 @@ app.post("/import-paypal-csv", (req, res) => {
   }
 });
 
+app.post("/insert-santander-balance", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var balance = req.body.balance;
+
+  var sql1 = "INSERT INTO santander (balance) VALUES (?)";
+  await con2.query(sql1, [balance]);
+
+  res.json({status: "OK", data: "Santander Balance has been submitted."});
+});
+
 app.get("/get-paypal-mov", (req, res) => {
   if (!req.session.isLoggedIn) {
     res.json({status: "NOK", error: "Invalid Authorization."});
