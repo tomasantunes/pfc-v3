@@ -616,7 +616,7 @@ app.post("/api/check-login", (req, res) => {
 app.get("/api/logout", (req, res) => {
   if (req.session.isLoggedIn) {
     req.session.isLoggedIn = false;
-    res.json({status: "OK", data: "You have logged out successfully."});
+    res.redirect("/");
   }
   else {
     res.json({status: "NOK", error: "You can't logout because you are not logged in."});

@@ -37,6 +37,9 @@ export default function Navbar() {
                 </li>
             </ul>
             </div>
+            <div class="logout-btn">
+                <a href="/api/logout"><i class="fa-solid fa-right-from-bracket"></i></a>
+            </div>
         </div>
     </nav>
   )
