@@ -56,6 +56,8 @@ export default function Home() {
     });
   }
 
+  
+
   useEffect(() => {
     getNetWorth();
     getAverageMonthlyExpense();
@@ -68,17 +70,41 @@ export default function Home() {
       <Navbar />
       <div className="container">
         <div class="row">
-          <h3>Dashboard</h3>
-          <p><b>Net Worth:</b> {netWorth}</p>
-          <p><b>Average Monthly Expense:</b> {averageMonthlyExpense}</p>
-          <p><b>Total Profit:</b> {totalProfit}</p>
-        </div>
+          <div class="row text-center">
+            <h1>Dashboard</h1>
+          </div>
+          <div class="col-md-4">
+            <div class="dashboard-section mb-3">
+              <div class="row">
+                <h2>General Stats</h2>
+              </div>
+              <div class="row">
+                <p><b>Net Worth:</b> {netWorth}</p>
+                <p><b>Average Monthly Expense:</b> {averageMonthlyExpense}</p>
+                <p><b>Total Profit:</b> {totalProfit}</p>
+              </div>
+            </div>
+            <div class="dashboard-section mb-3">
+              <div class="row">
+                <h2>Expense Last 3 Months</h2>
+              </div>
+              <div class="row">
+                {expenseLast3Months && expenseLast3Months.map((exp) => (
+                  <p><b>{exp.mnth}/{exp.yr}</b> {exp.monthly_sum}€</p>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
 
-        <div class="row">
-          <h4>Expense Last 3 Months</h4>
-          {expenseLast3Months && expenseLast3Months.map((exp) => (
-            <p><b>{exp.mnth}/{exp.yr}</b> {exp.monthly_sum}€</p>
-          ))}
+          </div>
+          <div class="col-md-4">
+            {/*
+            <div class="dashboard-section mb-3">
+              // TODO: new section
+            </div>
+            */}
+          </div>
         </div>
       </div>
       
