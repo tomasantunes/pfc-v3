@@ -19,6 +19,8 @@
     - Despesa média por mês já temos.
     - Despesa média anual.
 
+Nota: Todos os valores têm que ser líquidos.
+
 ## LATER
 
 - Criar menu lateral esquerdo
