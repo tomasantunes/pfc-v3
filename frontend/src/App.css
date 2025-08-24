@@ -34,3 +34,8 @@
   display: inline-block;
   cursor: pointer;
 }
+
+.set-language-btn {
+  padding: 15px;
+  cursor: pointer;
+}

@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import Navbar from './Navbar';
 import axios from 'axios';
 import config from '../config';
+import {i18n} from '../libs/translations';
 import $ from 'jquery';
 
 window.jQuery = $;
@@ -67,8 +68,6 @@ export default function Home() {
     });
   }
 
-  
-
   useEffect(() => {
     getNetWorth();
     getAverageMonthlyExpense();
@@ -112,8 +111,8 @@ export default function Home() {
           <div class="col-md-4">
             <div class="dashboard-section mb-3">
               <h2>Dados Estimados</h2>
-              <p><b>Rendimento p/ hora: </b> {estimatedData.incomePerHour} <div class="pencil-btn"><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>Rendimento p/ dia: </b> {estimatedData.incomePerDay} <div class="pencil-btn"><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Income Per Hour")}: </b> {estimatedData.incomePerHour} <div class="pencil-btn"><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Income Per Day")}: </b> {estimatedData.incomePerDay} <div class="pencil-btn"><i class="fa-solid fa-pencil"></i></div></p>
               <p><b>Rendimento p/ semana: </b> {estimatedData.incomePerWeek} <div class="pencil-btn"><i class="fa-solid fa-pencil"></i></div></p>
               <p><b>Rendimento p/ mês: </b> {estimatedData.incomePerMonth} <div class="pencil-btn"><i class="fa-solid fa-pencil"></i></div></p>
               <p><b>Rendimento p/ ano: </b> {estimatedData.incomePerYear} <div class="pencil-btn"><i class="fa-solid fa-pencil"></i></div></p>

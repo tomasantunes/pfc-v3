@@ -1,8 +1,8 @@
 # TODOs
 
-## NOW
+## EM CURSO
 
-- Criar uma div com o título "Dados Estimados".
+- Escrever traduções de todos os termos visíveis da app em Inglês e Português.
 - Nessa div colocar uma lista de campos editáveis com um ícone de lápis e um prompt:
     - Rendimento p/ hora
     - Rendimento p/ dia
@@ -21,7 +21,7 @@
     - Despesa média por mês já temos.
     - Despesa média anual.
 
-## LATER
+## MAIS TARDE
 
 - Criar menu lateral esquerdo
 - Criar página de definições

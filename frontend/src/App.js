@@ -8,6 +8,7 @@ import Trading212 from './components/Trading212';
 import Coinbase from './components/Coinbase';
 import Binance from './components/Binance';
 import Polymarket from './components/Polymarket';
+import {init} from './libs/translations';
 
 function App() {
   return (

@@ -1,7 +1,9 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {NavLink} from 'react-router-dom';
+import {i18n, getLanguages, setLanguage} from '../libs/translations';
 
 export default function Navbar() {
+    const [languages, setLanguages] = useState(getLanguages());
   return (
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
@@ -36,6 +38,18 @@ export default function Navbar() {
                     <NavLink to="/polymarket" className="nav-link">Polymarket</NavLink>
                 </li>
             </ul>
+            </div>
+            <div class="me-3">
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                        {i18n("Language")}
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        {languages.map((l) => (
+                            <li><div class="set-language-btn" onClick={() => setLanguage(l.languageCode)}>{l.languageName}</div></li>
+                        ))}
+                    </ul>
+                </div>
             </div>
             <div class="logout-btn">
                 <a href="/api/logout"><i class="fa-solid fa-right-from-bracket"></i></a>
