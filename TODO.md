@@ -9,8 +9,10 @@
     - Rendimento p/ semana
     - Rendimento p/ mês
     - Rendimento p/ ano
-    - Salário p/ Mês (14 meses)
-    - Salário p/ Ano (14 meses)
+    - Salário p/ Mês Líquido (14 meses)
+    - Salário p/ Ano Líquido (14 meses)
+    - Salário p/ Mês Bruto (14 meses)
+    - Salário p/ Mês Bruto (14 meses)
 
 - Tal como para a despesa média mensal mostrar também:
     - Despesa média por hora
@@ -18,8 +20,6 @@
     - Despesa média por semana
     - Despesa média por mês já temos.
     - Despesa média anual.
-
-Nota: Todos os valores têm que ser líquidos.
 
 ## LATER
 

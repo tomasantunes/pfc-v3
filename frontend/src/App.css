@@ -29,3 +29,8 @@
   border-radius: 10px;
   border: 2px solid #555;
 }
+
+.pencil-btn {
+  display: inline-block;
+  cursor: pointer;
+}

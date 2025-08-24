@@ -15,6 +15,17 @@ export default function Home() {
   const [averageMonthlyExpense, setAverageMonthlyExpense] = useState("");
   const [totalProfit, setTotalProfit] = useState("");
   const [expenseLast3Months, setExpenseLast3Months] = useState();
+  const [estimatedData, setEstimatedData] = useState({
+    incomePerHour: "",
+    incomePerDay: "",
+    incomePerWeek: "",
+    incomePerMonth: "",
+    incomePerYear: "",
+    netSalaryPerMonth: "",
+    netSalaryPerYear: "",
+    grossSalaryPerMonth: "",
+    grossSalaryPerYear: "",
+  });
 
   function getNetWorth() {
     axios.get(config.BASE_URL + "/get-net-worth")
@@ -99,11 +110,18 @@ export default function Home() {
 
           </div>
           <div class="col-md-4">
-            {/*
             <div class="dashboard-section mb-3">
-              // TODO: new section
+              <h2>Dados Estimados</h2>
+              <p><b>Rendimento p/ hora: </b> {estimatedData.incomePerHour} <div class="pencil-btn"><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>Rendimento p/ dia: </b> {estimatedData.incomePerDay} <div class="pencil-btn"><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>Rendimento p/ semana: </b> {estimatedData.incomePerWeek} <div class="pencil-btn"><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>Rendimento p/ mês: </b> {estimatedData.incomePerMonth} <div class="pencil-btn"><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>Rendimento p/ ano: </b> {estimatedData.incomePerYear} <div class="pencil-btn"><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>Salário p/ Mês Líquido: </b> {estimatedData.netSalaryPerMonth} <div class="pencil-btn"><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>Salário p/ Ano Líquido: </b> {estimatedData.netSalaryPerYear} <div class="pencil-btn"><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>Salário p/ Mês Bruto: </b> {estimatedData.grossSalaryPerMonth} <div class="pencil-btn"><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>Salário p/ Ano Bruto: </b> {estimatedData.grossSalaryPerYear} <div class="pencil-btn"><i class="fa-solid fa-pencil"></i></div></p>
             </div>
-            */}
           </div>
         </div>
       </div>
