@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import Navbar from './Navbar';
 import axios from 'axios';
 import config from '../config';
+import TextInputModal from './TextInputModal';
 import {i18n} from '../libs/translations';
 import $ from 'jquery';
 
@@ -68,6 +69,17 @@ export default function Home() {
     });
   }
 
+  function changeIncomePerHour(e) {
+    setEstimatedData({
+      ...estimatedData,
+      incomePerHour: e.target.value
+    });
+  }
+
+  function showIncomePerHourModal() {
+    $('#textInputModal').modal('show');
+  }
+
   useEffect(() => {
     getNetWorth();
     getAverageMonthlyExpense();
@@ -106,12 +118,12 @@ export default function Home() {
             </div>
           </div>
           <div class="col-md-4">
-
+            
           </div>
           <div class="col-md-4">
             <div class="dashboard-section mb-3">
               <h2>Dados Estimados</h2>
-              <p><b>{i18n("Income Per Hour")}: </b> {estimatedData.incomePerHour} <div class="pencil-btn"><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Income Per Hour")}: </b> {estimatedData.incomePerHour} <div class="pencil-btn" onClick={showIncomePerHourModal}><i class="fa-solid fa-pencil"></i></div></p>
               <p><b>{i18n("Income Per Day")}: </b> {estimatedData.incomePerDay} <div class="pencil-btn"><i class="fa-solid fa-pencil"></i></div></p>
               <p><b>Rendimento p/ semana: </b> {estimatedData.incomePerWeek} <div class="pencil-btn"><i class="fa-solid fa-pencil"></i></div></p>
               <p><b>Rendimento p/ mês: </b> {estimatedData.incomePerMonth} <div class="pencil-btn"><i class="fa-solid fa-pencil"></i></div></p>
@@ -124,7 +136,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      
+      <TextInputModal value={estimatedData.incomePerHour} setValue={changeIncomePerHour} />
     </>
   )
 }
