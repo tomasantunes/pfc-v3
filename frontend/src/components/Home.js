@@ -80,6 +80,22 @@ export default function Home() {
     $('#textInputModal').modal('show');
   }
 
+  function updateField(field, value) {
+    axios.post("/update-estimated-data", {field, value})
+    .then(function(response) {
+      if (response.data.status == "OK") {
+        bootprompt.alert("This field has been updated.");
+      }
+      else {
+        bootprompt.alert("There has been an error updating this field.");
+      }
+    })
+    .catch(function(err) {
+      console.log("Error: " + err.message);
+      bootprompt.alert("Error: " + err.message);
+    });
+  }
+
   useEffect(() => {
     getNetWorth();
     getAverageMonthlyExpense();
@@ -136,7 +152,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <TextInputModal value={estimatedData.incomePerHour} setValue={changeIncomePerHour} />
+      <TextInputModal value={estimatedData.incomePerHour} setValue={changeIncomePerHour} updateField={updateField} />
     </>
   )
 }

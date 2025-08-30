@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function TextInputModal({value, setValue}) {
+export default function TextInputModal({value, setValue, updateField}) {
   return (
     <div class="modal fade" id="textInputModal" tabindex="-1" aria-labelledby="textInputModalLabel" aria-hidden="true">
       <div class="modal-dialog">
@@ -13,7 +13,7 @@ export default function TextInputModal({value, setValue}) {
           </div>
           <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Save</button>
+              <button type="button" class="btn btn-primary" onClick={updateField}>Save</button>
           </div>
           </div>
       </div>

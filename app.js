@@ -582,6 +582,100 @@ app.get("/get-total-profit", async (req, res) => {
   res.json({status: "OK", data: total_profit});
 });
 
+app.post("/update-estimated-data", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var field_map = [
+    "incomePerHour",
+    "incomePerDay",
+    "incomePerWeek",
+    "incomePerMonth",
+    "incomePerYear",
+    "netSalaryPerMonth",
+    "netSalaryPerYear",
+    "grossSalaryPerMonth",
+    "grossSalaryPerYear"
+  ];
+
+  var field = req.body.field;
+  var value = req.body.value;
+
+  var sql1 = "SELECT * FROM estimated_data ORDER BY id DESC LIMIT 1";
+
+  const [lastEstimatedDataSnapshot] = await con2.execute(sql1);
+
+  var sql2 = `
+    INSERT INTO
+      estimated_data
+    (
+      incomePerHour,
+      incomePerDay,
+      incomePerWeek,
+      incomePerMonth,
+      incomePerYear,
+      netSalaryPerMonth,
+      netSalaryPerYear,
+      grossSalaryPerMonth,
+      grossSalaryPerYear
+    )
+    VALUES (
+      ?,
+      ?,
+      ?,
+      ?,
+      ?,
+      ?,
+      ?,
+      ?,
+      ?
+    )
+  `;
+
+  var fields_not_affected = [
+    {key: "incomePerHour", val: lastEstimatedDataSnapshot.incomePerHour},
+    {key: "incomePerDay", val: lastEstimatedDataSnapshot.incomePerDay},
+    {key: "incomePerWeek", val: lastEstimatedDataSnapshot.incomePerWeek},
+    {key: "incomePerMonth", val: lastEstimatedDataSnapshot.incomePerMonth},
+    {key: "incomePerYear", val: lastEstimatedDataSnapshot.incomePerYear},
+    {key: "netSalaryPerMonth", val: lastEstimatedDataSnapshot.netSalaryPerMonth},
+    {key: "netSalaryPerYear", val: lastEstimatedDataSnapshot.netSalaryPerYear},
+    {key: "grossSalaryPerMonth", val: lastEstimatedDataSnapshot.grossSalaryPerMonth},
+    {key: "grossSalaryPerYear", val: lastEstimatedDataSnapshot.grossSalaryPerYear}
+  ];
+  var fields_to_affect = [];
+
+  for (var i in fields_not_affected) {
+      if (fields_not_affected[i].key == field) {
+        fields_not_affected[i].val == value;
+      }
+  }
+
+  fields_to_affect = fields_not_affected;
+  delete fields_not_affected;
+
+  await con2.execute(sql2, fields_to_affect);
+  res.json({
+    status: "OK",
+    data: "Estimated data has been updated."
+  });
+});
+
+app.get("/get-estimated-data", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var sql1 = "SELECT * FROM estimated_data ORDER BY id DESC LIMIT 1";
+
+  const [lastEstimatedDataSnapshot] = await con2.execute(sql1);
+
+  res.json({status: "OK", data: lastEstimatedDataSnapshot});
+});
+
 app.post("/api/check-login", (req, res) => {
   var user = req.body.user;
   var pass = req.body.pass;
