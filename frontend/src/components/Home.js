@@ -96,11 +96,24 @@ export default function Home() {
     });
   }
 
+  function getEstimatedData() {
+    axios.get("/get-estimated-data")
+    .then(function(response) {
+      console.log(response.data.data);
+      setEstimatedData(response.data.data);
+    })
+    .catch(function(err) {
+      console.log(err);
+      bootprompt.alert("Error: " + err.message);
+    });
+  }
+
   useEffect(() => {
     getNetWorth();
     getAverageMonthlyExpense();
     getTotalProfit();
     getExpenseLast3Months();
+    getEstimatedData();
   }, []);
 
   return (
