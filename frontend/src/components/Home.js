@@ -136,7 +136,7 @@ export default function Home() {
     axios.post("/update-estimated-data", {field, value})
     .then(function(response) {
       if (response.data.status == "OK") {
-        bootprompt.alert("This field has been updated.");
+        console.log("This field has been updated.");
       }
       else {
         bootprompt.alert("There has been an error updating this field.");
@@ -242,13 +242,13 @@ export default function Home() {
               <h2>Dados Estimados</h2>
               <p><b>{i18n("Income Per Hour")}: </b> {estimatedData.incomePerHour} <div class="pencil-btn" onClick={showIncomePerHourModal}><i class="fa-solid fa-pencil"></i></div></p>
               <p><b>{i18n("Income Per Day")}: </b> {estimatedData.incomePerDay} <div class="pencil-btn" onClick={showIncomePerDayModal}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>Rendimento p/ semana: </b> {estimatedData.incomePerWeek} <div class="pencil-btn" onClick={showIncomePerWeekModal}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>Rendimento p/ mês: </b> {estimatedData.incomePerMonth} <div class="pencil-btn" onClick={showIncomePerMonthModal}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>Rendimento p/ ano: </b> {estimatedData.incomePerYear} <div class="pencil-btn" onClick={showIncomePerYearModal}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>Salário p/ Mês Líquido: </b> {estimatedData.netSalaryPerMonth} <div class="pencil-btn" onClick={showNetSalaryPerMonth}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>Salário p/ Ano Líquido: </b> {estimatedData.netSalaryPerYear} <div class="pencil-btn" onClick={showNetSalaryPerYear}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>Salário p/ Mês Bruto: </b> {estimatedData.grossSalaryPerMonth} <div class="pencil-btn" onClick={showGrossSalaryPerMonth}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>Salário p/ Ano Bruto: </b> {estimatedData.grossSalaryPerYear} <div class="pencil-btn" onClick={showGrossSalaryPerYear}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Rendimento p/ semana")}: </b> {estimatedData.incomePerWeek} <div class="pencil-btn" onClick={showIncomePerWeekModal}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Rendimento p/ mês")}:  </b> {estimatedData.incomePerMonth} <div class="pencil-btn" onClick={showIncomePerMonthModal}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Rendimento p/ ano")}: </b> {estimatedData.incomePerYear} <div class="pencil-btn" onClick={showIncomePerYearModal}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Salário p/ Mês Líquido")}: </b> {estimatedData.netSalaryPerMonth} <div class="pencil-btn" onClick={showNetSalaryPerMonth}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Salário p/ Ano Líquido")}:  </b>{estimatedData.netSalaryPerYear} <div class="pencil-btn" onClick={showNetSalaryPerYear}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Salário p/ Mês Bruto")}: </b> {estimatedData.grossSalaryPerMonth} <div class="pencil-btn" onClick={showGrossSalaryPerMonth}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Salário p/ Ano Bruto")}: </b> {estimatedData.grossSalaryPerYear} <div class="pencil-btn" onClick={showGrossSalaryPerYear}><i class="fa-solid fa-pencil"></i></div></p>
             </div>
           </div>
         </div>

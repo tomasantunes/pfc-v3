@@ -676,6 +676,23 @@ app.get("/get-estimated-data", async (req, res) => {
 
   const [lastEstimatedDataSnapshot] = await con2.execute(sql1);
 
+  console.log(lastEstimatedDataSnapshot);
+
+  if (lastEstimatedDataSnapshot.length === 0) {
+    res.json({status: "OK", data: {
+      incomePerHour: 0,
+      incomePerDay: 0,
+      incomePerWeek: 0,
+      incomePerMonth: 0,
+      incomePerYear: 0,
+      netSalaryPerMonth: 0,
+      netSalaryPerYear: 0,
+      grossSalaryPerMonth: 0,
+      grossSalaryPerYear: 0
+    }});
+    return;
+  }
+
   res.json({status: "OK", data: lastEstimatedDataSnapshot[0]});
 });
 
