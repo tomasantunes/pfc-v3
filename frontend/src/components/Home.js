@@ -69,11 +69,11 @@ export default function Home() {
     });
   }
 
-  function changeIncomePerHour(e) {
-    setEstimatedData({
-      ...estimatedData,
-      incomePerHour: e.target.value
-    });
+  function changeIncomePerHour(newVal) {
+    setEstimatedData(prev => ({
+      ...prev,
+      incomePerHour: newVal
+    }));
   }
 
   function showIncomePerHourModal() {
@@ -152,7 +152,11 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <TextInputModal value={estimatedData.incomePerHour} setValue={changeIncomePerHour} updateField={updateField} />
+      <TextInputModal
+        value={estimatedData.incomePerHour}
+        setValue={changeIncomePerHour}
+        updateField={() => updateField("incomePerHour", estimatedData.incomePerHour)}
+      />
     </>
   )
 }

@@ -588,24 +588,28 @@ app.post("/update-estimated-data", async (req, res) => {
     return;
   }
 
-  var field_map = [
-    "incomePerHour",
-    "incomePerDay",
-    "incomePerWeek",
-    "incomePerMonth",
-    "incomePerYear",
-    "netSalaryPerMonth",
-    "netSalaryPerYear",
-    "grossSalaryPerMonth",
-    "grossSalaryPerYear"
-  ];
-
   var field = req.body.field;
   var value = req.body.value;
 
   var sql1 = "SELECT * FROM estimated_data ORDER BY id DESC LIMIT 1";
 
   const [lastEstimatedDataSnapshot] = await con2.execute(sql1);
+
+  console.log(lastEstimatedDataSnapshot);
+
+  if (lastEstimatedDataSnapshot.length === 0) {
+    lastEstimatedDataSnapshot[0] = {
+      incomePerHour: 0,
+      incomePerDay: 0,
+      incomePerWeek: 0,
+      incomePerMonth: 0,
+      incomePerYear: 0,
+      netSalaryPerMonth: 0,
+      netSalaryPerYear: 0,
+      grossSalaryPerMonth: 0,
+      grossSalaryPerYear: 0
+    };
+  }
 
   var sql2 = `
     INSERT INTO
@@ -635,15 +639,15 @@ app.post("/update-estimated-data", async (req, res) => {
   `;
 
   var fields_not_affected = [
-    {key: "incomePerHour", val: lastEstimatedDataSnapshot.incomePerHour},
-    {key: "incomePerDay", val: lastEstimatedDataSnapshot.incomePerDay},
-    {key: "incomePerWeek", val: lastEstimatedDataSnapshot.incomePerWeek},
-    {key: "incomePerMonth", val: lastEstimatedDataSnapshot.incomePerMonth},
-    {key: "incomePerYear", val: lastEstimatedDataSnapshot.incomePerYear},
-    {key: "netSalaryPerMonth", val: lastEstimatedDataSnapshot.netSalaryPerMonth},
-    {key: "netSalaryPerYear", val: lastEstimatedDataSnapshot.netSalaryPerYear},
-    {key: "grossSalaryPerMonth", val: lastEstimatedDataSnapshot.grossSalaryPerMonth},
-    {key: "grossSalaryPerYear", val: lastEstimatedDataSnapshot.grossSalaryPerYear}
+    {key: "incomePerHour", val: lastEstimatedDataSnapshot[0].incomePerHour},
+    {key: "incomePerDay", val: lastEstimatedDataSnapshot[0].incomePerDay},
+    {key: "incomePerWeek", val: lastEstimatedDataSnapshot[0].incomePerWeek},
+    {key: "incomePerMonth", val: lastEstimatedDataSnapshot[0].incomePerMonth},
+    {key: "incomePerYear", val: lastEstimatedDataSnapshot[0].incomePerYear},
+    {key: "netSalaryPerMonth", val: lastEstimatedDataSnapshot[0].netSalaryPerMonth},
+    {key: "netSalaryPerYear", val: lastEstimatedDataSnapshot[0].netSalaryPerYear},
+    {key: "grossSalaryPerMonth", val: lastEstimatedDataSnapshot[0].grossSalaryPerMonth},
+    {key: "grossSalaryPerYear", val: lastEstimatedDataSnapshot[0].grossSalaryPerYear}
   ];
   var fields_to_affect = [];
 
@@ -654,7 +658,6 @@ app.post("/update-estimated-data", async (req, res) => {
   }
 
   fields_to_affect = fields_not_affected;
-  delete fields_not_affected;
 
   await con2.execute(sql2, fields_to_affect.map(f => f.val));
   res.json({
@@ -673,7 +676,7 @@ app.get("/get-estimated-data", async (req, res) => {
 
   const [lastEstimatedDataSnapshot] = await con2.execute(sql1);
 
-  res.json({status: "OK", data: lastEstimatedDataSnapshot});
+  res.json({status: "OK", data: lastEstimatedDataSnapshot[0]});
 });
 
 app.post("/api/check-login", (req, res) => {
