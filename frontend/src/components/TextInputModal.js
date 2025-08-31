@@ -1,8 +1,8 @@
 import React from 'react';
 
-export default function TextInputModal({value, setValue, updateField}) {
+export default function TextInputModal({id, value, setValue, updateField}) {
   return (
-    <div class="modal fade" id="textInputModal" tabindex="-1" aria-labelledby="textInputModalLabel" aria-hidden="true">
+    <div class="modal fade" id={id} tabindex="-1" aria-labelledby={id + "Label"} aria-hidden="true">
       <div class="modal-dialog">
           <div class="modal-content">
           <div class="modal-header">
@@ -14,7 +14,7 @@ export default function TextInputModal({value, setValue, updateField}) {
                 className="form-control"
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
-                style={{backgroundColor: "#99ccff"}}
+                style={{backgroundColor: "#d8ebfd"}}
               />
           </div>
           <div class="modal-footer">

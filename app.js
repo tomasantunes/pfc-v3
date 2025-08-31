@@ -652,9 +652,9 @@ app.post("/update-estimated-data", async (req, res) => {
   var fields_to_affect = [];
 
   for (var i in fields_not_affected) {
-      if (fields_not_affected[i].key == field) {
-        fields_not_affected[i].val = value;
-      }
+    if (fields_not_affected[i].key == field) {
+      fields_not_affected[i].val = value;
+    }
   }
 
   fields_to_affect = fields_not_affected;
