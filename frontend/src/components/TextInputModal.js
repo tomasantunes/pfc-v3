@@ -9,7 +9,13 @@ export default function TextInputModal({value, setValue, updateField}) {
               <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-              <input type="text" className="form-control" value={value} onChange={setValue} style={{backgroundColor: "#99ccff"}} />
+              <input
+                type="text"
+                className="form-control"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+                style={{backgroundColor: "#99ccff"}}
+              />
           </div>
           <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

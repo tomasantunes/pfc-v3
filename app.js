@@ -649,14 +649,14 @@ app.post("/update-estimated-data", async (req, res) => {
 
   for (var i in fields_not_affected) {
       if (fields_not_affected[i].key == field) {
-        fields_not_affected[i].val == value;
+        fields_not_affected[i].val = value;
       }
   }
 
   fields_to_affect = fields_not_affected;
   delete fields_not_affected;
 
-  await con2.execute(sql2, fields_to_affect);
+  await con2.execute(sql2, fields_to_affect.map(f => f.val));
   res.json({
     status: "OK",
     data: "Estimated data has been updated."
