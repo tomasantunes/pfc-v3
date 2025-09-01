@@ -16,7 +16,7 @@ export default function Home() {
   const [netWorth, setNetWorth] = useState("");
   const [averageMonthlyExpense, setAverageMonthlyExpense] = useState("");
   const [totalProfit, setTotalProfit] = useState("");
-  const [expenseLast3Months, setExpenseLast3Months] = useState();
+  const [expenseLast12Months, setExpenseLast12Months] = useState();
   const [estimatedData, setEstimatedData] = useState({
     incomePerHour: "",
     incomePerDay: "",
@@ -59,10 +59,10 @@ export default function Home() {
     });
   }
 
-  function getExpenseLast3Months() {
-    axios.get(config.BASE_URL + "/get-expense-last-3-months")
+  function getExpenseLast12Months() {
+    axios.get(config.BASE_URL + "/get-expense-last-12-months")
     .then(function(response) {
-      setExpenseLast3Months(response.data.data);
+      setExpenseLast12Months(response.data.data);
     })
     .catch(function(err) {
       bootprompt.alert("Error: " + err.message);
@@ -200,7 +200,7 @@ export default function Home() {
     getNetWorth();
     getAverageMonthlyExpense();
     getTotalProfit();
-    getExpenseLast3Months();
+    getExpenseLast12Months();
     getEstimatedData();
   }, []);
 
@@ -225,10 +225,10 @@ export default function Home() {
             </div>
             <div class="dashboard-section mb-3">
               <div class="row">
-                <h2>Expense Last 3 Months</h2>
+                <h2>Expense Last 12 Months</h2>
               </div>
               <div class="row">
-                {expenseLast3Months && expenseLast3Months.map((exp) => (
+                {expenseLast12Months && expenseLast12Months.map((exp) => (
                   <p><b>{exp.mnth}/{exp.yr}</b> {exp.monthly_sum}€</p>
                 ))}
               </div>
@@ -255,55 +255,55 @@ export default function Home() {
       </div>
       <TextInputModal
         id="incomePerHourModal"
-        value={estimatedData.incomePerHour + "€"}
+        value={estimatedData.incomePerHour}
         setValue={changeIncomePerHour}
         updateField={() => updateField("incomePerHour", estimatedData.incomePerHour)}
       />
       <TextInputModal
         id="incomePerDayModal"
-        value={estimatedData.incomePerDay + "€"}
+        value={estimatedData.incomePerDay}
         setValue={changeIncomePerDay}
         updateField={() => updateField("incomePerDay", estimatedData.incomePerDay)}
       />
       <TextInputModal
         id="incomePerWeekModal"
-        value={estimatedData.incomePerWeek + "€"}
+        value={estimatedData.incomePerWeek}
         setValue={changeIncomePerWeek}
         updateField={() => updateField("incomePerWeek", estimatedData.incomePerWeek)}
       />
       <TextInputModal
         id="incomePerMonthModal"
-        value={estimatedData.incomePerMonth + "€"}
+        value={estimatedData.incomePerMonth}
         setValue={changeIncomePerMonth}
         updateField={() => updateField("incomePerMonth", estimatedData.incomePerMonth)}
       />
       <TextInputModal
         id="incomePerYearModal"
-        value={estimatedData.incomePerYear + "€"}
+        value={estimatedData.incomePerYear}
         setValue={changeIncomePerYear}
         updateField={() => updateField("incomePerYear", estimatedData.incomePerYear)}
       />
       <TextInputModal
         id="netSalaryPerMonthModal"
-        value={estimatedData.netSalaryPerMonth + "€"}
+        value={estimatedData.netSalaryPerMonth}
         setValue={changeNetSalaryPerMonth}
         updateField={() => updateField("netSalaryPerMonth", estimatedData.netSalaryPerMonth)}
       />
       <TextInputModal
         id="netSalaryPerYearModal"
-        value={estimatedData.netSalaryPerYear + "€"}
+        value={estimatedData.netSalaryPerYear}
         setValue={changeNetSalaryPerYear}
         updateField={() => updateField("netSalaryPerYear", estimatedData.netSalaryPerYear)}
       />
       <TextInputModal
         id="grossSalaryPerMonthModal"
-        value={estimatedData.grossSalaryPerMonth + "€"}
+        value={estimatedData.grossSalaryPerMonth}
         setValue={changeGrossSalaryPerMonth}
         updateField={() => updateField("grossSalaryPerMonth", estimatedData.grossSalaryPerMonth)}
       />
       <TextInputModal
         id="grossSalaryPerYearModal"
-        value={estimatedData.grossSalaryPerYear + "€"}
+        value={estimatedData.grossSalaryPerYear}
         setValue={changeGrossSalaryPerYear}
         updateField={() => updateField("grossSalaryPerYear", estimatedData.grossSalaryPerYear)}
       />

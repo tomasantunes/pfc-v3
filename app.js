@@ -286,17 +286,22 @@ app.post("/insert-portfolio-snapshot-t212", async (req, res) => {
     return;
   }
 
-  var balance = req.body.balance;
-  var profit = req.body.profit;
-  var positions = req.body.positions;
+  try {
+    var balance = req.body.balance;
+    var profit = req.body.profit;
+    var positions = req.body.positions;
 
-  var sql1 = "INSERT INTO t212_portfolio_snapshot_headers (balance, profit) VALUES (?, ?)";
-  var result1 = await con2.query(sql1, [balance, profit]);
-  var headerId = result1[0].insertId;
+    var sql1 = "INSERT INTO t212_portfolio_snapshot_headers (balance, profit) VALUES (?, ?)";
+    var result1 = await con2.query(sql1, [balance, profit]);
+    var headerId = result1[0].insertId;
 
-  for (var i in positions) {
-    var sql2 = "INSERT INTO t212_portfolio_snapshot_positions (snapshot_id, name, price, quantity, value, return) VALUES (?, ?, ?, ?, ?, ?)";
-    await con2.query(sql2, [headerId, positions[i].name, positions[i].price, positions[i].quantity, positions[i].value, positions[i].return]);
+    for (var i in positions) {
+      var sql2 = "INSERT INTO t212_portfolio_snapshot_positions (snapshot_id, name, price, quantity, value, `return`) VALUES (?, ?, ?, ?, ?, ?)";
+      await con2.query(sql2, [headerId, positions[i].name, positions[i].price, positions[i].quantity, positions[i].value, positions[i].return]);
+    }
+  }
+  catch (err) {
+    console.log(err);
   }
 
   res.json({status: "OK", data: "Portfolio snapshot has been inserted successfully."});
@@ -482,7 +487,7 @@ app.get("/get-average-monthly-expense", async (req, res) => {
   res.json({status: "OK", data: averageMonthlyExpense});
 });
 
-app.get("/get-expense-last-3-months", async (req, res) => {
+app.get("/get-expense-last-12-months", async (req, res) => {
   if (!req.session.isLoggedIn) {
     res.json({status: "NOK", error: "Invalid Authorization."});
     return;
@@ -494,20 +499,20 @@ app.get("/get-expense-last-3-months", async (req, res) => {
         MONTH(data_mov) AS mnth,
         SUM(ABS(valor)) AS monthly_sum
     FROM bpi_mov
-    WHERE 
+    WHERE
         valor < 0
         AND is_expense = 1
         AND (
-            YEAR(data_mov) <> YEAR(CURDATE())
-            OR MONTH(data_mov) <> MONTH(CURDATE())
+          YEAR(data_mov) <> YEAR(CURDATE())
+          OR MONTH(data_mov) <> MONTH(CURDATE())
         )
     GROUP BY YEAR(data_mov), MONTH(data_mov)
     ORDER BY yr DESC, mnth DESC
-    LIMIT 3;
+    LIMIT 12;
   `);
 
-  const expenseLast3Months = rows;
-  res.json({status: "OK", data: expenseLast3Months});
+  const expenseLast12Months = rows;
+  res.json({status: "OK", data: expenseLast12Months});
 });
 
 app.get("/get-total-profit", async (req, res) => {
