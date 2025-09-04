@@ -47,7 +47,7 @@ export default function BPI() {
         bootprompt.alert(response.data.error);
       }
     })
-    .catch((err) => bootprompt.alert("File Upload Error"));
+    .catch((err) => bootprompt.alert(i18n("File Upload Error")));
   }
 
   function toggleIsExpense(id) {
@@ -158,7 +158,7 @@ export default function BPI() {
       <div className="container">
         <div className="col-md-4">
           <form onSubmit={submitExcelFile} className="bpi-form mb-3">
-            <h3>{i18n("Importar XLS BPI>")}</h3>
+            <h3>{i18n("Import XLS BPI")}</h3>
             <div className="form-group py-2">
                 <FileUploader onFileSelectSuccess={(file) => changeExcelFile({file})} onFileSelectError={({ error}) => bootprompt.alert(error)} />
             </div>
@@ -211,7 +211,7 @@ export default function BPI() {
             <th>{i18n("Value")}</th>
             <th>{i18n("Balance")}</th>
             <th>{i18n("Expense")}</th>
-            <th>{i18n("Ações")}</th>
+            <th>{i18n("Actions")}</th>
           </tr>
           <tbody>
             {mov.map((m) => (
@@ -221,7 +221,7 @@ export default function BPI() {
                 <td>{m.desc_mov}</td>
                 <td>{m.valor}</td>
                 <td>{m.saldo}</td>
-                <td>{m.is_expense == 1 ? i18n("Sim") : i18n("Não")}</td>
+                <td>{m.is_expense == 1 ? i18n("Yes") : i18n("No")}</td>
                 <td>{Number(m.valor) < 0 && <button className={"btn btn-sm" + " " + ((m.is_expense) ? "btn-success" : "btn-danger")} onClick={() => toggleIsExpense(m.id)}>{(m.is_expense) ? "+" : "-"}</button>}</td>
               </tr>
             ))}
