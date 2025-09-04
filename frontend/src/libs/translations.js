@@ -16,12 +16,19 @@ export var translations = {
     "Net Monthly Salary": {"en-us": "Net Monthly Salary", "pt-pt": "Salário p/ Mês Líquido"},
     "Net Annual Salary": {"en-us": "Net Annual Salary", "pt-pt": "Salário p/ Ano Líquido"},
     "Gross Monthly Salary": {"en-us": "Gross Monthly Salary", "pt-pt": "Salário p/ Mês Bruto"},
-    "Gross Annual Salary": {"en-us": "Gross Annual Salary", "pt-pt": "Salário p/ Ano Bruto"}
+    "Gross Annual Salary": {"en-us": "Gross Annual Salary", "pt-pt": "Salário p/ Ano Bruto"},
+    "XLS has been imported successfully": {}
 }
 
 export function i18n(text) {
     var currentLanguage = localStorage.getItem("language");
     if (translations[text]?.[currentLanguage]) {
+        return translations[text][currentLanguage];
+    }
+    else if (translations[text + "."]?.[currentLanguage]) {
+        return translations[text][currentLanguage];
+    }
+    else if (translations[text.slice(0, -1)]?.[currentLanguage]) {
         return translations[text][currentLanguage];
     }
     else {

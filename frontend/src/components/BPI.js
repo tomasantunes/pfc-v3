@@ -3,6 +3,7 @@ import FileUploader from './FileUploader';
 import Navbar from './Navbar';
 import axios from 'axios';
 import config from '../config';
+import {i18n} from '../libs/translations';
 import $ from 'jquery';
 
 window.jQuery = $;
@@ -36,7 +37,7 @@ export default function BPI() {
     axios.post(config.BASE_URL + "/import-bpi-xls", formData)
     .then((response) => {
       if (response.data.status == "OK") {
-        bootprompt.alert("XLS has been imported successfully.");
+        bootprompt.alert(i18n("XLS has been imported successfully"));
         setExcelFile("");
         $("input[type=file]").val('');
         getMov();
@@ -53,7 +54,7 @@ export default function BPI() {
     axios.post(config.BASE_URL + "/toggle-is-expense", {id: id})
     .then(function(response) {
       if (response.data.status == "OK") {
-        bootprompt.alert("Movimento atualizado com sucesso.");
+        bootprompt.alert(i18n("Movement has been updated successfully."));
         getMov();
       }
       else {
@@ -136,7 +137,7 @@ export default function BPI() {
           saldo: "",
           is_expense: false,
         });
-        bootprompt.alert("O movimento BPI foi adicionado com sucesso.");
+        bootprompt.alert(i18n("Movement has been added successfully."));
       }
       else {
         bootprompt.alert(response.data.error);
@@ -157,47 +158,46 @@ export default function BPI() {
       <div className="container">
         <div className="col-md-4">
           <form onSubmit={submitExcelFile} className="bpi-form mb-3">
-            <h3>Importar XLS BPI</h3>
+            <h3>{i18n("Importar XLS BPI>")}</h3>
             <div className="form-group py-2">
                 <FileUploader onFileSelectSuccess={(file) => changeExcelFile({file})} onFileSelectError={({ error}) => bootprompt.alert(error)} />
             </div>
             <div className="form-group">
                 <div className="text-end">
-                    <button type="submit" className="btn btn-primary">Submeter</button>
+                    <button type="submit" className="btn btn-primary">{i18n("Submit")}</button>
                 </div>
             </div>
           </form>
 
           <form onSubmit={addMovement} className="bpi-form mb-3">
-            <h3>Adicionar Movimento</h3>
+            <h3>{i18n("Add Movement")}</h3>
             <div className="form-group">
-              <label>Data Mov.</label>&nbsp;<small>(YYYY-MM-DD)</small>
-              
+              <label>{i18n("Movement Date")}</label>&nbsp;<small>(YYYY-MM-DD)</small>
               <input type="text" className="form-control" value={newMovement.data_mov} onChange={changeNewMovementDataMov} />
             </div>
             <div className="form-group">
-              <label>Data Valor</label>&nbsp;<small>(YYYY-MM-DD)</small>
+              <label>{i18n("Value Date")}</label>&nbsp;<small>(YYYY-MM-DD)</small>
               <input type="text" className="form-control" value={newMovement.data_valor} onChange={changeNewMovementDataValor} />
             </div>
             <div className="form-group">
-              <label>Descrição</label>&nbsp;<small>(Texto)</small>
+              <label>{i18n("Description")}</label>&nbsp;<small>({i18n("Text")})</small>
               <input type="text" className="form-control" value={newMovement.desc_mov} onChange={changeNewMovementDescMov} />
             </div>
             <div className="form-group">
-              <label>Valor</label>&nbsp;<small>(xx.xx)</small>
+              <label>{i18n("Value")}</label>&nbsp;<small>(xx.xx)</small>
               <input type="text" className="form-control" value={newMovement.valor} onChange={changeNewMovementValor} />
             </div>
             <div className="form-group">
-              <label>Saldo</label>&nbsp;<small>(xx.xx)</small>
+              <label>{i18n("Balance")}</label>&nbsp;<small>(xx.xx)</small>
               <input type="text" className="form-control" value={newMovement.saldo} onChange={changeNewMovementSaldo} />
             </div>
             <div className="form-group">
               <input type="checkbox" checked={newMovement.is_expense} onChange={changeNewMovementIsExpense} />
-              <label>Despesa</label>
+              <label>{i18n("Expense")}</label>
             </div>
             <div className="form-group">
                 <div className="text-end">
-                    <button type="submit" className="btn btn-primary">Submeter</button>
+                    <button type="submit" className="btn btn-primary">{i18n("Submit")}</button>
                 </div>
             </div>
           </form>
@@ -205,13 +205,13 @@ export default function BPI() {
 
         <table className="table">
           <tr>
-            <th>Data Mov.</th>
-            <th>Data Valor</th>
-            <th>Descrição</th>
-            <th>Valor</th>
-            <th>Saldo</th>
-            <th>Despesa</th>
-            <th>Ações</th>
+            <th>{i18n("Movement Date")}</th>
+            <th>{i18n("Value Date")}</th>
+            <th>{i18n("Description")}</th>
+            <th>{i18n("Value")}</th>
+            <th>{i18n("Balance")}</th>
+            <th>{i18n("Expense")}</th>
+            <th>{i18n("Ações")}</th>
           </tr>
           <tbody>
             {mov.map((m) => (
@@ -221,7 +221,7 @@ export default function BPI() {
                 <td>{m.desc_mov}</td>
                 <td>{m.valor}</td>
                 <td>{m.saldo}</td>
-                <td>{m.is_expense == 1 ? "Sim" : "Não"}</td>
+                <td>{m.is_expense == 1 ? i18n("Sim") : i18n("Não")}</td>
                 <td>{Number(m.valor) < 0 && <button className={"btn btn-sm" + " " + ((m.is_expense) ? "btn-success" : "btn-danger")} onClick={() => toggleIsExpense(m.id)}>{(m.is_expense) ? "+" : "-"}</button>}</td>
               </tr>
             ))}
