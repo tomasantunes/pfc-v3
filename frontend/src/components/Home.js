@@ -15,7 +15,7 @@ var bootprompt = require('bootprompt');
 export default function Home() {
   const [netWorth, setNetWorth] = useState("");
   const [averageMonthlyExpense, setAverageMonthlyExpense] = useState("");
-  const [totalProfit, setTotalProfit] = useState("");
+  const [tradingProfit, setTradingProfit] = useState("");
   const [expenseLast12Months, setExpenseLast12Months] = useState();
   const [estimatedData, setEstimatedData] = useState({
     incomePerHour: "",
@@ -52,7 +52,7 @@ export default function Home() {
   function getTotalProfit() {
     axios.get(config.BASE_URL + "/get-total-profit")
     .then(function(response) {
-      setTotalProfit(response.data.data.toString() + "€");
+      setTradingProfit(response.data.data.toString() + "€");
     })
     .catch(function(err) {
       bootprompt.alert("Error: " + err.message);
@@ -102,6 +102,7 @@ export default function Home() {
       ...prev,
       incomePerYear: newVal
     }));
+    
   }
 
   function changeNetSalaryPerMonth(newVal) {
@@ -139,8 +140,17 @@ export default function Home() {
         console.log("This field has been updated.");
       }
       else {
-        bootprompt.alert("There has been an error updating this field.");
+        bootprompt.alert(i18n("There has been an error updating this field."));
       }
+      $('#incomePerHourModal').modal('hide');
+      $('#incomePerDayModal').modal('hide');
+      $('#incomePerWeekModal').modal('hide');
+      $('#incomePerMonthModal').modal('hide');
+      $('#incomePerYearModal').modal('hide');
+      $('#netSalaryPerMonthModal').modal('hide');
+      $('#netSalaryPerYearModal').modal('hide');
+      $('#grossSalaryPerMonthModal').modal('hide');
+      $('#grossSalaryPerYearModal').modal('hide');
     })
     .catch(function(err) {
       console.log("Error: " + err.message);
@@ -210,22 +220,22 @@ export default function Home() {
       <div className="container">
         <div class="row">
           <div class="row text-center">
-            <h1>Dashboard</h1>
+            <h1>{i18n("Dashboard")}</h1>
           </div>
           <div class="col-md-4">
             <div class="dashboard-section mb-3">
               <div class="row">
-                <h2>General Stats</h2>
+                <h2>{i18n("General Stats")}</h2>
               </div>
               <div class="row">
-                <p><b>Net Worth:</b> {netWorth}</p>
-                <p><b>Average Monthly Expense:</b> {averageMonthlyExpense}</p>
-                <p><b>Total Profit:</b> {totalProfit}</p>
+                <p><b>{i18n("Net Worth")}:</b> {netWorth}</p>
+                <p><b>{i18n("Average Monthly Expense")}:</b> {averageMonthlyExpense}</p>
+                <p><b>{i18n("Trading Profit") + " " + new Date().getFullYear()}:</b> {tradingProfit}</p>
               </div>
             </div>
             <div class="dashboard-section mb-3">
               <div class="row">
-                <h2>Expense Last 12 Months</h2>
+                <h2>{i18n("Expense Last 12 Months")}</h2>
               </div>
               <div class="row">
                 {expenseLast12Months && expenseLast12Months.map((exp) => (
@@ -239,7 +249,7 @@ export default function Home() {
           </div>
           <div class="col-md-4">
             <div class="dashboard-section mb-3">
-              <h2>Dados Estimados</h2>
+              <h2>{i18n("Estimated Data")}</h2>
               <p><b>{i18n("Income Per Hour")}: </b> {estimatedData.incomePerHour} <div class="pencil-btn" onClick={showIncomePerHourModal}><i class="fa-solid fa-pencil"></i></div></p>
               <p><b>{i18n("Income Per Day")}: </b> {estimatedData.incomePerDay} <div class="pencil-btn" onClick={showIncomePerDayModal}><i class="fa-solid fa-pencil"></i></div></p>
               <p><b>{i18n("Rendimento p/ semana")}: </b> {estimatedData.incomePerWeek} <div class="pencil-btn" onClick={showIncomePerWeekModal}><i class="fa-solid fa-pencil"></i></div></p>
