@@ -88,7 +88,7 @@ else if (secretConfig.ENVIRONMENT == "UBUNTU") {
   });
 }
 
-function convertBpiDate(dateStr) {
+function convertExcelDate(dateStr) {
   if (dateStr == "") return "1900-01-01";
   const [day, month, year] = dateStr.split('-'); // Split the input string by '-'
   return `${year}-${month}-${day}`; // Rearrange and return the new format
@@ -134,8 +134,8 @@ app.post("/import-bpi-xls", async (req, res) => {
         xls[i].hasOwnProperty("__EMPTY_3") &&
         xls[i]["BPI Net"] != "Data Mov."
       ) {
-        var data_mov = convertBpiDate(xls[i]["BPI Net"]);
-        var data_valor = convertBpiDate(xls[i]["__EMPTY"]);
+        var data_mov = convertExcelDate(xls[i]["BPI Net"]);
+        var data_valor = convertExcelDate(xls[i]["__EMPTY"]);
         var desc_mov = xls[i]["__EMPTY_1"];
         var valor = xls[i]["__EMPTY_2"];
         var saldo = xls[i]["__EMPTY_3"];
@@ -163,6 +163,100 @@ app.post("/import-bpi-xls", async (req, res) => {
   res.json({status: "OK", data: "XLS has been imported successfully."});
 });
 
+function formatDatePtVerbose(date) {
+  const opcoes = {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  };
+
+  let data = date.toLocaleDateString('pt-PT', opcoes);
+
+  // Separar por espaços
+  let partes = data.split(" ");
+
+  // Capitalizar o primeiro termo (dia da semana)
+  partes[0] = partes[0].charAt(0).toUpperCase() + partes[0].slice(1);
+
+  // Capitalizar o mês
+  partes[3] = partes[3].charAt(0).toUpperCase() + partes[3].slice(1);
+
+  return partes.join(" ");
+}
+
+app.post("/import-santander-xls", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+  if (!req.files) {
+    console.log("No file has been detected.");
+    res.json({status: "NOK", error: "No file has been detected."});
+    return;
+  }
+
+  try {
+    const file = req.files.excelFile.tempFilePath;
+    const xlsFile = readerXLS.readFile(file);
+    let xls = [];
+    const sheets = xlsFile.SheetNames;
+
+    for(let i = 0; i < sheets.length; i++) {
+      const temp = readerXLS.utils.sheet_to_json(xlsFile.Sheets[xlsFile.SheetNames[i]])
+      temp.forEach((res) => {
+        xls.push(res);
+      });
+    }
+
+    xls.reverse();
+
+    const today = new Date();
+    let todayVerbose = formatDatePtVerbose(today).trim();
+    console.log(todayVerbose);
+
+    console.log("Before loop.");
+    for (var i in xls) {
+      if (
+        xls[i].hasOwnProperty(todayVerbose) && 
+        xls[i].hasOwnProperty("__EMPTY") && 
+        xls[i].hasOwnProperty("__EMPTY_1") &&
+        xls[i].hasOwnProperty("__EMPTY_2") &&
+        xls[i].hasOwnProperty("__EMPTY_3") &&
+        xls[i][todayVerbose] != "Data Operação"
+      ) {
+        console.log("+1 entered loop.")
+        var data_mov = convertExcelDate(xls[i][todayVerbose]);
+        var data_valor = convertExcelDate(xls[i]["__EMPTY"]);
+        var desc_mov = xls[i]["__EMPTY_1"];
+        var valor = xls[i]["__EMPTY_2"];
+        var saldo = xls[i]["__EMPTY_3"];
+        var sql1 = "SELECT * FROM santander_mov WHERE data_mov = ? AND data_valor = ? AND desc_mov = ? AND valor = ? AND saldo = ?";
+        var result = await con2.query(sql1, [data_mov, data_valor, desc_mov, valor, saldo]);
+        if (result[0].length < 1) {
+          var is_expense = (Number(valor) < 0) ? 1 : 0;
+          var sql2 = "INSERT INTO santander_mov (data_mov, data_valor, desc_mov, valor, saldo, is_expense) VALUES (?, ?, ?, ?, ?, ?)";
+          con.query(sql2, [data_mov, data_valor, desc_mov, valor, saldo, is_expense], function(err, result) {
+            if (err) {
+              console.log("Error inserting to MySQL.");
+              console.log(err.message);
+              throw new Error("Error inserting to MySQL.");
+            }
+            console.log("Successfully inserted to MySQL");
+          });
+        }
+      }
+    }
+    console.log("After loop.");
+  } catch(exception) {
+    console.log(exception);
+    res.json({status: "NOK", error: "Error importing file."});
+    return;
+  }
+  
+  res.json({status: "OK", data: "XLS has been imported successfully."});
+});
+
 app.post("/add-bpi-mov", (req, res) => {
   if (!req.session.isLoggedIn) {
     res.json({status: "NOK", error: "Invalid Authorization."});
@@ -187,6 +281,30 @@ app.post("/add-bpi-mov", (req, res) => {
   });
 });
 
+app.post("/add-santander-mov", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var data_mov = req.body.data_mov;
+  var data_valor = req.body.data_valor;
+  var desc_mov = req.body.desc_mov;
+  var valor = req.body.valor;
+  var saldo = req.body.saldo;
+  var is_expense = req.body.is_expense == true ? 1 : 0;
+
+  var sql = "INSERT INTO santander_mov (data_mov, data_valor, desc_mov, valor, saldo, is_expense, is_original) VALUES (?, ?, ?, ?, ?, ?, ?)";
+  con.query(sql, [data_mov, data_valor, desc_mov, Number(valor), Number(saldo), is_expense, 0], function(err, result) {
+    if (err) {
+      console.log("Error inserting to MySQL.");
+      console.log(err.message);
+      res.json({status: "NOK", error: "Error inserting to MySQL."});
+    }
+    res.json({status: "OK", data: "Santander movement has been added."});
+  });
+});
+
 app.get("/get-bpi-mov", (req, res) => {
   if (!req.session.isLoggedIn) {
     res.json({status: "NOK", error: "Invalid Authorization."});
@@ -194,6 +312,23 @@ app.get("/get-bpi-mov", (req, res) => {
   }
 
   var sql = "SELECT * FROM bpi_mov ORDER BY data_mov DESC, id DESC";
+  con.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: "There was an error getting movements."});
+      return;
+    }
+    res.json({status: "OK", data: result});
+  });
+});
+
+app.get("/get-santander-mov", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var sql = "SELECT * FROM santander_mov ORDER BY data_mov DESC, id DESC";
   con.query(sql, function(err, result) {
     if (err) {
       console.log(err);
@@ -261,6 +396,22 @@ app.post("/insert-santander-balance", async (req, res) => {
   await con2.query(sql1, [balance]);
 
   res.json({status: "OK", data: "Santander Balance has been submitted."});
+});
+
+app.get("/get-santander-balance", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var sql6 = "SELECT * FROM santander ORDER BY created_at DESC LIMIT 1";
+  var result6 = await con2.query(sql6);
+  var saldo_santander = 0;
+  if (result6[0].length > 0) {
+    saldo_santander = result6[0][0].balance;
+  }
+
+  res.json({status: "OK", data: saldo_santander});
 });
 
 app.get("/get-paypal-mov", (req, res) => {
@@ -840,6 +991,15 @@ app.get('/binance', (req, res) => {
 });
 
 app.get('/polymarket', (req, res) => {
+  if(req.session.isLoggedIn) {
+    res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
+  }
+  else {
+    res.redirect('/login');
+  }
+});
+
+app.get('/santander', (req, res) => {
   if(req.session.isLoggedIn) {
     res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
   }
