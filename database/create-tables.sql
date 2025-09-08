@@ -109,3 +109,5 @@ ALTER TABLE polymarket_portfolio_snapshot ADD COLUMN deposit DECIMAL(17, 2) DEFA
 ALTER TABLE t212_portfolio_snapshot_positions RENAME COLUMN balance TO value;
 ALTER TABLE t212_portfolio_snapshot_positions ADD COLUMN `return` DECIMAL(17, 2) DEFAULT NULL;
 ALTER TABLE bpi_mov ADD COLUMN is_original BOOLEAN DEFAULT 1;
+ALTER TABLE estimated_data ADD COLUMN incomePerWorkHour DECIMAL(17, 2) DEFAULT 0;
+ALTER TABLE estimated_data ADD COLUMN incomePerWorkDay DECIMAL(17, 2) DEFAULT 0;

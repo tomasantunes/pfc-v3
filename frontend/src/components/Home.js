@@ -15,11 +15,14 @@ var bootprompt = require('bootprompt');
 export default function Home() {
   const [netWorth, setNetWorth] = useState("");
   const [averageMonthlyExpense, setAverageMonthlyExpense] = useState("");
+  const [averageDailyExpense, setAverageDailyExpense] = useState("");
   const [tradingProfit, setTradingProfit] = useState("");
   const [expenseLast12Months, setExpenseLast12Months] = useState();
   const [estimatedData, setEstimatedData] = useState({
     incomePerHour: "",
     incomePerDay: "",
+    incomePerWorkHour: "",
+    incomePerWorkDay: "",
     incomePerWeek: "",
     incomePerMonth: "",
     incomePerYear: "",
@@ -43,6 +46,16 @@ export default function Home() {
     axios.get(config.BASE_URL + "/get-average-monthly-expense")
     .then(function(response) {
       setAverageMonthlyExpense(response.data.data.toString() + "€");
+    })
+    .catch(function(err) {
+      bootprompt.alert("Error: " + err.message);
+    });
+  }
+
+  function getAverageDailyExpense() {
+    axios.get(config.BASE_URL + "/get-average-daily-expense")
+    .then(function(response) {
+      setAverageDailyExpense(response.data.data.toString() + "€");
     })
     .catch(function(err) {
       bootprompt.alert("Error: " + err.message);
@@ -80,6 +93,20 @@ export default function Home() {
     setEstimatedData(prev => ({
       ...prev,
       incomePerDay: newVal
+    }));
+  }
+
+  function changeIncomePerWorkHour(newVal) {
+    setEstimatedData(prev => ({
+      ...prev,
+      incomePerWorkHour: newVal
+    }));
+  }
+
+  function changeIncomePerWorkDay(newVal) {
+    setEstimatedData(prev => ({
+      ...prev,
+      incomePerWorkDay: newVal
     }));
   }
 
@@ -144,6 +171,8 @@ export default function Home() {
       }
       $('#incomePerHourModal').modal('hide');
       $('#incomePerDayModal').modal('hide');
+      $('#incomePerWorkHourModal').modal('hide');
+      $('#incomePerWorkDayModal').modal('hide');
       $('#incomePerWeekModal').modal('hide');
       $('#incomePerMonthModal').modal('hide');
       $('#incomePerYearModal').modal('hide');
@@ -178,6 +207,14 @@ export default function Home() {
     $('#incomePerDayModal').modal('show');
   }
 
+  function showIncomePerWorkHourModal() {
+    $('#incomePerWorkHourModal').modal('show');
+  }
+
+  function showIncomePerWorkDayModal() {
+    $('#incomePerWorkDayModal').modal('show');
+  }
+
   function showIncomePerWeekModal() {
     $('#incomePerWeekModal').modal('show');
   }
@@ -209,6 +246,7 @@ export default function Home() {
   useEffect(() => {
     getNetWorth();
     getAverageMonthlyExpense();
+    getAverageDailyExpense();
     getTotalProfit();
     getExpenseLast12Months();
     getEstimatedData();
@@ -230,6 +268,7 @@ export default function Home() {
               <div class="row">
                 <p><b>{i18n("Net Worth")}:</b> {netWorth}</p>
                 <p><b>{i18n("Average Monthly Expense")}:</b> {averageMonthlyExpense}</p>
+                <p><b>{i18n("Average Daily Expense")}:</b> {averageDailyExpense}</p>
                 <p><b>{i18n("Trading Profit") + " " + new Date().getFullYear()}:</b> {tradingProfit}</p>
               </div>
             </div>
@@ -252,6 +291,8 @@ export default function Home() {
               <h2>{i18n("Estimated Data")}</h2>
               <p><b>{i18n("Income Per Hour")}: </b> {estimatedData.incomePerHour} <div class="pencil-btn" onClick={showIncomePerHourModal}><i class="fa-solid fa-pencil"></i></div></p>
               <p><b>{i18n("Income Per Day")}: </b> {estimatedData.incomePerDay} <div class="pencil-btn" onClick={showIncomePerDayModal}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Income Per Work Hour")}: </b> {estimatedData.incomePerWorkHour} <div class="pencil-btn" onClick={showIncomePerWorkHourModal}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Income Per Work Day")}: </b> {estimatedData.incomePerWorkDay} <div class="pencil-btn" onClick={showIncomePerWorkDayModal}><i class="fa-solid fa-pencil"></i></div></p>
               <p><b>{i18n("Income Per Week")}: </b> {estimatedData.incomePerWeek} <div class="pencil-btn" onClick={showIncomePerWeekModal}><i class="fa-solid fa-pencil"></i></div></p>
               <p><b>{i18n("Income Per Month")}:  </b> {estimatedData.incomePerMonth} <div class="pencil-btn" onClick={showIncomePerMonthModal}><i class="fa-solid fa-pencil"></i></div></p>
               <p><b>{i18n("Income Per Year")}: </b> {estimatedData.incomePerYear} <div class="pencil-btn" onClick={showIncomePerYearModal}><i class="fa-solid fa-pencil"></i></div></p>
@@ -274,6 +315,18 @@ export default function Home() {
         value={estimatedData.incomePerDay}
         setValue={changeIncomePerDay}
         updateField={() => updateField("incomePerDay", estimatedData.incomePerDay)}
+      />
+      <TextInputModal
+        id="incomePerWorkHourModal"
+        value={estimatedData.incomePerWorkHour}
+        setValue={changeIncomePerWorkHour}
+        updateField={() => updateField("incomePerWorkHour", estimatedData.incomePerWorkHour)}
+      />
+      <TextInputModal
+        id="incomePerWorkDayModal"
+        value={estimatedData.incomePerWorkDay}
+        setValue={changeIncomePerWorkDay}
+        updateField={() => updateField("incomePerWorkDay", estimatedData.incomePerWorkDay)}
       />
       <TextInputModal
         id="incomePerWeekModal"

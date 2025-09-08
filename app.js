@@ -638,6 +638,31 @@ app.get("/get-average-monthly-expense", async (req, res) => {
   res.json({status: "OK", data: averageMonthlyExpense});
 });
 
+app.get("/get-average-daily-expense", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  const [rows] = await con2.execute(`
+    SELECT 
+        SUM(ABS(valor)) / DATEDIFF(
+            DATE_SUB(CURDATE(), INTERVAL 1 MONTH),
+            MIN(data_mov)
+        ) AS average_daily_expense
+    FROM bpi_mov
+    WHERE valor < 0
+      AND is_expense = 1
+      AND (
+          YEAR(data_mov) <> YEAR(CURDATE())
+          OR MONTH(data_mov) <> MONTH(CURDATE())
+      );
+  `);
+
+  const averageDailyExpense = Number(rows[0].average_daily_expense).toFixed(2) || 0;
+  res.json({status: "OK", data: averageDailyExpense});
+});
+
 app.get("/get-expense-last-12-months", async (req, res) => {
   if (!req.session.isLoggedIn) {
     res.json({status: "NOK", error: "Invalid Authorization."});
@@ -757,6 +782,8 @@ app.post("/update-estimated-data", async (req, res) => {
     lastEstimatedDataSnapshot[0] = {
       incomePerHour: 0,
       incomePerDay: 0,
+      incomePerWorkHour: 0,
+      incomePerWorkDay: 0,
       incomePerWeek: 0,
       incomePerMonth: 0,
       incomePerYear: 0,
@@ -773,6 +800,8 @@ app.post("/update-estimated-data", async (req, res) => {
     (
       incomePerHour,
       incomePerDay,
+      incomePerWorkHour,
+      incomePerWorkDay,
       incomePerWeek,
       incomePerMonth,
       incomePerYear,
@@ -790,6 +819,8 @@ app.post("/update-estimated-data", async (req, res) => {
       ?,
       ?,
       ?,
+      ?,
+      ?,
       ?
     )
   `;
@@ -797,6 +828,8 @@ app.post("/update-estimated-data", async (req, res) => {
   var fields_not_affected = [
     {key: "incomePerHour", val: lastEstimatedDataSnapshot[0].incomePerHour},
     {key: "incomePerDay", val: lastEstimatedDataSnapshot[0].incomePerDay},
+    {key: "incomePerWorkHour", val: lastEstimatedDataSnapshot[0].incomePerWorkHour},
+    {key: "incomePerWorkDay", val: lastEstimatedDataSnapshot[0].incomePerWorkDay},
     {key: "incomePerWeek", val: lastEstimatedDataSnapshot[0].incomePerWeek},
     {key: "incomePerMonth", val: lastEstimatedDataSnapshot[0].incomePerMonth},
     {key: "incomePerYear", val: lastEstimatedDataSnapshot[0].incomePerYear},
@@ -838,6 +871,8 @@ app.get("/get-estimated-data", async (req, res) => {
     res.json({status: "OK", data: {
       incomePerHour: 0,
       incomePerDay: 0,
+      incomePerWorkHour: 0,
+      incomePerWorkDay: 0,
       incomePerWeek: 0,
       incomePerMonth: 0,
       incomePerYear: 0,

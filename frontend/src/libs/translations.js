@@ -5,6 +5,7 @@ export var translations = {
     "General Stats": {"en-us": "General Stats", "pt-pt": "Estatísticas Gerais"},
     "Net Worth": {"en-us": "Net Worth", "pt-pt": "Património"},
     "Average Monthly Expense": {"en-us": "Average Monthly Expense", "pt-pt": "Despesa Média Mensal"},
+    "Average Daily Expense": {"en-us": "Average Daily Expense", "pt-pt": "Despesa Média Diária"},
     "Trading Profit": {"en-us": "Trading Profit", "pt-pt": "Lucro Comercial"},
     "Expense Last 12 Months": {"en-us": "Expense Last 12 Months", "pt-pt": "Despesa dos últimos 12 meses"},
     "Estimated Data": {"en-us": "Estimated Data", "pt-pt": "Dados Estimados"},
