@@ -10,7 +10,9 @@ CREATE TABLE bpi_mov (
     data_valor DATE,
     desc_mov VARCHAR(256),
     valor DECIMAL(17, 2),
-    saldo DECIMAL(17, 2)
+    saldo DECIMAL(17, 2),
+    is_expense BOOLEAN DEFAULT 0,
+    is_original BOOLEAN DEFAULT 1
 );
 
 CREATE TABLE santander_mov (
@@ -104,10 +106,8 @@ CREATE TABLE estimated_data (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-ALTER TABLE bpi_mov ADD COLUMN is_expense BOOLEAN DEFAULT 0;
 ALTER TABLE polymarket_portfolio_snapshot ADD COLUMN deposit DECIMAL(17, 2) DEFAULT 0;
 ALTER TABLE t212_portfolio_snapshot_positions RENAME COLUMN balance TO value;
 ALTER TABLE t212_portfolio_snapshot_positions ADD COLUMN `return` DECIMAL(17, 2) DEFAULT NULL;
-ALTER TABLE bpi_mov ADD COLUMN is_original BOOLEAN DEFAULT 1;
 ALTER TABLE estimated_data ADD COLUMN incomePerWorkHour DECIMAL(17, 2) DEFAULT 0;
 ALTER TABLE estimated_data ADD COLUMN incomePerWorkDay DECIMAL(17, 2) DEFAULT 0;

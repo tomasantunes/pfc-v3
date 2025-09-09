@@ -614,7 +614,7 @@ app.get("/get-average-monthly-expense", async (req, res) => {
     return;
   }
 
-  const [rows] = await con2.execute(`
+  const [rows1] = await con2.execute(`
     SELECT
         AVG(monthly_expenses.monthly_sum) AS average_monthly_expense
     FROM (
@@ -634,7 +634,29 @@ app.get("/get-average-monthly-expense", async (req, res) => {
     ) AS monthly_expenses
   `);
 
-  const averageMonthlyExpense = Number(rows[0].average_monthly_expense).toFixed(2) || 0;
+  const [rows2] = await con2.execute(`
+    SELECT
+        AVG(monthly_expenses.monthly_sum) AS average_monthly_expense
+    FROM (
+        SELECT
+            YEAR(data_mov) AS yr,
+            MONTH(data_mov) AS mnth,
+            SUM(ABS(valor)) AS monthly_sum
+        FROM santander_mov
+        WHERE
+          valor < 0
+          AND is_expense = 1
+          AND (
+              YEAR(data_mov) <> YEAR(CURDATE())
+              OR MONTH(data_mov) <> MONTH(CURDATE())
+          )
+        GROUP BY YEAR(data_mov), MONTH(data_mov)
+    ) AS monthly_expenses
+  `);
+
+  const averageMonthlyExpenseBpi = Number(rows1[0].average_monthly_expense) || 0;
+  const averageMonthlyExpenseSantander = Number(rows2[0].average_monthly_expense) || 0;
+  const averageMonthlyExpense = (averageMonthlyExpenseBpi + averageMonthlyExpenseSantander).toFixed(2);
   res.json({status: "OK", data: averageMonthlyExpense});
 });
 
@@ -644,23 +666,39 @@ app.get("/get-average-daily-expense", async (req, res) => {
     return;
   }
 
-  const [rows] = await con2.execute(`
-    SELECT 
-        SUM(ABS(valor)) / DATEDIFF(
-            DATE_SUB(CURDATE(), INTERVAL 1 MONTH),
-            MIN(data_mov)
-        ) AS average_daily_expense
-    FROM bpi_mov
-    WHERE valor < 0
-      AND is_expense = 1
-      AND (
-          YEAR(data_mov) <> YEAR(CURDATE())
-          OR MONTH(data_mov) <> MONTH(CURDATE())
-      );
-  `);
+  try {
+    const [minRows] = await con2.execute(`
+      SELECT LEAST(
+        IFNULL((SELECT MIN(data_mov) FROM bpi_mov), CURDATE()),
+        IFNULL((SELECT MIN(data_mov) FROM santander_mov), CURDATE())
+      ) AS first_date
+    `);
 
-  const averageDailyExpense = Number(rows[0].average_daily_expense).toFixed(2) || 0;
-  res.json({status: "OK", data: averageDailyExpense});
+    const firstDate = new Date(minRows[0].first_date);
+
+    const lastDayPrevMonth = new Date();
+    lastDayPrevMonth.setDate(0);
+
+    const [expRows] = await con2.execute(`
+      SELECT SUM(total) AS total_expenses
+      FROM (
+        SELECT SUM(ABS(valor)) AS total FROM bpi_mov WHERE valor < 0 AND is_expense = 1
+        UNION ALL
+        SELECT SUM(ABS(valor)) FROM santander_mov WHERE valor < 0 AND is_expense = 1
+      ) t
+    `);
+
+    const totalExpenses = expRows[0].total_expenses || 0;
+
+    const diffDays = Math.floor((lastDayPrevMonth - firstDate) / (1000 * 60 * 60 * 24)) + 1;
+
+    const averageDailyExpense = totalExpenses / diffDays;
+
+    res.json({status: "OK", data: averageDailyExpense.toFixed(2)});
+  } catch(err) {
+    console.log(err);
+    res.json({status: "NOK", error: "Error getting average daily expense."});
+  }
 });
 
 app.get("/get-expense-last-12-months", async (req, res) => {
@@ -669,7 +707,7 @@ app.get("/get-expense-last-12-months", async (req, res) => {
     return;
   }
 
-  const [rows] = await con2.execute(`
+  const [rows1] = await con2.execute(`
     SELECT 
         YEAR(data_mov) AS yr,
         MONTH(data_mov) AS mnth,
@@ -687,7 +725,43 @@ app.get("/get-expense-last-12-months", async (req, res) => {
     LIMIT 12;
   `);
 
-  const expenseLast12Months = rows;
+  const [rows2] = await con2.execute(`
+    SELECT 
+        YEAR(data_mov) AS yr,
+        MONTH(data_mov) AS mnth,
+        SUM(ABS(valor)) AS monthly_sum
+    FROM santander_mov
+    WHERE
+        valor < 0
+        AND is_expense = 1
+        AND (
+          YEAR(data_mov) <> YEAR(CURDATE())
+          OR MONTH(data_mov) <> MONTH(CURDATE())
+        )
+    GROUP BY YEAR(data_mov), MONTH(data_mov)
+    ORDER BY yr DESC, mnth DESC
+    LIMIT 12;
+  `);
+
+  const expenseLast12MonthsBpi = rows1;
+  const expenseLast12MonthsSantander = rows2;
+  const expenseLast12Months = [];
+
+  for (var i in expenseLast12MonthsBpi) {
+    for (var j in expenseLast12MonthsSantander) { 
+      if (expenseLast12MonthsBpi[i].yr == expenseLast12MonthsSantander[j].yr && expenseLast12MonthsBpi[i].mnth == expenseLast12MonthsSantander[j].mnth) {
+        expenseLast12Months.push({
+          yr: expenseLast12MonthsBpi[i].yr,
+          mnth: expenseLast12MonthsBpi[i].mnth,
+          monthly_sum: (Number(expenseLast12MonthsBpi[i].monthly_sum) + Number(expenseLast12MonthsSantander[j].monthly_sum)).toFixed(2)
+        });
+      }
+      else {
+        expenseLast12Months.push(expenseLast12MonthsBpi[i]);
+      }
+    }
+  }
+
   res.json({status: "OK", data: expenseLast12Months});
 });
 
