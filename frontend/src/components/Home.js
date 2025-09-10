@@ -30,6 +30,12 @@ export default function Home() {
     netSalaryPerYear: "",
     grossSalaryPerMonth: "",
     grossSalaryPerYear: "",
+    benefitsPerYear: "",
+    expenseBenefitsPerYear: "",
+    foodAssistancePerYear: "",
+    technologyBenefitsPerYear: "",
+    grossMonthlySalaryPlusBenefits: "",
+    grossAnnualSalaryPlusBenefits: "",
   });
 
   function getNetWorth() {
@@ -160,6 +166,48 @@ export default function Home() {
     }));
   }
 
+  function changeBenefitsPerYear(newVal) {
+    setEstimatedData(prev => ({
+      ...prev,
+      benefitsPerYear: newVal
+    }));
+  }
+
+  function changeExpenseBenefitsPerYear(newVal) {
+    setEstimatedData(prev => ({
+      ...prev,
+      expenseBenefitsPerYear: newVal
+    }));
+  }
+
+  function changeFoodAssistancePerYear(newVal) {
+    setEstimatedData(prev => ({
+      ...prev,
+      foodAssistancePerYear: newVal
+    }));
+  }
+
+  function changeTechnologyBenefitsPerYear(newVal) {
+    setEstimatedData(prev => ({
+      ...prev,
+      technologyBenefitsPerYear: newVal
+    }));
+  }
+
+  function changeGrossMonthlySalaryPlusBenefits(newVal) {
+    setEstimatedData(prev => ({
+      ...prev,
+      grossMonthlySalaryPlusBenefits: newVal
+    }));
+  }
+
+  function changeGrossAnnualSalaryPlusBenefits(newVal) {
+    setEstimatedData(prev => ({
+      ...prev,
+      grossAnnualSalaryPlusBenefits: newVal
+    }));
+  }
+
   function updateField(field, value) {
     axios.post("/update-estimated-data", {field, value})
     .then(function(response) {
@@ -180,6 +228,12 @@ export default function Home() {
       $('#netSalaryPerYearModal').modal('hide');
       $('#grossSalaryPerMonthModal').modal('hide');
       $('#grossSalaryPerYearModal').modal('hide');
+      $('#benefitsPerYearModal').modal('hide');
+      $('#expenseBenefitsPerYearModal').modal('hide');
+      $('#foodAssistancePerYearModal').modal('hide');
+      $('#technologyBenefitsPerYearModal').modal('hide');
+      $('#grossMonthlySalaryPlusBenefitsModal').modal('hide');
+      $('#grossAnnualSalaryPlusBenefitsModal').modal('hide');
     })
     .catch(function(err) {
       console.log("Error: " + err.message);
@@ -243,6 +297,30 @@ export default function Home() {
     $('#grossSalaryPerYearModal').modal('show');
   }
 
+  function showBenefitsPerYear() {
+    $('#benefitsPerYearModal').modal('show');
+  }
+
+  function showExpenseBenefitsPerYear() {
+    $('#expenseBenefitsPerYearModal').modal('show');
+  }
+
+  function showFoodAssistancePerYear() {
+    $('#foodAssistancePerYearModal').modal('show');
+  }
+
+  function showTechnologyBenefitsPerYear() {
+    $('#technologyBenefitsPerYearModal').modal('show');
+  }
+
+  function showGrossMonthlySalaryPlusBenefits() {
+    $('#grossMonthlySalaryPlusBenefitsModal').modal('show');
+  }
+
+  function showGrossAnnualSalaryPlusBenefits() {
+    $('#grossMonthlySalaryPlusBenefitsModal').modal('show');
+  }
+
   useEffect(() => {
     getNetWorth();
     getAverageMonthlyExpense();
@@ -300,6 +378,12 @@ export default function Home() {
               <p><b>{i18n("Net Annual Salary")}:  </b>{estimatedData.netSalaryPerYear} <div class="pencil-btn" onClick={showNetSalaryPerYear}><i class="fa-solid fa-pencil"></i></div></p>
               <p><b>{i18n("Gross Monthly Salary")}: </b> {estimatedData.grossSalaryPerMonth} <div class="pencil-btn" onClick={showGrossSalaryPerMonth}><i class="fa-solid fa-pencil"></i></div></p>
               <p><b>{i18n("Gross Annual Salary")}: </b> {estimatedData.grossSalaryPerYear} <div class="pencil-btn" onClick={showGrossSalaryPerYear}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Benefits Per Year")}: </b> {estimatedData.benefitsPerYear} <div class="pencil-btn" onClick={showBenefitsPerYear}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Expense Benefits Per Year")}: </b> {estimatedData.expenseBenefitsPerYear} <div class="pencil-btn" onClick={showExpenseBenefitsPerYear}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Food Assistance Per Year")}: </b> {estimatedData.foodAssistancePerYear} <div class="pencil-btn" onClick={showFoodAssistancePerYear}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Technology Benefits Per Year")}: </b> {estimatedData.technologyBenefitsPerYear} <div class="pencil-btn" onClick={showTechnologyBenefitsPerYear}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Gross Monthly Salary Plus Benefits")}: </b> {estimatedData.grossMonthlySalaryPlusBenefits} <div class="pencil-btn" onClick={showGrossMonthlySalaryPlusBenefits}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Gross Annual Salary Plus Benefits")}: </b> {estimatedData.grossAnnualSalaryPlusBenefits} <div class="pencil-btn" onClick={showGrossAnnualSalaryPlusBenefits}><i class="fa-solid fa-pencil"></i></div></p>
             </div>
           </div>
         </div>
@@ -369,6 +453,42 @@ export default function Home() {
         value={estimatedData.grossSalaryPerYear}
         setValue={changeGrossSalaryPerYear}
         updateField={() => updateField("grossSalaryPerYear", estimatedData.grossSalaryPerYear)}
+      />
+      <TextInputModal
+        id="benefitsPerYearModal"
+        value={estimatedData.benefitsPerYear}
+        setValue={changeBenefitsPerYear}
+        updateField={() => updateField("benefitsPerYear", estimatedData.benefitsPerYear)}
+      />
+      <TextInputModal
+        id="expenseBenefitsPerYearModal"
+        value={estimatedData.expenseBenefitsPerYear}
+        setValue={changeExpenseBenefitsPerYear}
+        updateField={() => updateField("expenseBenefitsPerYear", estimatedData.expenseBenefitsPerYear)}
+      />
+      <TextInputModal
+        id="foodAssistancePerYearModal"
+        value={estimatedData.foodAssistancePerYear}
+        setValue={changeFoodAssistancePerYear}
+        updateField={() => updateField("foodAssistancePerYear", estimatedData.foodAssistancePerYear)}
+      />
+      <TextInputModal
+        id="technologyBenefitsPerYearModal"
+        value={estimatedData.technologyBenefitsPerYear}
+        setValue={changeTechnologyBenefitsPerYear}
+        updateField={() => updateField("technologyBenefitsPerYear", estimatedData.technologyBenefitsPerYear)}
+      />
+      <TextInputModal
+        id="grossMonthlySalaryPlusBenefitsModal"
+        value={estimatedData.grossMonthlySalaryPlusBenefits}
+        setValue={changeGrossMonthlySalaryPlusBenefits}
+        updateField={() => updateField("grossMonthlySalaryPlusBenefits", estimatedData.technologyBenefitsPerYear)}
+      />
+      <TextInputModal
+        id="grossAnnualSalaryPlusBenefitsModal"
+        value={estimatedData.grossAnnualSalaryPlusBenefits}
+        setValue={changeGrossAnnualSalaryPlusBenefits}
+        updateField={() => updateField("grossAnnualSalaryPlusBenefits", estimatedData.grossAnnualSalaryPlusBenefits)}
       />
     </>
   )

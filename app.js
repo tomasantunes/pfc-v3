@@ -864,7 +864,13 @@ app.post("/update-estimated-data", async (req, res) => {
       netSalaryPerMonth: 0,
       netSalaryPerYear: 0,
       grossSalaryPerMonth: 0,
-      grossSalaryPerYear: 0
+      grossSalaryPerYear: 0,
+      benefitsPerYear: 0,
+      expenseBenefitsPerYear: 0,
+      foodAssistancePerYear: 0,
+      technologyBenefitsPerYear: 0,
+      grossMonthlySalaryPlusBenefits: 0,
+      grossAnnualSalaryPlusBenefits: 0
     };
   }
 
@@ -882,9 +888,21 @@ app.post("/update-estimated-data", async (req, res) => {
       netSalaryPerMonth,
       netSalaryPerYear,
       grossSalaryPerMonth,
-      grossSalaryPerYear
+      grossSalaryPerYear,
+      benefitsPerYear,
+      expenseBenefitsPerYear,
+      foodAssistancePerYear,
+      technologyBenefitsPerYear,
+      grossMonthlySalaryPlusBenefits,
+      grossAnnualSalaryPlusBenefits
     )
     VALUES (
+      ?,
+      ?,
+      ?,
+      ?,
+      ?,
+      ?,
       ?,
       ?,
       ?,
@@ -910,7 +928,13 @@ app.post("/update-estimated-data", async (req, res) => {
     {key: "netSalaryPerMonth", val: lastEstimatedDataSnapshot[0].netSalaryPerMonth},
     {key: "netSalaryPerYear", val: lastEstimatedDataSnapshot[0].netSalaryPerYear},
     {key: "grossSalaryPerMonth", val: lastEstimatedDataSnapshot[0].grossSalaryPerMonth},
-    {key: "grossSalaryPerYear", val: lastEstimatedDataSnapshot[0].grossSalaryPerYear}
+    {key: "grossSalaryPerYear", val: lastEstimatedDataSnapshot[0].grossSalaryPerYear},
+    {key: "benefitsPerYear", val: lastEstimatedDataSnapshot[0].benefitsPerYear},
+    {key: "expenseBenefitsPerYear", val: lastEstimatedDataSnapshot[0].expenseBenefitsPerYear},
+    {key: "foodAssistancePerYear", val: lastEstimatedDataSnapshot[0].foodAssistancePerYear},
+    {key: "technologyBenefitsPerYear", val: lastEstimatedDataSnapshot[0].technologyBenefitsPerYear},
+    {key: "grossMonthlySalaryPlusBenefits", val: lastEstimatedDataSnapshot[0].grossMonthlySalaryPlusBenefits},
+    {key: "grossAnnualSalaryPlusBenefits", val: lastEstimatedDataSnapshot[0].grossAnnualSalaryPlusBenefits},
   ];
   var fields_to_affect = [];
 
@@ -953,7 +977,13 @@ app.get("/get-estimated-data", async (req, res) => {
       netSalaryPerMonth: 0,
       netSalaryPerYear: 0,
       grossSalaryPerMonth: 0,
-      grossSalaryPerYear: 0
+      grossSalaryPerYear: 0,
+      benefitsPerYear: 0,
+      expenseBenefitsPerYear: 0,
+      foodAssistancePerYear: 0,
+      technologyBenefitsPerYear: 0,
+      grossMonthlySalaryPlusBenefits: 0,
+      grossAnnualSalaryPlusBenefits: 0
     }});
     return;
   }
