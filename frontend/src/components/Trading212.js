@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import Navbar from './Navbar';
 import axios from 'axios';
 import config from '../config';
+import {i18n} from '../libs/translations';
 import $ from 'jquery';
 
 window.jQuery = $;
@@ -109,28 +110,28 @@ export default function Trading212() {
     <div className="container">
       <div className="row">
         <div className="col-md-3">
-          <h3>Insert Portfolio Snapshot</h3>
+          <h3>{i18n("Insert Portfolio Snapshot")}</h3>
           <div className="form-group mb-2">
-              <label><b>Balance</b></label>
+              <label><b>{i18n("Balance")}</b></label>
               <input type="text" className="form-control" value={newBalance} onChange={changeNewBalance} />
           </div>
           <div className="form-group mb-2">
-              <label><b>Profit</b></label>
+              <label><b>{i18n("Profit")}</b></label>
               <input type="text" className="form-control" value={newProfit} onChange={changeNewProfit} />
           </div>
         </div>
       </div>
       <div className="row">
         <div>
-            <label><b>Positions</b></label>
+            <label><b>{i18n("Positions")}</b></label>
             <table className="table table-striped">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Price</th>
-                        <th>Quantity</th>
-                        <th>Value</th>
-                        <th>Return</th>
+                        <th>{i18n("Name")}</th>
+                        <th>{i18n("Price")}</th>
+                        <th>{i18n("Quantity")}</th>
+                        <th>{i18n("Value")}</th>
+                        <th>{i18n("Return")}</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -153,13 +154,13 @@ export default function Trading212() {
                         <td><input type="text" className="form-control" value={newPosition.quantity} onChange={changeNewPositionQuantity} /></td>
                         <td><input type="text" className="form-control" value={newPosition.value} onChange={changeNewPositionValue} /></td>
                         <td><input type="text" className="form-control" value={newPosition.return} onChange={changeNewPositionReturn} /></td>
-                        <td><button className="btn btn-success" onClick={addNewPosition}>Add</button></td>
+                        <td><button className="btn btn-success" onClick={addNewPosition}>{i18n("Add")}</button></td>
                     </tr>
                 </tfoot>
             </table>
         </div>
         <div style={{textAlign: "right"}}>
-          <button className="btn btn-primary" onClick={submitPortfolioSnapshot}>Submit</button>
+          <button className="btn btn-primary" onClick={submitPortfolioSnapshot}>{i18n("Submit")}</button>
         </div>
       </div>
     </div>

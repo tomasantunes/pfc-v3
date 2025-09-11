@@ -44,6 +44,16 @@ export var translations = {
     "Current balance": {"en-us" : "Current balance", "pt-pt": "Saldo atual"},
     "Enter new balance": {"en-us" : "Enter new balance", "pt-pt": "Introduza o novo saldo"},
     "Import XLS Santander": {"en-us": "Import XLS Santander", "pt-pt": "Importar XLS Santander"},
+    "Portfolio snapshot has been submitted.": {"en-us": "Portfolio snapshot has been submitted.", "pt-pt": "O resumo do seu portfolio foi submetido com sucesso."},
+    "Insert Portfolio Snapshot": {"en-us": "Insert Portfolio Snapshot", "pt-pt": "Inserir Resumo do Portfolio"},
+    "Profit": {"en-us": "Profit", "pt-pt": "Lucro"},
+    "Positions": {"en-us": "Positions", "pt-pt": "Posições"},
+    "Name": {"en-us": "Name", "pt-pt": "Nome"},
+    "Price": {"en-us": "Price", "pt-pt": "Preço"},
+    "Quantity": {"en-us": "Quantity", "pt-pt": "Quantidade"},
+    "Value": {"en-us": "Value", "pt-pt": "Valor"},
+    "Return": {"en-us": "Return", "pt-pt": "Retorno"},
+    "Add": {"en-us": "Add", "pt-pt": "Adicionar"},
 }
 
 export function i18n(text) {
