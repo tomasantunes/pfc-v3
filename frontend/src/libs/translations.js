@@ -43,6 +43,7 @@ export var translations = {
     "Santander balance has been submitted.": {"en-us" : "Santander balance has been submitted.", "pt-pt": "O saldo Santander foi submetido com sucesso."},
     "Current balance": {"en-us" : "Current balance", "pt-pt": "Saldo atual"},
     "Enter new balance": {"en-us" : "Enter new balance", "pt-pt": "Introduza o novo saldo"},
+    "Import XLS Santander": {"en-us": "Import XLS Santander", "pt-pt": "Importar XLS Santander"},
 }
 
 export function i18n(text) {
