@@ -37,6 +37,12 @@ export var translations = {
     "Technology Benefits Per Year": {"en-us" : "Technology Benefits Per Year", "pt-pt": "Benefícios de Tecnologia p/ Ano"},
     "Gross Monthly Salary Plus Benefits": {"en-us" : "Gross Monthly Salary Plus Benefits", "pt-pt": "Salário p/ Mês Bruto Mais Benefícios"},
     "Gross Annual Salary Plus Benefits": {"en-us" : "Gross Annual Salary Plus Benefits", "pt-pt": "Salário p/ Ano Bruto Mais Benefícios"},
+    "File Upload Error": {"en-us" : "File Upload Error", "pt-pt": "Erro ao carregar ficheiro."},
+    "Movement has been updated successfully.": {"en-us" : "Movement has been updated successfully.", "pt-pt": "O movimento foi atualizado com sucesso."},
+    "Movement has been added successfully.": {"en-us" : "Movement has been added successfully.", "pt-pt": "O movimento foi adicionado com sucesso."},
+    "Santander balance has been submitted.": {"en-us" : "Santander balance has been submitted.", "pt-pt": "O saldo Santander foi submetido com sucesso."},
+    "Current balance": {"en-us" : "Current balance", "pt-pt": "Saldo atual"},
+    "Enter new balance": {"en-us" : "Enter new balance", "pt-pt": "Introduza o novo saldo"},
 }
 
 export function i18n(text) {

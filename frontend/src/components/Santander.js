@@ -196,14 +196,14 @@ export default function Santander() {
         <div className="santander-form col-md-4 mb-3">
           <div className="row">
               <div className="form-group mb-2">
-                <p><b>Current balance: </b>{currentBalance}</p>
-                <label><b>Enter new balance</b></label>
+                <p><b>{i18n("Current balance")}: </b>{currentBalance}</p>
+                <label><b>{i18n("Enter new balance")}</b></label>
                 <input type="text" className="form-control" value={newBalance} onChange={changeNewBalance} />
               </div>
           </div>
           <div className="row">
             <div style={{textAlign: "right"}}>
-              <button className="btn btn-primary" onClick={submitSantanderBalance}>Submit</button>
+              <button className="btn btn-primary" onClick={submitSantanderBalance}>{i18n("Submit")}</button>
             </div>
           </div>
         </div>
