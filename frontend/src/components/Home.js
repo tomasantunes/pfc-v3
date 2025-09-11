@@ -318,7 +318,7 @@ export default function Home() {
   }
 
   function showGrossAnnualSalaryPlusBenefits() {
-    $('#grossMonthlySalaryPlusBenefitsModal').modal('show');
+    $('#grossAnnualSalaryPlusBenefitsModal').modal('show');
   }
 
   useEffect(() => {
@@ -482,7 +482,7 @@ export default function Home() {
         id="grossMonthlySalaryPlusBenefitsModal"
         value={estimatedData.grossMonthlySalaryPlusBenefits}
         setValue={changeGrossMonthlySalaryPlusBenefits}
-        updateField={() => updateField("grossMonthlySalaryPlusBenefits", estimatedData.technologyBenefitsPerYear)}
+        updateField={() => updateField("grossMonthlySalaryPlusBenefits", estimatedData.grossMonthlySalaryPlusBenefits)}
       />
       <TextInputModal
         id="grossAnnualSalaryPlusBenefitsModal"

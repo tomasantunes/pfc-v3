@@ -31,6 +31,12 @@ export var translations = {
     "Actions": {"en-us": "Actions", "pt-pt": "Acões"},
     "Yes": {"en-us": "Yes", "pt-pt": "Sim"},
     "No": {"en-us": "No", "pt-pt": "Não"},
+    "Benefits Per Year": {"en-us" : "Benefits Per Year", "pt-pt": "Benefícios p/ Ano"},
+    "Expense Benefits Per Year": {"en-us" : "Expense Benefits Per Year", "pt-pt": "Benefícios de Despesas p/ Ano"},
+    "Food Assistance Per Year": {"en-us" : "Food Assistance Per Year", "pt-pt": "Subsídio de Alimentação p/ Ano"},
+    "Technology Benefits Per Year": {"en-us" : "Technology Benefits Per Year", "pt-pt": "Benefícios de Tecnologia p/ Ano"},
+    "Gross Monthly Salary Plus Benefits": {"en-us" : "Gross Monthly Salary Plus Benefits", "pt-pt": "Salário p/ Mês Bruto Mais Benefícios"},
+    "Gross Annual Salary Plus Benefits": {"en-us" : "Gross Annual Salary Plus Benefits", "pt-pt": "Salário p/ Ano Bruto Mais Benefícios"},
 }
 
 export function i18n(text) {
