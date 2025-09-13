@@ -44,9 +44,21 @@ export default function Santander() {
     });
   }
 
+  function changeCash(e) {
+    setCash(e.target.value);
+  }
+  
+  function changeVouchers(e) {
+    setVouchers(e.target.value);
+  }
+
+  function changeGiftCards(e) {
+    setGiftCards(e.target.value);
+  }
+
   useEffect(() => {
     loadSavings();
-  });
+  }, []);
   return (
     <>
       <Navbar />

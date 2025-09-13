@@ -111,6 +111,7 @@ CREATE TABLE savings (
     cash DECIMAL(17,2),
     vouchers DECIMAL(17, 2),
     gift_cards DECIMAL(17, 2),
+    savings_accounts_total DECIMAL(17, 2),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
