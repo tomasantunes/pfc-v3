@@ -49,6 +49,17 @@ CREATE TABLE t212_portfolio_snapshot_positions (
     balance DECIMAL(17, 2)
 );
 
+CREATE TABLE t212_account_activity (
+    id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    date_mov DATE,
+    type VARCHAR(256),
+    name VARCHAR(256),
+    quantity DECIMAL(17, 5),
+    price DECIMAL(17,2),
+    value DECIMAL(17,2),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE coinbase_portfolio_snapshot_headers (
     id INT(11) AUTO_INCREMENT PRIMARY KEY,
     balance DECIMAL(17,2),

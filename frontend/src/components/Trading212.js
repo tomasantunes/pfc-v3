@@ -22,6 +22,66 @@ export default function Trading212() {
     value: "",
     return: ""
   });
+  const [newMovementDate, setNewMovementDate] = useState("");
+  const [newMovementType, setNewMovementType] = useState("buy");
+  const [newMovementName, setNewMovementName] = useState("");
+  const [newMovementQuantity, setNewMovementQuantity] = useState("");
+  const [newMovementPrice, setNewMovementPrice] = useState("");
+  const [newMovementValue, setNewMovementValue] = useState("");
+
+  function changeNewMovementDate(e) {
+    setNewMovementDate(e.target.value);
+  }
+
+  function changeNewMovementType(e) {
+    setNewMovementType(e.target.value);
+  }
+
+  function changeNewMovementName(e) {
+    setNewMovementName(e.target.value);
+  }
+
+  function changeNewMovementQuantity(e) {
+    setNewMovementQuantity(e.target.value);
+  }
+
+  function changeNewMovementPrice(e) {
+    setNewMovementPrice(e.target.value);
+  }
+
+  function changeNewMovementValue(e) {
+    setNewMovementValue(e.target.value);
+  }
+
+  function submitAccountMovement() {
+    var data = {
+      date: newMovementDate,
+      type: newMovementType,
+      name: newMovementName,
+      quantity: newMovementQuantity,
+      price: newMovementPrice,
+      value: newMovementValue
+    };
+
+    axios.post(config.BASE_URL + "/insert-account-movement-t212", data)
+    .then(function (response) {
+      if (response.data.status == "OK") {
+        bootprompt.alert("Account movement has been submitted.");
+        setNewMovementDate("");
+        setNewMovementType("buy");
+        setNewMovementName("");
+        setNewMovementQuantity("");
+        setNewMovementPrice("");
+        setNewMovementValue("");
+      }
+      else {
+        bootprompt.alert("Error: " + response.data.error);
+      }
+    })
+    .catch(function(err) {
+      bootprompt.alert("Error: " + err.message);
+    });
+  }
 
   function changeNewBalance(e) {
     setNewBalance(e.target.value);
@@ -108,7 +168,42 @@ export default function Trading212() {
     <>
     <Navbar />
     <div className="container">
-      <div className="row">
+      <div className="row t212-form mb-3">
+        <div className="col-md-3">
+          <h3>{i18n("Insert Account Movement")}</h3>
+          <div className="form-group mb-2">
+              <label><b>{i18n("Movement Date")}</b></label>
+              <input type="text" className="form-control" value={newMovementDate} onChange={changeNewMovementDate} />
+          </div>
+          <div className="form-group mb-2">
+              <label><b>{i18n("Type")}</b></label>
+              <select className="form-control" value={newMovementType} onChange={changeNewMovementType}>
+                <option value="buy">{i18n("Buy")}</option>
+                <option value="sell">{i18n("Sell")}</option>
+              </select>
+          </div>
+          <div className="form-group mb-2">
+              <label><b>{i18n("Name")}</b></label>
+              <input type="text" className="form-control" value={newMovementName} onChange={changeNewMovementName} />
+          </div>
+          <div className="form-group mb-2">
+              <label><b>{i18n("Quantity")}</b></label>
+              <input type="text" className="form-control" value={newMovementQuantity} onChange={changeNewMovementQuantity} />
+          </div>
+          <div className="form-group mb-2">
+              <label><b>{i18n("Price")}</b></label>
+              <input type="text" className="form-control" value={newMovementPrice} onChange={changeNewMovementPrice} />
+          </div>
+          <div className="form-group mb-2">
+              <label><b>{i18n("Value")}</b></label>
+              <input type="text" className="form-control" value={newMovementValue} onChange={changeNewMovementValue} />
+          </div>
+          <div style={{textAlign: "right"}}>
+            <button className="btn btn-primary" onClick={submitAccountMovement}>{i18n("Submit")}</button>
+          </div>
+        </div>
+      </div>
+      <div className="row t212-form mb-3">
         <div className="col-md-3">
           <h3>{i18n("Insert Portfolio Snapshot")}</h3>
           <div className="form-group mb-2">
@@ -120,10 +215,9 @@ export default function Trading212() {
               <input type="text" className="form-control" value={newProfit} onChange={changeNewProfit} />
           </div>
         </div>
-      </div>
-      <div className="row">
         <div>
             <label><b>{i18n("Positions")}</b></label>
+            <div className="p-3 mb-3" style={{backgroundColor: "white", borderRadius: "10px"}}>
             <table className="table table-striped">
                 <thead>
                     <tr>
@@ -158,9 +252,10 @@ export default function Trading212() {
                     </tr>
                 </tfoot>
             </table>
-        </div>
-        <div style={{textAlign: "right"}}>
-          <button className="btn btn-primary" onClick={submitPortfolioSnapshot}>{i18n("Submit")}</button>
+            </div>
+            <div style={{textAlign: "right"}}>
+              <button className="btn btn-primary" onClick={submitPortfolioSnapshot}>{i18n("Submit")}</button>
+            </div>
         </div>
       </div>
     </div>

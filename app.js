@@ -458,6 +458,30 @@ app.post("/insert-portfolio-snapshot-t212", async (req, res) => {
   res.json({status: "OK", data: "Portfolio snapshot has been inserted successfully."});
 });
 
+app.post("/insert-account-movement-t212", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var date = req.body.date;
+  var type = req.body.type;
+  var name = req.body.name;
+  var quantity = req.body.quantity;
+  var price = req.body.price;
+  var value = req.body.value;
+
+  var sql = "INSERT INTO t212_account_activity (date_mov, type, name, quantity, price, value) VALUES (?, ?, ?, ?, ?, ?)";
+  con.query(sql, [date, type, name, quantity, price, value], function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: "There was an error inserting the account movement."});
+      return;
+    }
+    res.json({status: "OK", data: "Account movement has been inserted successfully."});
+  });
+});
+
 app.post("/insert-portfolio-snapshot-polymarket", async (req, res) => {
   if (!req.session.isLoggedIn) {
     res.json({status: "NOK", error: "Invalid Authorization."});
