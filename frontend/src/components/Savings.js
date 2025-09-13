@@ -16,6 +16,7 @@ export default function Santander() {
   const [cash, setCash] = useState(0);
   const [vouchers, setVouchers] = useState(0);
   const [giftCards, setGiftCards] = useState(0);
+  const [savingsAccountsTotal, setSavingsAccountsTotal] = useState(0);
 
   function loadSavings() {
     axios.get(config.BASE_URL + "/get-savings")
@@ -23,6 +24,7 @@ export default function Santander() {
       setCash(response.data.data.cash);
       setVouchers(response.data.data.vouchers);
       setGiftCards(response.data.data.gift_cards);
+      setSavingsAccountsTotal(response.data.data.savings_accounts_total);
     })
     .catch(function() {
       bootprompt.alert(i18n("Error loading savings data."));
@@ -30,7 +32,7 @@ export default function Santander() {
   }
 
   function submitSavings() {
-    axios.post(config.BASE_URL + "/insert-savings", {cash, vouchers, giftCards})
+    axios.post(config.BASE_URL + "/insert-savings", {cash, vouchers, giftCards, savingsAccountsTotal})
     .then(function(response) {
       if (response.data.status == "OK") {
         bootprompt.alert(i18n("Savings data has been updated successfully."));
@@ -56,6 +58,10 @@ export default function Santander() {
     setGiftCards(e.target.value);
   }
 
+  function changeSavingsAccountsTotal(e) {
+    setSavingsAccountsTotal(e.target.value);
+  }
+
   useEffect(() => {
     loadSavings();
   }, []);
@@ -77,6 +83,11 @@ export default function Santander() {
             <div className="form-group mb-2">
               <label><b>{i18n("Gift Cards")}</b></label>
               <input type="text" className="form-control" value={giftCards} onChange={changeGiftCards} />
+            </div>
+
+            <div className="form-group mb-2">
+              <label><b>{i18n("Savings Accounts Total")}</b></label>
+              <input type="text" className="form-control" value={savingsAccountsTotal} onChange={changeSavingsAccountsTotal} />
             </div>
 
             <div className="row">

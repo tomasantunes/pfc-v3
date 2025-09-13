@@ -602,10 +602,16 @@ app.get("/get-net-worth", async (req, res) => {
     saldo_santander = result6[0][0].balance;
   }
 
-  var total = (Number(saldo_bpi) + Number(saldo_t212) + Number(saldo_coinbase) + Number(saldo_binance) + Number(saldo_polymarket) + Number(saldo_santander)).toFixed(2);
+  var sql7 = "SELECT cash + vouchers + gift_cards + savings_accounts_total AS balance FROM savings ORDER BY created_at DESC LIMIT 1";
+  var result7 = await con2.query(sql7);
+  var saldo_savings = 0;
+  if (result7[0].length > 0) {
+    saldo_savings = result7[0][0].balance;
+  }
+
+  var total = (Number(saldo_bpi) + Number(saldo_t212) + Number(saldo_coinbase) + Number(saldo_binance) + Number(saldo_polymarket) + Number(saldo_santander) + Number(saldo_savings)).toFixed(2);
 
   res.json({status: "OK", data: total});
-
 });
 
 app.get("/get-average-monthly-expense", async (req, res) => {
@@ -1006,7 +1012,8 @@ app.get("/get-savings", async (req, res) => {
       res.json({status: "OK", data: {
         cash: 0,
         vouchers: 0,
-        gift_cards: 0
+        gift_cards: 0,
+        savings_accounts_total: 0
       }});
       return;
     }
@@ -1027,9 +1034,10 @@ app.post("/insert-savings", async (req, res) => {
   var cash = req.body.cash;
   var vouchers = req.body.vouchers;
   var gift_cards = req.body.giftCards;
+  var savings_accounts_total = req.body.savingsAccountsTotal;
 
-  var sql = "INSERT INTO savings (cash, vouchers, gift_cards) VALUES (?, ?, ?)";
-  con.query(sql, [cash, vouchers, gift_cards], function (err, result) {
+  var sql = "INSERT INTO savings (cash, vouchers, gift_cards, savings_accounts_total) VALUES (?, ?, ?, ?)";
+  con.query(sql, [cash, vouchers, gift_cards, savings_accounts_total], function (err, result) {
     if (err) {
       console.log(err);
       res.json({status: "NOK", error: "Error inserting savings."});
