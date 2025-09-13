@@ -482,6 +482,89 @@ app.post("/insert-account-movement-t212", (req, res) => {
   });
 });
 
+app.get("/get-account-activity-t212", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  const [rows] = await con2.execute(`
+        SELECT 
+            id,
+            name,
+            type,
+            quantity, 
+            price,
+            value,
+            YEAR(date_mov) as year 
+        FROM t212_account_activity 
+        ORDER BY date_mov DESC, id DESC
+    `);
+
+    const groupedByYear = rows.reduce((acc, row) => {
+        const year = row.year.toString();
+        
+        if (!acc[year]) {
+            acc[year] = [];
+        }
+        
+        const { year: _, ...rowData } = row;
+        acc[year].push(rowData);
+        
+        return acc;
+    }, {});
+
+    res.json({status: "OK", data: groupedByYear});
+});
+
+app.get("/get-portfolio-snapshots-t212", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  const query = `
+      SELECT 
+          h.id,
+          DATE_FORMAT(h.created_at, '%Y-%m-%d') as snapshot_date,
+          h.balance,
+          h.profit,
+          p.name,
+          p.price,
+          p.quantity,
+          p.value,
+          p.\`return\`
+      FROM t212_portfolio_snapshot_headers h
+      LEFT JOIN t212_portfolio_snapshot_positions p ON h.id = p.snapshot_id
+      ORDER BY h.created_at DESC, p.name ASC
+  `;
+
+  const [rows] = await con2.execute(query);
+  
+  const groupedData = {};
+  
+  rows.forEach(row => {
+      const key = `${row.snapshot_date} - Balance: ${row.balance} - Profit: ${row.profit}`;
+      
+      if (!groupedData[key]) {
+          groupedData[key] = [];
+      }
+      
+      if (row.name) {
+          groupedData[key].push({
+              id: row.id,
+              name: row.name,
+              price: parseFloat(row.price),
+              quantity: parseFloat(row.quantity),
+              value: parseFloat(row.value),
+              return: parseFloat(row.return)
+          });
+      }
+  });
+  
+  res.json({status: "OK", data: groupedData});
+})
+
 app.post("/insert-portfolio-snapshot-polymarket", async (req, res) => {
   if (!req.session.isLoggedIn) {
     res.json({status: "NOK", error: "Invalid Authorization."});

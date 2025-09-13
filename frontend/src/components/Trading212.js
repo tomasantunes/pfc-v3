@@ -1,7 +1,8 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Navbar from './Navbar';
 import axios from 'axios';
 import config from '../config';
+import ExpandableGroupedTable from './ExpandableGroupedTable';
 import {i18n} from '../libs/translations';
 import $ from 'jquery';
 
@@ -28,6 +29,8 @@ export default function Trading212() {
   const [newMovementQuantity, setNewMovementQuantity] = useState("");
   const [newMovementPrice, setNewMovementPrice] = useState("");
   const [newMovementValue, setNewMovementValue] = useState("");
+  const [accountActivity, setAccountActivity] = useState(null);
+  const [portfolioSnapshots, setPortfolioSnapshots] = useState(null);
 
   function changeNewMovementDate(e) {
     setNewMovementDate(e.target.value);
@@ -164,6 +167,41 @@ export default function Trading212() {
     });
   }
 
+  function loadAccountActivity() {
+    axios.get(config.BASE_URL + "/get-account-activity-t212")
+    .then(function(response) {
+      if (response.data.status == "OK") {
+        setAccountActivity(response.data.data);
+      }
+      else {
+        bootprompt.alert("Error: " + response.data.error);
+      }
+    })
+    .catch(function(err) {
+      bootprompt.alert("Error: " + err.message);
+    });
+  }
+
+  function loadPortfolioSnapshots() {
+    axios.get(config.BASE_URL + "/get-portfolio-snapshots-t212")
+    .then(function(response) {
+      if (response.data.status == "OK") {
+        setPortfolioSnapshots(response.data.data);
+      }
+      else {
+        bootprompt.alert("Error: " + response.data.error);
+      }
+    })
+    .catch(function(err) {
+      bootprompt.alert("Error: " + err.message);
+    });
+  }
+
+  useEffect(() => {
+    loadAccountActivity();
+    loadPortfolioSnapshots();
+  }, []);
+
   return (
     <>
     <Navbar />
@@ -202,6 +240,11 @@ export default function Trading212() {
             <button className="btn btn-primary" onClick={submitAccountMovement}>{i18n("Submit")}</button>
           </div>
         </div>
+      </div>
+      <div className="row t212-form mb-3">
+        {accountActivity &&
+          <ExpandableGroupedTable tableData={accountActivity} tableHeaders={["Name", "Type", "Quantity", "Price", "Value"]} title={i18n("Account Activity")} />
+        }
       </div>
       <div className="row t212-form mb-3">
         <div className="col-md-3">
@@ -257,6 +300,11 @@ export default function Trading212() {
               <button className="btn btn-primary" onClick={submitPortfolioSnapshot}>{i18n("Submit")}</button>
             </div>
         </div>
+      </div>
+      <div className="row t212-form mb-3">
+        {portfolioSnapshots && 
+          <ExpandableGroupedTable tableData={portfolioSnapshots} tableHeaders={["Name", "Price", "Quantity", "Value", "Return"]} title={i18n("Portfolio Snapshots")} />
+        }
       </div>
     </div>
     </>
