@@ -60,6 +60,7 @@ export var translations = {
     "Cash": {"en-us": "Cash", "pt-pt": "Dinheiro"},
     "Vouchers": {"en-us": "Vouchers", "pt-pt": "Vales"},
     "Gift Cards": {"en-us": "Gift Cards", "pt-pt": "Cartões-Presente"},
+    "Savings Accounts Total": {"en-us": "Savings Accounts Total", "pt-pt": "Total Contas Poupança"}
 }
 
 export function i18n(text) {
