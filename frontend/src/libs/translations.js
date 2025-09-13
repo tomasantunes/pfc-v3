@@ -54,6 +54,12 @@ export var translations = {
     "Value": {"en-us": "Value", "pt-pt": "Valor"},
     "Return": {"en-us": "Return", "pt-pt": "Retorno"},
     "Add": {"en-us": "Add", "pt-pt": "Adicionar"},
+    "Error loading savings data.": {"en-us": "Error loading savings data.", "pt-pt": "Erro ao carregar dados de poupanças."},
+    "Error updating savings data.": {"en-us": "Error updating savings data.", "pt-pt": "Erro ao atualizar dados de poupanças."},
+    "Savings data has been updated successfully.": {"en-us": "Savings data has been updated successfully.", "pt-pt": "Os dados de poupanças foram atualizados com sucesso."},
+    "Cash": {"en-us": "Cash", "pt-pt": "Dinheiro"},
+    "Vouchers": {"en-us": "Vouchers", "pt-pt": "Vales"},
+    "Gift Cards": {"en-us": "Gift Cards", "pt-pt": "Cartões-Presente"},
 }
 
 export function i18n(text) {

@@ -22,6 +22,9 @@ export default function Navbar() {
                 <li class="nav-item">
                     <NavLink to="/santander" className="nav-link">Santander</NavLink>
                 </li>
+                <li class="nav-item">
+                    <NavLink to="/savings" className="nav-link">Savings</NavLink>
+                </li>
                 {/*<li class="nav-item">
                     <NavLink to="/paypal" className="nav-link">Paypal</NavLink>
                 </li>*/}

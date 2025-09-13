@@ -991,6 +991,54 @@ app.get("/get-estimated-data", async (req, res) => {
   res.json({status: "OK", data: lastEstimatedDataSnapshot[0]});
 });
 
+app.get("/get-savings", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var sql1 = "SELECT * FROM savings ORDER BY id DESC LIMIT 1";
+
+  try {
+    const [savings] = await con2.execute(sql1);
+
+    if (savings.length === 0) {
+      res.json({status: "OK", data: {
+        cash: 0,
+        vouchers: 0,
+        gift_cards: 0
+      }});
+      return;
+    }
+
+    res.json({status: "OK", data: savings[0]});
+  } catch (err) {
+    console.log(err);
+    res.json({status: "NOK", error: "Error getting savings."});
+  }
+});
+
+app.post("/insert-savings", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var cash = req.body.cash;
+  var vouchers = req.body.vouchers;
+  var gift_cards = req.body.giftCards;
+
+  var sql = "INSERT INTO savings (cash, vouchers, gift_cards) VALUES (?, ?, ?)";
+  con.query(sql, [cash, vouchers, gift_cards], function (err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: "Error inserting savings."});
+      return;
+    }
+    res.json({status: "OK", data: "Savings inserted successfully."});
+  });
+});
+
 app.post("/api/check-login", (req, res) => {
   var user = req.body.user;
   var pass = req.body.pass;
@@ -1139,6 +1187,15 @@ app.get('/polymarket', (req, res) => {
 });
 
 app.get('/santander', (req, res) => {
+  if(req.session.isLoggedIn) {
+    res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
+  }
+  else {
+    res.redirect('/login');
+  }
+});
+
+app.get('/savings', (req, res) => {
   if(req.session.isLoggedIn) {
     res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
   }

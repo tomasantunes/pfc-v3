@@ -106,6 +106,14 @@ CREATE TABLE estimated_data (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE savings (
+    id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    cash DECIMAL(17,2),
+    vouchers DECIMAL(17, 2),
+    gift_cards DECIMAL(17, 2),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 ALTER TABLE polymarket_portfolio_snapshot ADD COLUMN deposit DECIMAL(17, 2) DEFAULT 0;
 ALTER TABLE t212_portfolio_snapshot_positions RENAME COLUMN balance TO value;
 ALTER TABLE t212_portfolio_snapshot_positions ADD COLUMN `return` DECIMAL(17, 2) DEFAULT NULL;
