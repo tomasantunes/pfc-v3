@@ -1,9 +1,12 @@
+import "flatpickr/dist/themes/airbnb.css";
 import React, {useState, useEffect} from 'react';
 import Navbar from './Navbar';
 import axios from 'axios';
 import config from '../config';
 import ExpandableGroupedTable from './ExpandableGroupedTable';
+import EditableExpandableGroupedTable from './EditableExpandableGroupedTable';
 import {i18n} from '../libs/translations';
+import Flatpickr from "react-flatpickr";
 import $ from 'jquery';
 
 window.jQuery = $;
@@ -11,6 +14,22 @@ window.$ = $;
 global.jQuery = $;
 window.bootstrap = require('bootstrap');
 var bootprompt = require('bootprompt');
+
+function toLocaleISOString(date) {
+  function pad(number) {
+      if (number < 10) {
+          return '0' + number;
+      }
+      return number;
+  }
+
+  return date.getFullYear() +
+      '-' + pad(date.getMonth() + 1) +
+      '-' + pad(date.getDate()) +
+      'T' + pad(date.getHours()) +
+      ':' + pad(date.getMinutes()) +
+      ':' + pad(date.getSeconds()) ;
+}
 
 export default function Trading212() {
   const [newBalance, setNewBalance] = useState();
@@ -31,10 +50,6 @@ export default function Trading212() {
   const [newMovementValue, setNewMovementValue] = useState("");
   const [accountActivity, setAccountActivity] = useState(null);
   const [portfolioSnapshots, setPortfolioSnapshots] = useState(null);
-
-  function changeNewMovementDate(e) {
-    setNewMovementDate(e.target.value);
-  }
 
   function changeNewMovementType(e) {
     setNewMovementType(e.target.value);
@@ -58,7 +73,7 @@ export default function Trading212() {
 
   function submitAccountMovement() {
     var data = {
-      date: newMovementDate,
+      date: toLocaleISOString(newMovementDate).substring(0, 10),
       type: newMovementType,
       name: newMovementName,
       quantity: newMovementQuantity,
@@ -76,6 +91,7 @@ export default function Trading212() {
         setNewMovementQuantity("");
         setNewMovementPrice("");
         setNewMovementValue("");
+        loadAccountActivity();
       }
       else {
         bootprompt.alert("Error: " + response.data.error);
@@ -197,6 +213,48 @@ export default function Trading212() {
     });
   }
 
+  function updateMovement(itemId, updatedValues) {
+    axios.post(config.BASE_URL + "/update-account-movement-t212", {
+      id: itemId,
+      ...updatedValues
+    })
+    .then(function (response) {
+      if (response.data.status == "OK") {
+        bootprompt.alert("Account movement has been updated.");
+        loadAccountActivity();
+      }
+      else {
+        bootprompt.alert("Error: " + response.data.error);
+      }
+    })
+    .catch(function(err) {
+      bootprompt.alert("Error: " + err.message);
+    });
+  }
+
+  const handleUpdateMovement = (itemId, updatedValues) => {
+    console.log('Saving movement:', itemId, 'with values:', updatedValues);
+    
+    // Update the data state
+    setAccountActivity(prevData => {
+      const newData = { ...prevData };
+      
+      // Find and update the item in the appropriate group
+      Object.keys(newData).forEach(groupName => {
+        const itemIndex = newData[groupName].findIndex(item => item.id === itemId);
+        if (itemIndex !== -1) {
+          newData[groupName][itemIndex] = {
+            ...newData[groupName][itemIndex],
+            ...updatedValues
+          };
+        }
+      });
+      return newData;
+    });
+
+    updateMovement(itemId, updatedValues);
+  };
+
   useEffect(() => {
     loadAccountActivity();
     loadPortfolioSnapshots();
@@ -211,7 +269,7 @@ export default function Trading212() {
           <h3>{i18n("Insert Account Movement")}</h3>
           <div className="form-group mb-2">
               <label><b>{i18n("Movement Date")}</b></label>
-              <input type="text" className="form-control" value={newMovementDate} onChange={changeNewMovementDate} />
+              <Flatpickr className="form-control" value={newMovementDate} onChange={([date]) => setNewMovementDate(date)} />
           </div>
           <div className="form-group mb-2">
               <label><b>{i18n("Type")}</b></label>
@@ -244,7 +302,7 @@ export default function Trading212() {
       </div>
       <div className="row t212-form mb-3">
         {accountActivity &&
-          <ExpandableGroupedTable tableData={accountActivity} tableHeaders={["Name", "Type", "Quantity", "Price", "Value"]} title={i18n("Account Activity")} />
+          <EditableExpandableGroupedTable tableData={accountActivity} tableHeaders={["Movement Date", "Name", "Type", "Quantity", "Price", "Value", "Return"]} title={i18n("Account Activity")} onSave={handleUpdateMovement} />
         }
       </div>
       <div className="row t212-form mb-3">

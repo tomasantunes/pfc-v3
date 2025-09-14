@@ -137,3 +137,4 @@ ALTER TABLE estimated_data ADD COLUMN foodAssistancePerYear DECIMAL(17, 2) DEFAU
 ALTER TABLE estimated_data ADD COLUMN technologyBenefitsPerYear DECIMAL(17, 2) DEFAULT 0;
 ALTER TABLE estimated_data ADD COLUMN grossMonthlySalaryPlusBenefits DECIMAL(17, 2) DEFAULT 0;
 ALTER TABLE estimated_data ADD COLUMN grossAnnualSalaryPlusBenefits DECIMAL(17, 2) DEFAULT 0;
+ALTER TABLE t212_account_activity ADD COLUMN `return` DECIMAL(17, 2) DEFAULT 0;

@@ -68,7 +68,7 @@ export var translations = {
     "Account movement has been submitted.": {"en-us": "Account movement has been submitted.", "pt-pt": "O movimento de conta foi submetido com sucesso."},
     "Dividend": {"en-us": "Dividend", "pt-pt": "Dividendo"},
     "Buy": {"en-us": "Buy", "pt-pt": "Compra"},
-    "Sell": {"en-us": "Sell", "pt-pt": "Venda"}
+    "Sell": {"en-us": "Sell", "pt-pt": "Venda"},
 }
 
 export function i18n(text) {
