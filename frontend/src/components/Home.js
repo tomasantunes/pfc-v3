@@ -16,7 +16,8 @@ export default function Home() {
   const [netWorth, setNetWorth] = useState("");
   const [averageMonthlyExpense, setAverageMonthlyExpense] = useState("");
   const [averageDailyExpense, setAverageDailyExpense] = useState("");
-  const [tradingProfit, setTradingProfit] = useState("");
+  const [cryptoProfit, setCryptoProfit] = useState("");
+  const [t212YearlyProfit, setT212YearlyProfit] = useState("");
   const [expenseLast12Months, setExpenseLast12Months] = useState();
   const [estimatedData, setEstimatedData] = useState({
     incomePerHour: "",
@@ -68,10 +69,10 @@ export default function Home() {
     });
   }
 
-  function getTotalProfit() {
-    axios.get(config.BASE_URL + "/get-total-profit")
+  function getCryptoProfit() {
+    axios.get(config.BASE_URL + "/get-crypto-profit")
     .then(function(response) {
-      setTradingProfit(response.data.data.toString() + "€");
+      setCryptoProfit(response.data.data.toString() + "€");
     })
     .catch(function(err) {
       bootprompt.alert("Error: " + err.message);
@@ -321,11 +322,28 @@ export default function Home() {
     $('#grossAnnualSalaryPlusBenefitsModal').modal('show');
   }
 
+  function getT212YearlyProfit() {
+    axios.get(config.BASE_URL + "/get-t212-yearly-profit")
+    .then(function(response) {
+      if (response.data.status == "OK") {
+        setT212YearlyProfit(response.data.data + "€");
+      }
+      else {
+        setT212YearlyProfit("0€");
+        bootprompt.alert("Error: " + response.data.error);
+      }
+    })
+    .catch(function(err) {
+      bootprompt.alert("Error: " + err.message);
+    });
+  }
+
   useEffect(() => {
     getNetWorth();
     getAverageMonthlyExpense();
     getAverageDailyExpense();
-    getTotalProfit();
+    getCryptoProfit();
+    getT212YearlyProfit();
     getExpenseLast12Months();
     getEstimatedData();
   }, []);
@@ -347,7 +365,8 @@ export default function Home() {
                 <p><b>{i18n("Net Worth")}:</b> {netWorth}</p>
                 <p><b>{i18n("Average Monthly Expense")}:</b> {averageMonthlyExpense}</p>
                 <p><b>{i18n("Average Daily Expense")}:</b> {averageDailyExpense}</p>
-                <p><b>{i18n("Trading Profit") + " " + new Date().getFullYear()}:</b> {tradingProfit}</p>
+                <p><b>{i18n("T212 Sales") + " " + new Date().getFullYear()}:</b> {t212YearlyProfit}</p>
+                <p><b>{i18n("Crypto Profit")}:</b> {cryptoProfit}</p>
               </div>
             </div>
             <div class="dashboard-section mb-3">
