@@ -4,7 +4,7 @@ import axios from 'axios';
 import config from '../config';
 import TextInputModal from './TextInputModal';
 import {i18n} from '../libs/translations';
-import $ from 'jquery';
+import $, { get } from 'jquery';
 
 window.jQuery = $;
 window.$ = $;
@@ -18,6 +18,7 @@ export default function Home() {
   const [averageDailyExpense, setAverageDailyExpense] = useState("");
   const [cryptoProfit, setCryptoProfit] = useState("");
   const [t212YearlyProfit, setT212YearlyProfit] = useState("");
+  const [t212CurrentReturn, setT212CurrentReturn] = useState("");
   const [expenseLast12Months, setExpenseLast12Months] = useState();
   const [estimatedData, setEstimatedData] = useState({
     incomePerHour: "",
@@ -338,12 +339,29 @@ export default function Home() {
     });
   }
 
+  function getT212CurrentReturn() {
+    axios.get(config.BASE_URL + "/get-t212-current-return")
+    .then(function(response) {
+      if (response.data.status == "OK") {
+        setT212CurrentReturn(response.data.data + "€");
+      }
+      else {
+        setT212CurrentReturn("0€");
+        bootprompt.alert("Error: " + response.data.error);
+      }
+    })
+    .catch(function(err) {
+      bootprompt.alert("Error: " + err.message);
+    });
+  }
+
   useEffect(() => {
     getNetWorth();
     getAverageMonthlyExpense();
     getAverageDailyExpense();
     getCryptoProfit();
     getT212YearlyProfit();
+    getT212CurrentReturn();
     getExpenseLast12Months();
     getEstimatedData();
   }, []);
@@ -366,6 +384,7 @@ export default function Home() {
                 <p><b>{i18n("Average Monthly Expense")}:</b> {averageMonthlyExpense}</p>
                 <p><b>{i18n("Average Daily Expense")}:</b> {averageDailyExpense}</p>
                 <p><b>{i18n("T212 Sales") + " " + new Date().getFullYear()}:</b> {t212YearlyProfit}</p>
+                <p><b>{i18n("T212 Current Return")}:</b> {t212CurrentReturn}</p>
                 <p><b>{i18n("Crypto Profit")}:</b> {cryptoProfit}</p>
               </div>
             </div>

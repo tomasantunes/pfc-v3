@@ -994,7 +994,23 @@ app.get("/get-t212-yearly-profit", async (req, res) => {
     console.log(err);
     res.json({status: "NOK", error: "Error getting T212 yearly profit."});
   }
-})
+});
+
+app.get("/get-t212-current-return", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var sql1 = "SELECT * FROM t212_portfolio_snapshot_headers ORDER BY created_at DESC LIMIT 1";
+  var result1 = await con2.query(sql1);
+  var profit_t212 = 0;
+  if (result1[0].length > 0) {
+    profit_t212 = Number(result1[0][0].profit);
+  }
+
+  res.json({status: "OK", data: Number(profit_t212).toFixed(2)});
+});
 
 app.post("/update-estimated-data", async (req, res) => {
   if (!req.session.isLoggedIn) {
