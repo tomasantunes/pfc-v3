@@ -60,7 +60,15 @@ export var translations = {
     "Cash": {"en-us": "Cash", "pt-pt": "Dinheiro"},
     "Vouchers": {"en-us": "Vouchers", "pt-pt": "Vales"},
     "Gift Cards": {"en-us": "Gift Cards", "pt-pt": "Cartões-Presente"},
-    "Savings Accounts Total": {"en-us": "Savings Accounts Total", "pt-pt": "Total Contas Poupança"}
+    "Savings Accounts Total": {"en-us": "Savings Accounts Total", "pt-pt": "Total Contas Poupança"},
+    "Insert Account Movement": {"en-us": "Insert Account Movement", "pt-pt": "Inserir Movimento de Conta"},
+    "Account Activity": {"en-us": "Account Activity", "pt-pt": "Atividade da Conta"},
+    "Portfolio Snapshots": {"en-us": "Portfolio Snapshots", "pt-pt": "Resumos do Portfolio"},
+    "Type": {"en-us": "Type", "pt-pt": "Tipo"},
+    "Account movement has been submitted.": {"en-us": "Account movement has been submitted.", "pt-pt": "O movimento de conta foi submetido com sucesso."},
+    "Dividend": {"en-us": "Dividend", "pt-pt": "Dividendo"},
+    "Buy": {"en-us": "Buy", "pt-pt": "Compra"},
+    "Sell": {"en-us": "Sell", "pt-pt": "Venda"}
 }
 
 export function i18n(text) {

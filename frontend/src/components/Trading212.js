@@ -218,6 +218,7 @@ export default function Trading212() {
               <select className="form-control" value={newMovementType} onChange={changeNewMovementType}>
                 <option value="buy">{i18n("Buy")}</option>
                 <option value="sell">{i18n("Sell")}</option>
+                <option value="dividend">{i18n("Dividend")}</option>
               </select>
           </div>
           <div className="form-group mb-2">
