@@ -4,13 +4,10 @@ import Navbar from './Navbar';
 import axios from 'axios';
 import config from '../config';
 import {i18n} from '../libs/translations';
-import $ from 'jquery';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
-window.jQuery = $;
-window.$ = $;
-global.jQuery = $;
-window.bootstrap = require('bootstrap');
-var bootprompt = require('bootprompt');
+const MySwal = withReactContent(Swal);
 
 export default function Santander() {
   const [cash, setCash] = useState(0);
@@ -27,7 +24,7 @@ export default function Santander() {
       setSavingsAccountsTotal(response.data.data.savings_accounts_total);
     })
     .catch(function() {
-      bootprompt.alert(i18n("Error loading savings data."));
+      MySwal.fire(i18n("Error loading savings data."));
     });
   }
 
@@ -35,14 +32,14 @@ export default function Santander() {
     axios.post(config.BASE_URL + "/insert-savings", {cash, vouchers, giftCards, savingsAccountsTotal})
     .then(function(response) {
       if (response.data.status == "OK") {
-        bootprompt.alert(i18n("Savings data has been updated successfully."));
+        MySwal.fire(i18n("Savings data has been updated successfully."));
       }
       else {
-        bootprompt.alert(i18n("Error updating savings data."));
+        MySwal.fire(i18n("Error updating savings data."));
       }
     })
     .catch(function() {
-      bootprompt.alert(i18n("Error updating savings data."));
+      MySwal.fire(i18n("Error updating savings data."));
     });
   }
 

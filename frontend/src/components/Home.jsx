@@ -4,13 +4,10 @@ import axios from 'axios';
 import config from '../config';
 import TextInputModal from './TextInputModal';
 import {i18n} from '../libs/translations';
-import $, { get } from 'jquery';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
-window.jQuery = $;
-window.$ = $;
-global.jQuery = $;
-window.bootstrap = require('bootstrap');
-var bootprompt = require('bootprompt');
+const MySwal = withReactContent(Swal);
 
 export default function Home() {
   const [netWorth, setNetWorth] = useState("");
@@ -46,7 +43,7 @@ export default function Home() {
       setNetWorth(response.data.data.toString() + "€");
     })
     .catch(function(err) {
-      bootprompt.alert("Error: " + err.message);
+      MySwal.fire("Error: " + err.message);
     });
   }
 
@@ -56,7 +53,7 @@ export default function Home() {
       setAverageMonthlyExpense(response.data.data.toString() + "€");
     })
     .catch(function(err) {
-      bootprompt.alert("Error: " + err.message);
+      MySwal.fire("Error: " + err.message);
     });
   }
 
@@ -66,7 +63,7 @@ export default function Home() {
       setAverageDailyExpense(response.data.data.toString() + "€");
     })
     .catch(function(err) {
-      bootprompt.alert("Error: " + err.message);
+      MySwal.fire("Error: " + err.message);
     });
   }
 
@@ -76,7 +73,7 @@ export default function Home() {
       setCryptoProfit(response.data.data.toString() + "€");
     })
     .catch(function(err) {
-      bootprompt.alert("Error: " + err.message);
+      MySwal.fire("Error: " + err.message);
     });
   }
 
@@ -86,7 +83,7 @@ export default function Home() {
       setExpenseLast12Months(response.data.data);
     })
     .catch(function(err) {
-      bootprompt.alert("Error: " + err.message);
+      MySwal.fire("Error: " + err.message);
     });
   }
 
@@ -217,7 +214,7 @@ export default function Home() {
         console.log("This field has been updated.");
       }
       else {
-        bootprompt.alert(i18n("There has been an error updating this field."));
+        MySwal.fire(i18n("There has been an error updating this field."));
       }
       $('#incomePerHourModal').modal('hide');
       $('#incomePerDayModal').modal('hide');
@@ -239,7 +236,7 @@ export default function Home() {
     })
     .catch(function(err) {
       console.log("Error: " + err.message);
-      bootprompt.alert("Error: " + err.message);
+      MySwal.fire("Error: " + err.message);
     });
   }
 
@@ -251,7 +248,7 @@ export default function Home() {
     })
     .catch(function(err) {
       console.log(err);
-      bootprompt.alert("Error: " + err.message);
+      MySwal.fire("Error: " + err.message);
     });
   }
 
@@ -331,11 +328,11 @@ export default function Home() {
       }
       else {
         setT212YearlyProfit("0€");
-        bootprompt.alert("Error: " + response.data.error);
+        MySwal.fire("Error: " + response.data.error);
       }
     })
     .catch(function(err) {
-      bootprompt.alert("Error: " + err.message);
+      MySwal.fire("Error: " + err.message);
     });
   }
 
@@ -347,11 +344,11 @@ export default function Home() {
       }
       else {
         setT212CurrentReturn("0€");
-        bootprompt.alert("Error: " + response.data.error);
+        MySwal.fire("Error: " + response.data.error);
       }
     })
     .catch(function(err) {
-      bootprompt.alert("Error: " + err.message);
+      MySwal.fire("Error: " + err.message);
     });
   }
 

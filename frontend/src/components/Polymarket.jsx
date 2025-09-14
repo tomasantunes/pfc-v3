@@ -2,13 +2,10 @@ import React, {useState} from 'react';
 import Navbar from './Navbar';
 import axios from 'axios';
 import config from '../config';
-import $ from 'jquery';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
-window.jQuery = $;
-window.$ = $;
-global.jQuery = $;
-window.bootstrap = require('bootstrap');
-var bootprompt = require('bootprompt');
+const MySwal = withReactContent(Swal);
 
 export default function Polymarket() {
   const [newBalance, setNewBalance] = useState();
@@ -37,17 +34,17 @@ export default function Polymarket() {
     axios.post(config.BASE_URL + "/insert-portfolio-snapshot-polymarket", data)
     .then(function (response) {
       if (response.data.status == "OK") {
-        bootprompt.alert("Portfolio snapshot has been submitted.");
+        MySwal.fire("Portfolio snapshot has been submitted.");
         setNewBalance("");
         setNewProfit("");
         setNewDeposit("");
       }
       else {
-        bootprompt.alert("Error: " + response.data.error);
+        MySwal.fire("Error: " + response.data.error);
       }
     })
     .catch(function(err) {
-      bootprompt.alert("Error: " + err.message);
+      MySwal.fire("Error: " + err.message);
     });
   }
 

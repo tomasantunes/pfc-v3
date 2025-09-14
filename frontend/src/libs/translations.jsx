@@ -51,7 +51,6 @@ export var translations = {
     "Name": {"en-us": "Name", "pt-pt": "Nome"},
     "Price": {"en-us": "Price", "pt-pt": "Preço"},
     "Quantity": {"en-us": "Quantity", "pt-pt": "Quantidade"},
-    "Value": {"en-us": "Value", "pt-pt": "Valor"},
     "Return": {"en-us": "Return", "pt-pt": "Retorno"},
     "Add": {"en-us": "Add", "pt-pt": "Adicionar"},
     "Error loading savings data.": {"en-us": "Error loading savings data.", "pt-pt": "Erro ao carregar dados de poupanças."},

@@ -3,15 +3,12 @@ import FileUploader from './FileUploader';
 import Navbar from './Navbar';
 import axios from 'axios';
 import config from '../config';
-import $ from 'jquery';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
-window.jQuery = $;
-window.$ = $;
-global.jQuery = $;
-window.bootstrap = require('bootstrap');
-var bootprompt = require('bootprompt');
+const MySwal = withReactContent(Swal);
 
-export default function BPI() {
+export default function Paypal() {
   const [csvFile, setCsvFile] = useState("");
   const [mov, setMov] = useState([]);
 
@@ -28,17 +25,17 @@ export default function BPI() {
     axios.post(config.BASE_URL + "/import-paypal-csv", formData)
     .then((response) => {
       if (response.data.status == "OK") {
-        bootprompt.alert("CSV has been imported successfully.");
+        MySwal.fire("CSV has been imported successfully.");
         setCsvFile("");
         $("input[type=file]").val('');
         getMov();
       }
       else {
         console.log(response.data.error);
-        bootprompt.alert(response.data.error);
+        MySwal.fire(response.data.error);
       }
     })
-    .catch((err) => bootprompt.alert("File Upload Error"));
+    .catch((err) => MySwal.fire("File Upload Error"));
   }
 
   function getMov() {
@@ -48,11 +45,11 @@ export default function BPI() {
         setMov(response.data.data);
       }
       else {
-        bootprompt.alert(response.data.error);
+        MySwal.fire(response.data.error);
       }
     })
     .catch(function(err) {
-      bootprompt.alert(err.message);
+      MySwal.fire(err.message);
     });
   }
 
@@ -66,7 +63,7 @@ export default function BPI() {
       <div className="container">
         <form onSubmit={submitCsvFile}>
           <div className="form-group py-2">
-              <FileUploader onFileSelectSuccess={(file) => changeCsvFile({file})} onFileSelectError={({ error}) => bootprompt.alert(error)} />
+              <FileUploader onFileSelectSuccess={(file) => changeCsvFile({file})} onFileSelectError={({ error}) => MySwal.fire(error)} />
           </div>
           <div className="form-group">
               <div>

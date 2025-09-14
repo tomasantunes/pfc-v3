@@ -7,13 +7,10 @@ import ExpandableGroupedTable from './ExpandableGroupedTable';
 import EditableExpandableGroupedTable from './EditableExpandableGroupedTable';
 import {i18n} from '../libs/translations';
 import Flatpickr from "react-flatpickr";
-import $ from 'jquery';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
-window.jQuery = $;
-window.$ = $;
-global.jQuery = $;
-window.bootstrap = require('bootstrap');
-var bootprompt = require('bootprompt');
+const MySwal = withReactContent(Swal);
 
 function toLocaleISOString(date) {
   function pad(number) {
@@ -84,7 +81,7 @@ export default function Trading212() {
     axios.post(config.BASE_URL + "/insert-account-movement-t212", data)
     .then(function (response) {
       if (response.data.status == "OK") {
-        bootprompt.alert("Account movement has been submitted.");
+        MySwal.fire("Account movement has been submitted.");
         setNewMovementDate("");
         setNewMovementType("buy");
         setNewMovementName("");
@@ -94,11 +91,11 @@ export default function Trading212() {
         loadAccountActivity();
       }
       else {
-        bootprompt.alert("Error: " + response.data.error);
+        MySwal.fire("Error: " + response.data.error);
       }
     })
     .catch(function(err) {
-      bootprompt.alert("Error: " + err.message);
+      MySwal.fire("Error: " + err.message);
     });
   }
 
@@ -169,17 +166,17 @@ export default function Trading212() {
     axios.post(config.BASE_URL + "/insert-portfolio-snapshot-t212", data)
     .then(function (response) {
       if (response.data.status == "OK") {
-        bootprompt.alert("Portfolio snapshot has been submitted.");
+        MySwal.fire("Portfolio snapshot has been submitted.");
         setNewPositions([]);
         setNewBalance("");
         setNewProfit("");
       }
       else {
-        bootprompt.alert("Error: " + response.data.error);
+        MySwal.fire("Error: " + response.data.error);
       }
     })
     .catch(function(err) {
-      bootprompt.alert("Error: " + err.message);
+      MySwal.fire("Error: " + err.message);
     });
   }
 
@@ -190,11 +187,11 @@ export default function Trading212() {
         setAccountActivity(response.data.data);
       }
       else {
-        bootprompt.alert("Error: " + response.data.error);
+        MySwal.fire("Error: " + response.data.error);
       }
     })
     .catch(function(err) {
-      bootprompt.alert("Error: " + err.message);
+      MySwal.fire("Error: " + err.message);
     });
   }
 
@@ -205,11 +202,11 @@ export default function Trading212() {
         setPortfolioSnapshots(response.data.data);
       }
       else {
-        bootprompt.alert("Error: " + response.data.error);
+        MySwal.fire("Error: " + response.data.error);
       }
     })
     .catch(function(err) {
-      bootprompt.alert("Error: " + err.message);
+      MySwal.fire("Error: " + err.message);
     });
   }
 
@@ -220,15 +217,15 @@ export default function Trading212() {
     })
     .then(function (response) {
       if (response.data.status == "OK") {
-        bootprompt.alert("Account movement has been updated.");
+        MySwal.fire("Account movement has been updated.");
         loadAccountActivity();
       }
       else {
-        bootprompt.alert("Error: " + response.data.error);
+        MySwal.fire("Error: " + response.data.error);
       }
     })
     .catch(function(err) {
-      bootprompt.alert("Error: " + err.message);
+      MySwal.fire("Error: " + err.message);
     });
   }
 

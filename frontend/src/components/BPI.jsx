@@ -4,17 +4,12 @@ import Navbar from './Navbar';
 import axios from 'axios';
 import config from '../config';
 import {i18n} from '../libs/translations';
-import $ from 'jquery';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
-window.jQuery = $;
-window.$ = $;
-global.jQuery = $;
-window.bootstrap = require('bootstrap');
-var bootprompt = require('bootprompt');
+const MySwal = withReactContent(Swal);
 
-export default function Santander() {
-  const [currentBalance, setCurrentbalance] = useState("");
-  const [newBalance, setNewBalance] = useState();
+export default function BPI() {
   const [excelFile, setExcelFile] = useState("");
   const [mov, setMov] = useState([]);
   const [newMovement, setNewMovement] = useState({
@@ -26,10 +21,6 @@ export default function Santander() {
     is_expense: false,
   });
 
-  function changeNewBalance(e) {
-    setNewBalance(e.target.value);
-  }
-
   function changeExcelFile({file}) {
     setExcelFile(file);
   }
@@ -40,50 +31,50 @@ export default function Santander() {
     const formData = new FormData();
     formData.append("excelFile", excelFile);
 
-    axios.post(config.BASE_URL + "/import-santander-xls", formData)
+    axios.post(config.BASE_URL + "/import-bpi-xls", formData)
     .then((response) => {
       if (response.data.status == "OK") {
-        bootprompt.alert(i18n("XLS has been imported successfully"));
+        MySwal.fire(i18n("XLS has been imported successfully"));
         setExcelFile("");
         $("input[type=file]").val('');
         getMov();
       }
       else {
         console.log(response.data.error);
-        bootprompt.alert(response.data.error);
+        MySwal.fire(response.data.error);
       }
     })
-    .catch((err) => bootprompt.alert(i18n("File Upload Error")));
+    .catch((err) => MySwal.fire(i18n("File Upload Error")));
   }
 
   function toggleIsExpense(id) {
     axios.post(config.BASE_URL + "/toggle-is-expense", {id: id})
     .then(function(response) {
       if (response.data.status == "OK") {
-        bootprompt.alert(i18n("Movement has been updated successfully."));
+        MySwal.fire(i18n("Movement has been updated successfully."));
         getMov();
       }
       else {
-        bootprompt.alert(response.data.error);
+        MySwal.fire(response.data.error);
       }
     })
     .catch(function(err) {
-      bootprompt.alert(err.message);
+      MySwal.fire(err.message);
     });
   }
 
   function getMov() {
-    axios.get(config.BASE_URL + "/get-santander-mov")
+    axios.get(config.BASE_URL + "/get-bpi-mov")
     .then(function(response) {
       if (response.data.status == "OK") {
         setMov(response.data.data);
       }
       else {
-        bootprompt.alert(response.data.error);
+        MySwal.fire(response.data.error);
       }
     })
     .catch(function(err) {
-      bootprompt.alert(err.message);
+      MySwal.fire(err.message);
     });
   }
 
@@ -131,7 +122,7 @@ export default function Santander() {
 
   function addMovement(e) {
     e.preventDefault();
-    axios.post(config.BASE_URL + "/add-santander-mov", newMovement)
+    axios.post(config.BASE_URL + "/add-bpi-mov", newMovement)
     .then(function(response) {
       if (response.data.status == "OK") {
         getMov();
@@ -143,75 +134,30 @@ export default function Santander() {
           saldo: "",
           is_expense: false,
         });
-        bootprompt.alert(i18n("Movement has been added successfully."));
+        MySwal.fire(i18n("Movement has been added successfully."));
       }
       else {
-        bootprompt.alert(response.data.error);
+        MySwal.fire(response.data.error);
       }
     })
     .catch(function(err) {
-      bootprompt.alert(err.message);
-    });
-  }
-
-  function submitSantanderBalance() {
-    var data = {
-      balance: newBalance,
-    };
-
-    axios.post(config.BASE_URL + "/insert-santander-balance", data)
-    .then(function (response) {
-      if (response.data.status == "OK") {
-        bootprompt.alert("Santander balance has been submitted.");
-        setNewBalance("");
-      }
-      else {
-        bootprompt.alert("Error: " + response.data.error);
-      }
-    })
-    .catch(function(err) {
-      bootprompt.alert("Error: " + err.message);
-    });
-  }
-
-  function getCurrentBalance() {
-    axios.get(config.BASE_URL + "/get-santander-balance")
-    .then(function(response) {
-      setCurrentbalance(response.data.data);
-    })
-    .catch(function(err) {
-      bootprompt.alert("Error: " + err.message);
+      MySwal.fire(err.message);
     });
   }
 
   useEffect(() => {
     getMov();
-    getCurrentBalance();
   }, []);
   
   return (
     <>
       <Navbar />
       <div className="container">
-        <div className="santander-form col-md-4 mb-3">
-          <div className="row">
-              <div className="form-group mb-2">
-                <p><b>{i18n("Current balance")}: </b>{currentBalance}</p>
-                <label><b>{i18n("Enter new balance")}</b></label>
-                <input type="text" className="form-control" value={newBalance} onChange={changeNewBalance} />
-              </div>
-          </div>
-          <div className="row">
-            <div style={{textAlign: "right"}}>
-              <button className="btn btn-primary" onClick={submitSantanderBalance}>{i18n("Submit")}</button>
-            </div>
-          </div>
-        </div>
         <div className="col-md-4">
-          <form onSubmit={submitExcelFile} className="santander-form mb-3">
-            <h3>{i18n("Import XLS Santander")}</h3>
+          <form onSubmit={submitExcelFile} className="bpi-form mb-3">
+            <h3>{i18n("Import XLS BPI")}</h3>
             <div className="form-group py-2">
-                <FileUploader onFileSelectSuccess={(file) => changeExcelFile({file})} onFileSelectError={({ error}) => bootprompt.alert(error)} />
+                <FileUploader onFileSelectSuccess={(file) => changeExcelFile({file})} onFileSelectError={({ error}) => MySwal.fire(error)} />
             </div>
             <div className="form-group">
                 <div className="text-end">
@@ -220,7 +166,7 @@ export default function Santander() {
             </div>
           </form>
 
-          <form onSubmit={addMovement} className="santander-form mb-3">
+          <form onSubmit={addMovement} className="bpi-form mb-3">
             <h3>{i18n("Add Movement")}</h3>
             <div className="form-group">
               <label>{i18n("Movement Date")}</label>&nbsp;<small>(YYYY-MM-DD)</small>

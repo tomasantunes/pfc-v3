@@ -2,13 +2,10 @@ import React, {useState, useEffect} from 'react';
 import Navbar from './Navbar';
 import axios from 'axios';
 import config from '../config';
-import $ from 'jquery';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
-window.jQuery = $;
-window.$ = $;
-global.jQuery = $;
-window.bootstrap = require('bootstrap');
-var bootprompt = require('bootprompt');
+const MySwal = withReactContent(Swal);
 
 export default function Coinbase() {
   const [newBalance, setNewBalance] = useState();
@@ -75,16 +72,16 @@ export default function Coinbase() {
     axios.post(config.BASE_URL + "/insert-portfolio-snapshot-coinbase", data)
     .then(function (response) {
       if (response.data.status == "OK") {
-        bootprompt.alert("Portfolio snapshot has been submitted.");
+        MySwal.fire("Portfolio snapshot has been submitted.");
         setNewAssets([]);
         setNewBalance("");
       }
       else {
-        bootprompt.alert("Error: " + response.data.error);
+        MySwal.fire("Error: " + response.data.error);
       }
     })
     .catch(function(err) {
-      bootprompt.alert("Error: " + err.message);
+      MySwal.fire("Error: " + err.message);
     });
   }
 
@@ -95,7 +92,7 @@ export default function Coinbase() {
       setLastSnapshot(response.data.data);
     })
     .catch(function(err) {
-      bootprompt.alert("Error: " + err.message);
+      MySwal.fire("Error: " + err.message);
     });
   }
 
