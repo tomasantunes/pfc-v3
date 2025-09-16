@@ -16,10 +16,12 @@
 
 - Tal como para a despesa média mensal mostrar também:
     - Despesa média por hora
-    - Despesa média por dia
+    - Despesa média por dia - FEITO
     - Despesa média por semana
-    - Despesa média por mês já temos.
+    - Despesa média por mês. - FEITO
     - Despesa média anual.
+
+- Criar página para orçamento mensal.
 
 ## MAIS TARDE
 
