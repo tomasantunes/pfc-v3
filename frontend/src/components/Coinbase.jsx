@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import Navbar from './Navbar';
 import axios from 'axios';
 import config from '../config';
+import {i18n} from '../libs/translations';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
@@ -72,7 +73,7 @@ export default function Coinbase() {
     axios.post(config.BASE_URL + "/insert-portfolio-snapshot-coinbase", data)
     .then(function (response) {
       if (response.data.status == "OK") {
-        MySwal.fire("Portfolio snapshot has been submitted.");
+        MySwal.fire(i18n("Portfolio snapshot has been submitted."));
         setNewAssets([]);
         setNewBalance("");
       }
@@ -106,23 +107,23 @@ export default function Coinbase() {
     <div className="container">
       <div className="row">
         <div className="col-md-3">
-          <h3>Insert Portfolio Snapshot</h3>
+          <h3>{i18n("Insert Portfolio Snapshot")}</h3>
           <div className="form-group mb-2">
-              <label><b>Balance</b></label>
+              <label><b>{i18n("Balance")}</b></label>
               <input type="text" className="form-control" value={newBalance} onChange={changeNewBalance} />
           </div>
         </div>
       </div>
       <div className="row">
         <div>
-            <label><b>Assets</b></label>
+            <label><b>{i18n("Assets")}</b></label>
             <table className="table table-striped">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Deposit</th>
-                        <th>Quantity</th>
-                        <th>Value</th>
+                        <th>{i18n("Name")}</th>
+                        <th>{i18n("Deposit")}</th>
+                        <th>{i18n("Quantity")}</th>
+                        <th>{i18n("Value")}</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -149,33 +150,35 @@ export default function Coinbase() {
             </table>
         </div>
         <div style={{textAlign: "right"}}>
-          <button className="btn btn-primary" onClick={submitPortfolioSnapshot}>Submit</button>
+          <button className="btn btn-primary" onClick={submitPortfolioSnapshot}>{i18n("Submit")}</button>
         </div>
       </div>
       <div className="row">
-        <label><b>Last Snapshot</b></label>
-        <table className="table table-striped">
-          <thead>
-              <tr>
-                  <th>Name</th>
-                  <th>Deposit</th>
-                  <th>Quantity</th>
-                  <th>Value</th>
-                  <th></th>
-              </tr>
-          </thead>
-          <tbody>
-            {lastSnapshot.map((asset) => (
-              <tr>
-                <td>{asset.name}</td>
-                <td>{asset.deposit}</td>
-                <td>{asset.quantity}</td>
-                <td>{asset.value}</td>
-                <td></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div class="col-12">
+        <label><b>{i18n("Last Snapshot")}</b></label>
+          <table className="table table-striped">
+            <thead>
+                <tr>
+                    <th>{i18n("Name")}</th>
+                    <th>{i18n("Deposit")}</th>
+                    <th>{i18n("Quantity")}</th>
+                    <th>{i18n("Value")}</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+              {lastSnapshot.map((asset) => (
+                <tr>
+                  <td>{asset.name}</td>
+                  <td>{asset.deposit}</td>
+                  <td>{asset.quantity}</td>
+                  <td>{asset.value}</td>
+                  <td></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
     </>

@@ -68,6 +68,8 @@ export var translations = {
     "Dividend": {"en-us": "Dividend", "pt-pt": "Dividendo"},
     "Buy": {"en-us": "Buy", "pt-pt": "Compra"},
     "Sell": {"en-us": "Sell", "pt-pt": "Venda"},
+    "Assets": {"en-us": "Assets", "pt-pt": "Ativos"},
+    "Last Snapshot": {"en-us": "Last Snapshot", "pt-pt": "Último Resumo"},
 }
 
 export function i18n(text) {
