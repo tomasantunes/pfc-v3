@@ -70,6 +70,7 @@ export var translations = {
     "Sell": {"en-us": "Sell", "pt-pt": "Venda"},
     "Assets": {"en-us": "Assets", "pt-pt": "Ativos"},
     "Last Snapshot": {"en-us": "Last Snapshot", "pt-pt": "Último Resumo"},
+    "Deposit": {"en-us": "Deposit", "pt-pt": "Depósito"},
 }
 
 export function i18n(text) {
