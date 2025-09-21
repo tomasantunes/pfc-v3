@@ -4,6 +4,7 @@ import axios from 'axios';
 import config from '../config';
 import TextInputModal from './TextInputModal';
 import {i18n} from '../libs/translations';
+import Chart from "react-apexcharts";
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
@@ -20,6 +21,8 @@ export default function Home() {
   const [t212YearlyProfit, setT212YearlyProfit] = useState("");
   const [t212CurrentReturn, setT212CurrentReturn] = useState("");
   const [expenseLast12Months, setExpenseLast12Months] = useState();
+  const [expenseLast12MonthsChartOptions, setExpenseLast12MonthsChartOptions] = useState();
+  const [expenseLast12MonthsChartSeries, setExpenseLast12MonthsChartSeries] = useState();
   const [estimatedData, setEstimatedData] = useState({
     incomePerHour: "",
     incomePerDay: "",
@@ -377,6 +380,32 @@ export default function Home() {
   }, [averageDailyExpense]);
 
   useEffect(() => {
+    if (expenseLast12Months) {
+      const options = {
+        chart: {
+          id: 'expense-last-12-months',
+        },
+        plotOptions: {
+          bar: {
+            borderRadius: 4,
+            horizontal: false,
+          }
+        },
+        xaxis: {
+          categories: expenseLast12Months.map(item => (item.mnth < 10 ? "0" + item.mnth : item.mnth) + "/" + item.yr)
+        }
+      };
+
+      const series = [{
+        name: i18n("Expense Last 12 Months"),
+        data: expenseLast12Months.reverse().map(item => Number(item.monthly_sum))
+      }];
+      setExpenseLast12MonthsChartOptions(options);
+      setExpenseLast12MonthsChartSeries(series);
+    }
+  }, [expenseLast12Months])
+
+  useEffect(() => {
     getNetWorth();
     getAverageMonthlyExpense();
     getAverageDailyExpense();
@@ -408,30 +437,7 @@ export default function Home() {
               </div>
             </div>
             <div class="dashboard-section mb-3">
-              <h2>{i18n("Expenses")}</h2>
-              <div class="row">
-                <p><b>{i18n("Average Annual Expense")}:</b> {averageAnnualExpense}€</p>
-                <p><b>{i18n("Average Monthly Expense")}:</b> {averageMonthlyExpense}€</p>
-                <p><b>{i18n("Average Weekly Expense")}:</b> {averageWeeklyExpense}€</p>
-                <p><b>{i18n("Average Daily Expense")}:</b> {averageDailyExpense}€</p>
-                <p><b>{i18n("Average Hourly Expense")}:</b> {averageHourlyExpense}€</p>
-              </div>
-              <div class="row">
-                <h3>{i18n("Expense Last 12 Months")}</h3>
-              </div>
-              <div class="row">
-                {expenseLast12Months && expenseLast12Months.map((exp) => (
-                  <p><b>{exp.mnth}/{exp.yr}</b> {exp.monthly_sum}€</p>
-                ))}
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4">
-            
-          </div>
-          <div class="col-md-4">
-            <div class="dashboard-section mb-3">
-              <h2>{i18n("Estimated Data")}</h2>
+              <h2>{i18n("Earnings")}</h2>
               <p><b>{i18n("Income Per Hour")}: </b> {estimatedData.incomePerHour} <div class="pencil-btn" onClick={showIncomePerHourModal}><i class="fa-solid fa-pencil"></i></div></p>
               <p><b>{i18n("Income Per Day")}: </b> {estimatedData.incomePerDay} <div class="pencil-btn" onClick={showIncomePerDayModal}><i class="fa-solid fa-pencil"></i></div></p>
               <p><b>{i18n("Income Per Work Hour")}: </b> {estimatedData.incomePerWorkHour} <div class="pencil-btn" onClick={showIncomePerWorkHourModal}><i class="fa-solid fa-pencil"></i></div></p>
@@ -449,6 +455,32 @@ export default function Home() {
               <p><b>{i18n("Technology Benefits Per Year")}: </b> {estimatedData.technologyBenefitsPerYear} <div class="pencil-btn" onClick={showTechnologyBenefitsPerYear}><i class="fa-solid fa-pencil"></i></div></p>
               <p><b>{i18n("Gross Monthly Salary Plus Benefits")}: </b> {estimatedData.grossMonthlySalaryPlusBenefits} <div class="pencil-btn" onClick={showGrossMonthlySalaryPlusBenefits}><i class="fa-solid fa-pencil"></i></div></p>
               <p><b>{i18n("Gross Annual Salary Plus Benefits")}: </b> {estimatedData.grossAnnualSalaryPlusBenefits} <div class="pencil-btn" onClick={showGrossAnnualSalaryPlusBenefits}><i class="fa-solid fa-pencil"></i></div></p>
+            </div>
+          </div>
+          <div class="col-md-8">
+            <div class="dashboard-section mb-3">
+              <h2>{i18n("Expenses")}</h2>
+              <div class="row">
+                <p><b>{i18n("Average Annual Expense")}:</b> {averageAnnualExpense}€</p>
+                <p><b>{i18n("Average Monthly Expense")}:</b> {averageMonthlyExpense}€</p>
+                <p><b>{i18n("Average Weekly Expense")}:</b> {averageWeeklyExpense}€</p>
+                <p><b>{i18n("Average Daily Expense")}:</b> {averageDailyExpense}€</p>
+                <p><b>{i18n("Average Hourly Expense")}:</b> {averageHourlyExpense}€</p>
+              </div>
+              <div class="row">
+                <h3>{i18n("Expense Last 12 Months")}</h3>
+              </div>
+              <div class="row">
+                {expenseLast12MonthsChartOptions && expenseLast12MonthsChartSeries && (
+                  <Chart
+                    options={expenseLast12MonthsChartOptions}
+                    series={expenseLast12MonthsChartSeries}
+                    type="bar"
+                    width="800"
+                    height="500"
+                  />
+                )}
+              </div>
             </div>
           </div>
         </div>

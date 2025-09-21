@@ -10,11 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "apexcharts": "^5.3.5",
     "axios": "^1.12.2",
     "bootprompt": "^6.0.2",
     "bootstrap": "^5.3.8",
     "jquery": "^3.7.1",
     "react": "^19.1.1",
+    "react-apexcharts": "^1.7.0",
     "react-dom": "^19.1.1",
     "react-flatpickr": "^4.0.11",
     "react-router-dom": "^7.8.1",

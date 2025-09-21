@@ -889,7 +889,8 @@ app.get("/get-average-daily-expense", async (req, res) => {
     const [minRows] = await con2.execute(`
       SELECT LEAST(
         IFNULL((SELECT MIN(data_mov) FROM bpi_mov), CURDATE()),
-        IFNULL((SELECT MIN(data_mov) FROM santander_mov), CURDATE())
+        IFNULL((SELECT MIN(data_mov) FROM santander_mov), CURDATE()),
+        IFNULL((SELECT MIN(data_inicio) FROM revolut_mov), CURDATE())
       ) AS first_date
     `);
 
@@ -903,9 +904,9 @@ app.get("/get-average-daily-expense", async (req, res) => {
       FROM (
         SELECT SUM(ABS(valor)) AS total FROM bpi_mov WHERE valor < 0 AND is_expense = 1
         UNION ALL
-        SELECT SUM(ABS(valor)) FROM santander_mov WHERE valor < 0 AND is_expense = 1
+        SELECT SUM(ABS(valor)) AS valor FROM santander_mov WHERE valor < 0 AND is_expense = 1
         UNION ALL
-        SELECT SUM(ABS(montante)) FROM revolut_mov WHERE montante < 0 AND is_expense = 1
+        SELECT SUM(ABS(montante)) AS valor FROM revolut_mov WHERE montante < 0 AND is_expense = 1
       ) t
     `);
 
@@ -964,23 +965,48 @@ app.get("/get-expense-last-12-months", async (req, res) => {
     LIMIT 12;
   `);
 
+  const [rows3] = await con2.execute(`
+    SELECT 
+        YEAR(data_inicio) AS yr,
+        MONTH(data_inicio) AS mnth,
+        SUM(ABS(montante)) AS monthly_sum
+    FROM revolut_mov
+    WHERE
+        montante < 0
+        AND is_expense = 1
+        AND (
+          YEAR(data_inicio) <> YEAR(CURDATE())
+          OR MONTH(data_inicio) <> MONTH(CURDATE())
+        )
+    GROUP BY YEAR(data_inicio), MONTH(data_inicio)
+    ORDER BY yr DESC, mnth DESC
+    LIMIT 12;
+  `);
+
   const expenseLast12MonthsBpi = rows1;
   const expenseLast12MonthsSantander = rows2;
+  const expenseLast12MonthsRevolut = rows3;
   const expenseLast12Months = [];
 
-  for (var i in expenseLast12MonthsBpi) {
-    for (var j in expenseLast12MonthsSantander) { 
-      if (expenseLast12MonthsBpi[i].yr == expenseLast12MonthsSantander[j].yr && expenseLast12MonthsBpi[i].mnth == expenseLast12MonthsSantander[j].mnth) {
-        expenseLast12Months.push({
-          yr: expenseLast12MonthsBpi[i].yr,
-          mnth: expenseLast12MonthsBpi[i].mnth,
-          monthly_sum: (Number(expenseLast12MonthsBpi[i].monthly_sum) + Number(expenseLast12MonthsSantander[j].monthly_sum)).toFixed(2)
-        });
-      }
-      else {
-        expenseLast12Months.push(expenseLast12MonthsBpi[i]);
-      }
-    }
+  for (let i = 0; i < 12; i++) {
+    const date = new Date();
+    date.setMonth(date.getMonth() - (i + 1));
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+
+    const bpiEntry = expenseLast12MonthsBpi.find(entry => entry.yr === year && entry.mnth === month);
+    const santanderEntry = expenseLast12MonthsSantander.find(entry => entry.yr === year && entry.mnth === month);
+    const revolutEntry = expenseLast12MonthsRevolut.find(entry => entry.yr === year && entry.mnth === month);
+
+    const totalExpense = (bpiEntry ? Number(bpiEntry.monthly_sum) : 0) +
+                        (santanderEntry ? Number(santanderEntry.monthly_sum) : 0) +
+                        (revolutEntry ? Number(revolutEntry.monthly_sum) : 0);
+
+    expenseLast12Months.push({
+      yr: year,
+      mnth: month,
+      monthly_sum: totalExpense.toFixed(2)
+    });
   }
 
   res.json({status: "OK", data: expenseLast12Months});

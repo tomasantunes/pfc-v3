@@ -81,6 +81,7 @@ export var translations = {
     "Average Hourly Expense": {"en-us": "Average Hourly Expense", "pt-pt": "Despesa Média Horária"},
     "Income Per Work Hour": {"en-us": "Income Per Work Hour", "pt-pt": "Rendimento p/ Hora de Trabalho"},
     "Income Per Work Day": {"en-us": "Income Per Work Day", "pt-pt": "Rendimento p/ Dia de Trabalho"},
+    "Earnings": {"en-us": "Earnings", "pt-pt": "Rendimentos"},
 }
 
 export function i18n(text) {
