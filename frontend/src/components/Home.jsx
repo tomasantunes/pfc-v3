@@ -13,6 +13,9 @@ export default function Home() {
   const [netWorth, setNetWorth] = useState("");
   const [averageMonthlyExpense, setAverageMonthlyExpense] = useState("");
   const [averageDailyExpense, setAverageDailyExpense] = useState("");
+  const [averageWeeklyExpense, setAverageWeeklyExpense] = useState("");
+  const [averageHourlyExpense, setAverageHourlyExpense] = useState("");
+  const [averageAnnualExpense, setAverageAnnualExpense] = useState("");
   const [cryptoProfit, setCryptoProfit] = useState("");
   const [t212YearlyProfit, setT212YearlyProfit] = useState("");
   const [t212CurrentReturn, setT212CurrentReturn] = useState("");
@@ -50,7 +53,7 @@ export default function Home() {
   function getAverageMonthlyExpense() {
     axios.get(config.BASE_URL + "/get-average-monthly-expense")
     .then(function(response) {
-      setAverageMonthlyExpense(response.data.data.toString() + "€");
+      setAverageMonthlyExpense(response.data.data.toString());
     })
     .catch(function(err) {
       MySwal.fire("Error: " + err.message);
@@ -60,11 +63,23 @@ export default function Home() {
   function getAverageDailyExpense() {
     axios.get(config.BASE_URL + "/get-average-daily-expense")
     .then(function(response) {
-      setAverageDailyExpense(response.data.data.toString() + "€");
+      setAverageDailyExpense(response.data.data.toString());
     })
     .catch(function(err) {
       MySwal.fire("Error: " + err.message);
     });
+  }
+
+  function getAverageWeeklyExpense() {
+    setAverageWeeklyExpense((Number(averageMonthlyExpense) / 4).toFixed(2));
+  }
+
+  function getAverageHourlyExpense() {
+    setAverageHourlyExpense((Number(averageDailyExpense) / 24).toFixed(2))
+  }
+
+  function getAverageAnnualExpense() {
+    setAverageAnnualExpense((Number(averageMonthlyExpense) * 12).toFixed(2));
   }
 
   function getCryptoProfit() {
@@ -353,6 +368,15 @@ export default function Home() {
   }
 
   useEffect(() => {
+    getAverageWeeklyExpense();
+    getAverageAnnualExpense();
+  }, [averageMonthlyExpense]);
+
+  useEffect(() => {
+    getAverageHourlyExpense();
+  }, [averageDailyExpense]);
+
+  useEffect(() => {
     getNetWorth();
     getAverageMonthlyExpense();
     getAverageDailyExpense();
@@ -374,20 +398,26 @@ export default function Home() {
           <div class="col-md-4">
             <div class="dashboard-section mb-3">
               <div class="row">
-                <h2>{i18n("General Stats")}</h2>
+                <h2>{i18n("Returns")}</h2>
               </div>
               <div class="row">
                 <p><b>{i18n("Net Worth")}:</b> {netWorth}</p>
-                <p><b>{i18n("Average Monthly Expense")}:</b> {averageMonthlyExpense}</p>
-                <p><b>{i18n("Average Daily Expense")}:</b> {averageDailyExpense}</p>
                 <p><b>{i18n("T212 Sales") + " " + new Date().getFullYear()}:</b> {t212YearlyProfit}</p>
                 <p><b>{i18n("T212 Current Return")}:</b> {t212CurrentReturn}</p>
                 <p><b>{i18n("Crypto Profit")}:</b> {cryptoProfit}</p>
               </div>
             </div>
             <div class="dashboard-section mb-3">
+              <h2>{i18n("Expenses")}</h2>
               <div class="row">
-                <h2>{i18n("Expense Last 12 Months")}</h2>
+                <p><b>{i18n("Average Annual Expense")}:</b> {averageAnnualExpense}€</p>
+                <p><b>{i18n("Average Monthly Expense")}:</b> {averageMonthlyExpense}€</p>
+                <p><b>{i18n("Average Weekly Expense")}:</b> {averageWeeklyExpense}€</p>
+                <p><b>{i18n("Average Daily Expense")}:</b> {averageDailyExpense}€</p>
+                <p><b>{i18n("Average Hourly Expense")}:</b> {averageHourlyExpense}€</p>
+              </div>
+              <div class="row">
+                <h3>{i18n("Expense Last 12 Months")}</h3>
               </div>
               <div class="row">
                 {expenseLast12Months && expenseLast12Months.map((exp) => (

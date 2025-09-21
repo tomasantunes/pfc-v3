@@ -71,6 +71,16 @@ export var translations = {
     "Assets": {"en-us": "Assets", "pt-pt": "Ativos"},
     "Last Snapshot": {"en-us": "Last Snapshot", "pt-pt": "Último Resumo"},
     "Deposit": {"en-us": "Deposit", "pt-pt": "Depósito"},
+    "Returns": {"en-us": "Returns", "pt-pt": "Retornos"},
+    "Expenses": {"en-us": "Expenses", "pt-pt": "Despesas"},
+    "Crypto Profit": {"en-us": "Crypto Profit", "pt-pt": "Lucro Criptomoedas"},
+    "T212 Sales 2025": {"en-us": "T212 Sales 2025", "pt-pt": "Vendas T212 2025"},
+    "T212 Current Return": {"en-us": "T212 Current Return", "pt-pt": "Retorno Atual T212"},
+    "Average Annual Expense": {"en-us": "Average Annual Expense", "pt-pt": "Despesa Média Anual"},
+    "Average Weekly Expense": {"en-us": "Average Weekly Expense", "pt-pt": "Despesa Média Semanal"},
+    "Average Hourly Expense": {"en-us": "Average Hourly Expense", "pt-pt": "Despesa Média Horária"},
+    "Income Per Work Hour": {"en-us": "Income Per Work Hour", "pt-pt": "Rendimento p/ Hora de Trabalho"},
+    "Income Per Work Day": {"en-us": "Income Per Work Day", "pt-pt": "Rendimento p/ Dia de Trabalho"},
 }
 
 export function i18n(text) {
@@ -81,10 +91,10 @@ export function i18n(text) {
         return translations[text][currentLanguage];
     }
     else if (translations[text2]?.[currentLanguage]) {
-        return translations[text][currentLanguage];
+        return translations[text]?.[currentLanguage] || text;
     }
     else if (translations[text3]?.[currentLanguage]) {
-        return translations[text][currentLanguage];
+        return translations[text]?.[currentLanguage] || text;
     }
     else {
         return text;
