@@ -26,6 +26,21 @@ CREATE TABLE santander_mov (
     is_original BOOLEAN DEFAULT 1
 );
 
+CREATE TABLE revolut_mov (
+    id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    data_inicio DATETIME,
+    data_fim DATETIME,
+    tipo VARCHAR(256),
+    produto VARCHAR(256),
+    descricao VARCHAR(256),
+    montante DECIMAL(17, 2),
+    comissao DECIMAL(17, 2),
+    moeda VARCHAR(10),
+    estado VARCHAR(50),
+    saldo DECIMAL(17, 2),
+    is_expense BOOLEAN DEFAULT 0
+);
+
 CREATE TABLE paypal_mov (
     id INT(11) AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(256),

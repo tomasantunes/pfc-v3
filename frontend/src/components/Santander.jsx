@@ -54,7 +54,7 @@ export default function Santander() {
   }
 
   function toggleIsExpense(id) {
-    axios.post(config.BASE_URL + "/toggle-is-expense", {id: id})
+    axios.post(config.BASE_URL + "/santander/toggle-is-expense", {id: id})
     .then(function(response) {
       if (response.data.status == "OK") {
         MySwal.fire(i18n("Movement has been updated successfully."));

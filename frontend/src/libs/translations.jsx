@@ -75,11 +75,8 @@ export var translations = {
 
 export function i18n(text) {
     var currentLanguage = localStorage.getItem("language");
-    console.log("Original: " + text);
     var text2 = text + ".";
-    console.log("With dot: " + text2);
     var text3 = text.slice(0, -1);
-    console.log("Without dot: " + text3);
     if (translations[text]?.[currentLanguage]) {
         return translations[text][currentLanguage];
     }
