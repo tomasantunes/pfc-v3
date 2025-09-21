@@ -904,6 +904,8 @@ app.get("/get-average-daily-expense", async (req, res) => {
         SELECT SUM(ABS(valor)) AS total FROM bpi_mov WHERE valor < 0 AND is_expense = 1
         UNION ALL
         SELECT SUM(ABS(valor)) FROM santander_mov WHERE valor < 0 AND is_expense = 1
+        UNION ALL
+        SELECT SUM(ABS(montante)) FROM revolut_mov WHERE montante < 0 AND is_expense = 1
       ) t
     `);
 
