@@ -846,49 +846,36 @@ app.get("/get-average-monthly-expense", async (req, res) => {
     return;
   }
 
-  const [rows1] = await con2.execute(`
-    SELECT
-        AVG(monthly_expenses.monthly_sum) AS average_monthly_expense
+  const [rows] = await con2.execute(`
+    SELECT AVG(monthly_expense) AS average_monthly_expense
     FROM (
-        SELECT
-            YEAR(data_mov) AS yr,
-            MONTH(data_mov) AS mnth,
-            SUM(ABS(valor)) AS monthly_sum
+      SELECT DATE_FORMAT(date, '%Y-%m') AS ym, 
+             SUM(ABS(amount)) AS monthly_expense
+      FROM (
+        SELECT data_mov AS date, valor AS amount
         FROM bpi_mov
-        WHERE
-          valor < 0
-          AND is_expense = 1
-          AND (
-              YEAR(data_mov) <> YEAR(CURDATE())
-              OR MONTH(data_mov) <> MONTH(CURDATE())
-          )
-        GROUP BY YEAR(data_mov), MONTH(data_mov)
-    ) AS monthly_expenses
-  `);
+        WHERE is_expense = 1 AND valor < 0
 
-  const [rows2] = await con2.execute(`
-    SELECT
-        AVG(monthly_expenses.monthly_sum) AS average_monthly_expense
-    FROM (
-        SELECT
-            YEAR(data_mov) AS yr,
-            MONTH(data_mov) AS mnth,
-            SUM(ABS(valor)) AS monthly_sum
+        UNION ALL
+
+        SELECT data_mov AS date, valor AS amount
         FROM santander_mov
-        WHERE
-          valor < 0
-          AND is_expense = 1
-          AND (
-              YEAR(data_mov) <> YEAR(CURDATE())
-              OR MONTH(data_mov) <> MONTH(CURDATE())
-          )
-        GROUP BY YEAR(data_mov), MONTH(data_mov)
-    ) AS monthly_expenses
+        WHERE is_expense = 1 AND valor < 0
+
+        UNION ALL
+
+        SELECT data_inicio AS date, montante AS amount
+        FROM revolut_mov
+        WHERE is_expense = 1 AND montante < 0
+      ) t
+      WHERE date < DATE_FORMAT(CURDATE(), '%Y-%m-01')
+      GROUP BY ym
+    ) m
   `);
 
-  const averageMonthlyExpenseBpi = Number(rows1[0].average_monthly_expense) || 0;
-  const averageMonthlyExpenseSantander = Number(rows2[0].average_monthly_expense) || 0;
-  const averageMonthlyExpense = (averageMonthlyExpenseBpi + averageMonthlyExpenseSantander).toFixed(2);
+  console.log(rows);
+  let averageMonthlyExpense = Number(rows[0].average_monthly_expense) || 0;
+  averageMonthlyExpense = averageMonthlyExpense.toFixed(2);
   res.json({status: "OK", data: averageMonthlyExpense});
 });
 
