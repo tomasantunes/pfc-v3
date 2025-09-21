@@ -2,25 +2,7 @@
 
 ## EM CURSO
 
-- Escrever traduções de todos os termos visíveis da app em Inglês e Português.
-- Nessa div colocar uma lista de campos editáveis com um ícone de lápis e um prompt:
-    - Rendimento p/ hora
-    - Rendimento p/ dia
-    - Rendimento p/ semana
-    - Rendimento p/ mês
-    - Rendimento p/ ano
-    - Salário p/ Mês Líquido (14 meses)
-    - Salário p/ Ano Líquido (14 meses)
-    - Salário p/ Mês Bruto (14 meses)
-    - Salário p/ Mês Bruto (14 meses)
-
-- Tal como para a despesa média mensal mostrar também:
-    - Despesa média por hora
-    - Despesa média por dia - FEITO
-    - Despesa média por semana
-    - Despesa média por mês. - FEITO
-    - Despesa média anual.
-
+- Transformar despesa dos últimos 12 meses num gráfico de barras.
 - Criar página para orçamento mensal.
 
 ## MAIS TARDE
