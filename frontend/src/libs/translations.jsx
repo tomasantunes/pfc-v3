@@ -31,7 +31,7 @@ export var translations = {
     "Actions": {"en-us": "Actions", "pt-pt": "Acões"},
     "Yes": {"en-us": "Yes", "pt-pt": "Sim"},
     "No": {"en-us": "No", "pt-pt": "Não"},
-    "Benefits Per Year": {"en-us" : "Benefits Per Year", "pt-pt": "Benefícios p/ Ano"},
+    "Total Benefits Per Year": {"en-us" : "Total Benefits Per Year", "pt-pt": "Benefícios Totais p/ Ano"},
     "Expense Benefits Per Year": {"en-us" : "Expense Benefits Per Year", "pt-pt": "Benefícios de Despesas p/ Ano"},
     "Food Assistance Per Year": {"en-us" : "Food Assistance Per Year", "pt-pt": "Subsídio de Alimentação p/ Ano"},
     "Technology Benefits Per Year": {"en-us" : "Technology Benefits Per Year", "pt-pt": "Benefícios de Tecnologia p/ Ano"},
@@ -82,6 +82,18 @@ export var translations = {
     "Income Per Work Hour": {"en-us": "Income Per Work Hour", "pt-pt": "Rendimento p/ Hora de Trabalho"},
     "Income Per Work Day": {"en-us": "Income Per Work Day", "pt-pt": "Rendimento p/ Dia de Trabalho"},
     "Earnings": {"en-us": "Earnings", "pt-pt": "Rendimentos"},
+    "Benefits Annual Expense": {"en-us": "Benefits Annual Expense", "pt-pt": "Despesa Anual de Benefícios"},
+    "Benefits Monthly Expense": {"en-us": "Benefits Monthly Expense", "pt-pt": "Despesa Mensal de Benefícios"},
+    "Benefits Weekly Expense": {"en-us": "Benefits Weekly Expense", "pt-pt": "Despesa Semanal de Benefícios"},
+    "Benefits Daily Expense": {"en-us": "Benefits Daily Expense", "pt-pt": "Despesa Diária de Benefícios"},
+    "Benefits Hourly Expense": {"en-us": "Benefits Hourly Expense", "pt-pt": "Despesa Horária de Benefícios"},
+    "Total Annual Expense": {"en-us": "Total Annual Expense", "pt-pt": "Despesa Anual Total"},
+    "Total Monthly Expense": {"en-us": "Total Monthly Expense", "pt-pt": "Despesa Mensal Total"},
+    "Total Weekly Expense": {"en-us": "Total Weekly Expense", "pt-pt": "Despesa Semanal Total"},
+    "Total Daily Expense": {"en-us": "Total Daily Expense", "pt-pt": "Despesa Diária Total"},
+    "Total Hourly Expense": {"en-us": "Total Hourly Expense", "pt-pt": "Despesa Horária Total"},
+    "Total Expenses": {"en-us": "Total Expenses", "pt-pt": "Despesas Totais"},
+    "Average Cash Expenses": {"en-us": "Average Cash Expenses", "pt-pt": "Despesas Médias em Dinheiro"},
 }
 
 export function i18n(text) {

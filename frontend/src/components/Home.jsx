@@ -23,6 +23,16 @@ export default function Home() {
   const [expenseLast12Months, setExpenseLast12Months] = useState();
   const [expenseLast12MonthsChartOptions, setExpenseLast12MonthsChartOptions] = useState();
   const [expenseLast12MonthsChartSeries, setExpenseLast12MonthsChartSeries] = useState();
+  const [benefitsAnnualExpense, setBenefitsAnnualExpense] = useState("0");
+  const [benefitsMonthlyExpense, setBenefitsMonthlyExpense] = useState("0");
+  const [benefitsWeeklyExpense, setBenefitsWeeklyExpense] = useState("0");
+  const [benefitsDailyExpense, setBenefitsDailyExpense] = useState("0");
+  const [benefitsHourlyExpense, setBenefitsHourlyExpense] = useState("0");
+  const [totalAnnualExpense, setTotalAnnualExpense] = useState("0");
+  const [totalMonthlyExpense, setTotalMonthlyExpense] = useState("0");
+  const [totalWeeklyExpense, setTotalWeeklyExpense] = useState("0");
+  const [totalDailyExpense, setTotalDailyExpense] = useState("0");
+  const [totalHourlyExpense, setTotalHourlyExpense] = useState("0");
   const [estimatedData, setEstimatedData] = useState({
     incomePerHour: "",
     incomePerDay: "",
@@ -370,6 +380,45 @@ export default function Home() {
     });
   }
 
+  function getBenefitsExpenses() {
+    if (!estimatedData.benefitsPerYear || estimatedData.benefitsPerYear == "") return;
+    setBenefitsAnnualExpense(estimatedData.benefitsPerYear);
+    setBenefitsMonthlyExpense((Number(estimatedData.benefitsPerYear) / 12).toFixed(2));
+    setBenefitsWeeklyExpense((Number(estimatedData.benefitsPerYear) / 52).toFixed(2));
+    setBenefitsDailyExpense((Number(estimatedData.benefitsPerYear) / 365).toFixed(2));
+    setBenefitsHourlyExpense((Number(estimatedData.benefitsPerYear) / 8760).toFixed(2));
+  }
+
+  function getTotalAnnualExpense() {
+    if (
+      !averageAnnualExpense || 
+      averageAnnualExpense == "" || 
+      !benefitsAnnualExpense || 
+      benefitsAnnualExpense == "" ||
+      !averageMonthlyExpense ||
+      averageMonthlyExpense == "" ||
+      !averageWeeklyExpense ||
+      averageWeeklyExpense == "" ||
+      !averageDailyExpense ||
+      averageDailyExpense == "" ||
+      !averageHourlyExpense ||
+      averageHourlyExpense == "" ||
+      !benefitsMonthlyExpense ||
+      benefitsMonthlyExpense == "" ||
+      !benefitsWeeklyExpense ||
+      benefitsWeeklyExpense == "" ||
+      !benefitsDailyExpense ||
+      benefitsDailyExpense == "" ||
+      !benefitsHourlyExpense ||
+      benefitsHourlyExpense == ""
+    ) return;
+    setTotalAnnualExpense((Number(averageAnnualExpense) + Number(benefitsAnnualExpense)).toFixed(2));
+    setTotalMonthlyExpense((Number(averageMonthlyExpense) + Number(benefitsMonthlyExpense)).toFixed(2));
+    setTotalWeeklyExpense(((Number(averageWeeklyExpense) + Number(benefitsWeeklyExpense))).toFixed(2));
+    setTotalDailyExpense(((Number(averageDailyExpense) + Number(benefitsDailyExpense))).toFixed(2));
+    setTotalHourlyExpense(((Number(averageHourlyExpense) + Number(benefitsHourlyExpense))).toFixed(2));
+  }
+
   useEffect(() => {
     getAverageWeeklyExpense();
     getAverageAnnualExpense();
@@ -378,6 +427,10 @@ export default function Home() {
   useEffect(() => {
     getAverageHourlyExpense();
   }, [averageDailyExpense]);
+
+  useEffect(() => {
+    getBenefitsExpenses();
+  }, [estimatedData]);
 
   useEffect(() => {
     if (expenseLast12Months) {
@@ -403,7 +456,22 @@ export default function Home() {
       setExpenseLast12MonthsChartOptions(options);
       setExpenseLast12MonthsChartSeries(series);
     }
-  }, [expenseLast12Months])
+  }, [expenseLast12Months]);
+
+  useEffect(() => {
+    getTotalAnnualExpense();
+  }, [
+    averageAnnualExpense, 
+    averageMonthlyExpense, 
+    averageWeeklyExpense, 
+    averageDailyExpense, 
+    averageHourlyExpense,
+    benefitsAnnualExpense, 
+    benefitsMonthlyExpense, 
+    benefitsWeeklyExpense, 
+    benefitsDailyExpense, 
+    benefitsHourlyExpense
+  ]);
 
   useEffect(() => {
     getNetWorth();
@@ -438,35 +506,32 @@ export default function Home() {
             </div>
             <div class="dashboard-section mb-3">
               <h2>{i18n("Earnings")}</h2>
-              <p><b>{i18n("Income Per Hour")}: </b> {estimatedData.incomePerHour} <div class="pencil-btn" onClick={showIncomePerHourModal}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>{i18n("Income Per Day")}: </b> {estimatedData.incomePerDay} <div class="pencil-btn" onClick={showIncomePerDayModal}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>{i18n("Income Per Work Hour")}: </b> {estimatedData.incomePerWorkHour} <div class="pencil-btn" onClick={showIncomePerWorkHourModal}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>{i18n("Income Per Work Day")}: </b> {estimatedData.incomePerWorkDay} <div class="pencil-btn" onClick={showIncomePerWorkDayModal}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>{i18n("Income Per Week")}: </b> {estimatedData.incomePerWeek} <div class="pencil-btn" onClick={showIncomePerWeekModal}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>{i18n("Income Per Month")}:  </b> {estimatedData.incomePerMonth} <div class="pencil-btn" onClick={showIncomePerMonthModal}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>{i18n("Income Per Year")}: </b> {estimatedData.incomePerYear} <div class="pencil-btn" onClick={showIncomePerYearModal}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>{i18n("Net Monthly Salary")}: </b> {estimatedData.netSalaryPerMonth} <div class="pencil-btn" onClick={showNetSalaryPerMonth}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>{i18n("Net Annual Salary")}:  </b>{estimatedData.netSalaryPerYear} <div class="pencil-btn" onClick={showNetSalaryPerYear}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>{i18n("Gross Monthly Salary")}: </b> {estimatedData.grossSalaryPerMonth} <div class="pencil-btn" onClick={showGrossSalaryPerMonth}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>{i18n("Gross Annual Salary")}: </b> {estimatedData.grossSalaryPerYear} <div class="pencil-btn" onClick={showGrossSalaryPerYear}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>{i18n("Benefits Per Year")}: </b> {estimatedData.benefitsPerYear} <div class="pencil-btn" onClick={showBenefitsPerYear}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>{i18n("Expense Benefits Per Year")}: </b> {estimatedData.expenseBenefitsPerYear} <div class="pencil-btn" onClick={showExpenseBenefitsPerYear}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>{i18n("Food Assistance Per Year")}: </b> {estimatedData.foodAssistancePerYear} <div class="pencil-btn" onClick={showFoodAssistancePerYear}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>{i18n("Technology Benefits Per Year")}: </b> {estimatedData.technologyBenefitsPerYear} <div class="pencil-btn" onClick={showTechnologyBenefitsPerYear}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>{i18n("Gross Monthly Salary Plus Benefits")}: </b> {estimatedData.grossMonthlySalaryPlusBenefits} <div class="pencil-btn" onClick={showGrossMonthlySalaryPlusBenefits}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>{i18n("Gross Annual Salary Plus Benefits")}: </b> {estimatedData.grossAnnualSalaryPlusBenefits} <div class="pencil-btn" onClick={showGrossAnnualSalaryPlusBenefits}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Income Per Hour")}: </b> {estimatedData.incomePerHour}€ <div class="pencil-btn" onClick={showIncomePerHourModal}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Income Per Day")}: </b> {estimatedData.incomePerDay}€ <div class="pencil-btn" onClick={showIncomePerDayModal}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Income Per Work Hour")}: </b> {estimatedData.incomePerWorkHour}€ <div class="pencil-btn" onClick={showIncomePerWorkHourModal}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Income Per Work Day")}: </b> {estimatedData.incomePerWorkDay}€ <div class="pencil-btn" onClick={showIncomePerWorkDayModal}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Income Per Week")}: </b> {estimatedData.incomePerWeek}€ <div class="pencil-btn" onClick={showIncomePerWeekModal}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Income Per Month")}:  </b> {estimatedData.incomePerMonth}€ <div class="pencil-btn" onClick={showIncomePerMonthModal}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Income Per Year")}: </b> {estimatedData.incomePerYear}€ <div class="pencil-btn" onClick={showIncomePerYearModal}><i class="fa-solid fa-pencil"></i></div></p>
+              <hr />
+              <p><b>{i18n("Net Monthly Salary")}: </b> {estimatedData.netSalaryPerMonth}€ <div class="pencil-btn" onClick={showNetSalaryPerMonth}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Net Annual Salary")}:  </b>{estimatedData.netSalaryPerYear}€ <div class="pencil-btn" onClick={showNetSalaryPerYear}><i class="fa-solid fa-pencil"></i></div></p>
+              <hr />
+              <p><b>{i18n("Gross Monthly Salary")}: </b> {estimatedData.grossSalaryPerMonth}€ <div class="pencil-btn" onClick={showGrossSalaryPerMonth}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Gross Annual Salary")}: </b> {estimatedData.grossSalaryPerYear}€ <div class="pencil-btn" onClick={showGrossSalaryPerYear}><i class="fa-solid fa-pencil"></i></div></p>
+              <hr />
+              <p><b>{i18n("Gross Monthly Salary Plus Benefits")}: </b> {estimatedData.grossMonthlySalaryPlusBenefits}€ <div class="pencil-btn" onClick={showGrossMonthlySalaryPlusBenefits}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Gross Annual Salary Plus Benefits")}: </b> {estimatedData.grossAnnualSalaryPlusBenefits}€ <div class="pencil-btn" onClick={showGrossAnnualSalaryPlusBenefits}><i class="fa-solid fa-pencil"></i></div></p>
+              <hr />
+              <p><b>{i18n("Total Benefits Per Year")}: </b> {estimatedData.benefitsPerYear}€ <div class="pencil-btn" onClick={showBenefitsPerYear}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Expense Benefits Per Year")}: </b> {estimatedData.expenseBenefitsPerYear}€ <div class="pencil-btn" onClick={showExpenseBenefitsPerYear}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Food Assistance Per Year")}: </b> {estimatedData.foodAssistancePerYear}€ <div class="pencil-btn" onClick={showFoodAssistancePerYear}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Technology Benefits Per Year")}: </b> {estimatedData.technologyBenefitsPerYear}€ <div class="pencil-btn" onClick={showTechnologyBenefitsPerYear}><i class="fa-solid fa-pencil"></i></div></p>
             </div>
           </div>
           <div class="col-md-8">
             <div class="dashboard-section mb-3">
               <h2>{i18n("Expenses")}</h2>
-              <div class="row">
-                <p><b>{i18n("Average Annual Expense")}:</b> {averageAnnualExpense}€</p>
-                <p><b>{i18n("Average Monthly Expense")}:</b> {averageMonthlyExpense}€</p>
-                <p><b>{i18n("Average Weekly Expense")}:</b> {averageWeeklyExpense}€</p>
-                <p><b>{i18n("Average Daily Expense")}:</b> {averageDailyExpense}€</p>
-                <p><b>{i18n("Average Hourly Expense")}:</b> {averageHourlyExpense}€</p>
-              </div>
               <div class="row">
                 <h3>{i18n("Expense Last 12 Months")}</h3>
               </div>
@@ -480,6 +545,33 @@ export default function Home() {
                     height="500"
                   />
                 )}
+              </div>
+              <hr />
+              <h3>{i18n("Total Expenses")}</h3>
+              <div class="row">
+                <p><b>{i18n("Total Annual Expense")}:</b> {totalAnnualExpense}€</p>
+                <p><b>{i18n("Total Monthly Expense")}:</b> {totalMonthlyExpense}€</p>
+                <p><b>{i18n("Total Weekly Expense")}:</b> {totalWeeklyExpense}€</p>
+                <p><b>{i18n("Total Daily Expense")}:</b> {totalDailyExpense}€</p>
+                <p><b>{i18n("Total Hourly Expense")}:</b> {totalHourlyExpense}€</p>
+              </div>
+              <hr />
+              <h3>{i18n("Average Cash Expenses")}</h3>
+              <div class="row">
+                <p><b>{i18n("Average Annual Expense")}:</b> {averageAnnualExpense}€</p>
+                <p><b>{i18n("Average Monthly Expense")}:</b> {averageMonthlyExpense}€</p>
+                <p><b>{i18n("Average Weekly Expense")}:</b> {averageWeeklyExpense}€</p>
+                <p><b>{i18n("Average Daily Expense")}:</b> {averageDailyExpense}€</p>
+                <p><b>{i18n("Average Hourly Expense")}:</b> {averageHourlyExpense}€</p>
+              </div>
+              <hr />
+              <h3>{i18n("Benefits Expenses")}</h3>
+              <div class="row">
+                <p><b>{i18n("Benefits Annual Expense")}:</b> {benefitsAnnualExpense}€</p>
+                <p><b>{i18n("Benefits Monthly Expense")}:</b> {benefitsMonthlyExpense}€</p>
+                <p><b>{i18n("Benefits Weekly Expense")}:</b> {benefitsWeeklyExpense}€</p>
+                <p><b>{i18n("Benefits Daily Expense")}:</b> {benefitsDailyExpense}€</p>
+                <p><b>{i18n("Benefits Hourly Expense")}:</b> {benefitsHourlyExpense}€</p>
               </div>
             </div>
           </div>
