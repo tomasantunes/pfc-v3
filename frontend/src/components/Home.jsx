@@ -14,6 +14,7 @@ const MySwal = withReactContent(Swal);
 
 export default function Home() {
   const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [netWorth, setNetWorth] = useState("");
   const [averageMonthlyExpense, setAverageMonthlyExpense] = useState("");
   const [averageDailyExpense, setAverageDailyExpense] = useState("");
@@ -481,6 +482,9 @@ export default function Home() {
       if (!isLoggedIn) {
         navigate("/login");
       }
+      else {
+        setIsLoggedIn(true);
+      }
     })
   }
 
@@ -502,6 +506,7 @@ export default function Home() {
     getEstimatedData();
   }, []);
 
+  if (isLoggedIn) {
   return (
     <>
       <Navbar />
@@ -699,4 +704,8 @@ export default function Home() {
       />
     </>
   )
+  }
+  else {
+    return (<></>);
+  }
 }

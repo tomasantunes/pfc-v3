@@ -58,14 +58,9 @@ router.get("/check-login", (req, res) => {
   }
 });
 
-router.get("/api/logout", (req, res) => {
-  if (req.session.isLoggedIn) {
-    req.session.isLoggedIn = false;
-    res.redirect("/");
-  }
-  else {
-    res.json({status: "NOK", error: "You can't logout because you are not logged in."});
-  }
+router.post("/api/logout", (req, res) => {
+  req.session.isLoggedIn = false;
+  res.json({status: "OK", data: "User has logged out."})
 });
 
 module.exports = router;

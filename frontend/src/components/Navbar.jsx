@@ -1,9 +1,18 @@
 import React, {useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 import {NavLink} from 'react-router-dom';
 import {i18n, getLanguages, setLanguage} from '../libs/translations';
+import axios from 'axios';
 
 export default function Navbar() {
-    const [languages, setLanguages] = useState(getLanguages());
+  const navigate = useNavigate();
+  const [languages, setLanguages] = useState(getLanguages());
+
+  function logout() {
+    axios.post("/api/logout");
+    navigate("/login");
+  }
+
   return (
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
@@ -58,7 +67,7 @@ export default function Navbar() {
                 </div>
             </div>
             <div class="logout-btn">
-                <a href="/api/logout"><i class="fa-solid fa-right-from-bracket"></i></a>
+                <div onClick={logout} style={{cursor: "pointer"}}><i class="fa-solid fa-right-from-bracket"></i></div>
             </div>
         </div>
     </nav>
