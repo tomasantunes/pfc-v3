@@ -38,13 +38,24 @@ router.post("/api/check-login", (req, res) => {
       else {
         var sql2 = "INSERT INTO logins (is_valid) VALUES (0);";
         con.query(sql2);
+        req.session.isLoggedIn = false;
         res.json({status: "NOK", error: "Wrong username/password."});
       }
     }
     else {
+      req.session.isLoggedIn = false;
       res.json({status: "NOK", error: "Too many login attempts."});
     }
   });
+});
+
+router.get("/check-login", (req, res) => {
+  if (req.session.isLoggedIn) {
+    res.json({status: "OK"});
+  }
+  else {
+    res.json({status: "NOK"});
+  }
 });
 
 router.get("/api/logout", (req, res) => {

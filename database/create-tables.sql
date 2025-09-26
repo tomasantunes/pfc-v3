@@ -72,6 +72,19 @@ CREATE TABLE t212_account_activity (
     quantity DECIMAL(17, 5),
     price DECIMAL(17,2),
     value DECIMAL(17,2),
+    `return` DECIMAL(17, 2) DEFAULT 0,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE revolut_account_activity (
+    id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    date_mov DATE,
+    type VARCHAR(256),
+    name VARCHAR(256),
+    quantity DECIMAL(17, 5),
+    price DECIMAL(17,2),
+    value DECIMAL(17,2),
+    `return` DECIMAL(17, 2) DEFAULT 0,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -152,4 +165,3 @@ ALTER TABLE estimated_data ADD COLUMN foodAssistancePerYear DECIMAL(17, 2) DEFAU
 ALTER TABLE estimated_data ADD COLUMN technologyBenefitsPerYear DECIMAL(17, 2) DEFAULT 0;
 ALTER TABLE estimated_data ADD COLUMN grossMonthlySalaryPlusBenefits DECIMAL(17, 2) DEFAULT 0;
 ALTER TABLE estimated_data ADD COLUMN grossAnnualSalaryPlusBenefits DECIMAL(17, 2) DEFAULT 0;
-ALTER TABLE t212_account_activity ADD COLUMN `return` DECIMAL(17, 2) DEFAULT 0;

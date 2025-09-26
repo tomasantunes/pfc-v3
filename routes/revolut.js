@@ -121,4 +121,92 @@ router.post("/revolut/toggle-is-expense", (req, res) => {
   });
 });
 
+router.post("/insert-account-movement-revolut", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var date = req.body.date;
+  var type = req.body.type;
+  var name = req.body.name;
+  var quantity = req.body.quantity;
+  var price = req.body.price;
+  var value = req.body.value;
+
+  var sql = "INSERT INTO revolut_account_activity (date_mov, type, name, quantity, price, value) VALUES (?, ?, ?, ?, ?, ?)";
+  con.query(sql, [date, type, name, quantity, price, value], function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: "There was an error inserting the account movement."});
+      return;
+    }
+    res.json({status: "OK", data: "Account movement has been inserted successfully."});
+  });
+});
+
+router.get("/get-account-activity-revolut", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  const [rows] = await con2.execute(`
+        SELECT 
+            id,
+            date_mov,
+            name,
+            type,
+            quantity, 
+            price,
+            value,
+            \`return\`,
+            YEAR(date_mov) as year 
+        FROM revolut_account_activity 
+        ORDER BY date_mov DESC, id DESC
+    `);
+
+    const groupedByYear = rows.reduce((acc, row) => {
+        const year = row.year.toString();
+        
+        if (!acc[year]) {
+            acc[year] = [];
+        }
+        
+        const { year: _, ...rowData } = row;
+        acc[year].push(rowData);
+        
+        return acc;
+    }, {});
+
+    res.json({status: "OK", data: groupedByYear});
+});
+
+router.post("/update-account-movement-revolut", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+  var id = req.body.id;
+  var updatedValues = {
+    date_mov: req.body.date_mov,
+    type: req.body.type,
+    name: req.body.name,
+    quantity: req.body.quantity,
+    price: req.body.price,
+    value: req.body.value,
+    return: req.body.return
+  };
+
+  var sql = "UPDATE revolut_account_activity SET date_mov = ?, type = ?, name = ?, quantity = ?, price = ?, value = ?, `return` = ? WHERE id = ?";
+  con.query(sql, [updatedValues.date_mov, updatedValues.type, updatedValues.name, updatedValues.quantity, updatedValues.price, updatedValues.value, updatedValues.return, id], function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: "There was an error updating the account movement."});
+      return;
+    }
+    res.json({status: "OK", data: "Account movement has been updated successfully."});
+  });
+});
+
 module.exports = router;

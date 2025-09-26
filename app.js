@@ -62,9 +62,7 @@ app.use('/', t212Router);
 app.use('/', coinbaseRouter);
 app.use('/', binanceRouter);
 app.use('/', estimatedDataRouter);
-app.use('/', indexRouter);
 app.use(express.static(path.resolve(__dirname) + '/frontend/dist'));
-app.use('/', viewsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

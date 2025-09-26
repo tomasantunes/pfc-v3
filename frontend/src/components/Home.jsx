@@ -1,4 +1,6 @@
 import React, {useEffect, useState} from 'react';
+import {useNavigate} from "react-router-dom";
+import {requestCheckLogin} from "../libs/auth";
 import Navbar from './Navbar';
 import axios from 'axios';
 import config from '../config';
@@ -11,6 +13,7 @@ import withReactContent from 'sweetalert2-react-content';
 const MySwal = withReactContent(Swal);
 
 export default function Home() {
+  const navigate = useNavigate();
   const [netWorth, setNetWorth] = useState("");
   const [averageMonthlyExpense, setAverageMonthlyExpense] = useState("");
   const [averageDailyExpense, setAverageDailyExpense] = useState("");
@@ -56,30 +59,30 @@ export default function Home() {
   function getNetWorth() {
     axios.get(config.BASE_URL + "/get-net-worth")
     .then(function(response) {
-      setNetWorth(response.data.data.toString() + "€");
+      setNetWorth(response.data.data?.toString() + "€");
     })
     .catch(function(err) {
-      MySwal.fire("Error: " + err.message);
+      showError(err.message);
     });
   }
 
   function getAverageMonthlyExpense() {
     axios.get(config.BASE_URL + "/get-average-monthly-expense")
     .then(function(response) {
-      setAverageMonthlyExpense(response.data.data.toString());
+      setAverageMonthlyExpense(response.data.data?.toString());
     })
     .catch(function(err) {
-      MySwal.fire("Error: " + err.message);
+      showError(err.message);
     });
   }
 
   function getAverageDailyExpense() {
     axios.get(config.BASE_URL + "/get-average-daily-expense")
     .then(function(response) {
-      setAverageDailyExpense(response.data.data.toString());
+      setAverageDailyExpense(response.data.data?.toString());
     })
     .catch(function(err) {
-      MySwal.fire("Error: " + err.message);
+      showError(err.message);
     });
   }
 
@@ -98,10 +101,10 @@ export default function Home() {
   function getCryptoProfit() {
     axios.get(config.BASE_URL + "/get-crypto-profit")
     .then(function(response) {
-      setCryptoProfit(response.data.data.toString() + "€");
+      setCryptoProfit(response.data.data?.toString() + "€");
     })
     .catch(function(err) {
-      MySwal.fire("Error: " + err.message);
+      showError(err.message);
     });
   }
 
@@ -111,7 +114,7 @@ export default function Home() {
       setExpenseLast12Months(response.data.data);
     })
     .catch(function(err) {
-      MySwal.fire("Error: " + err.message);
+      showError(err.message);
     });
   }
 
@@ -264,7 +267,7 @@ export default function Home() {
     })
     .catch(function(err) {
       console.log("Error: " + err.message);
-      MySwal.fire("Error: " + err.message);
+      showError(err.message);
     });
   }
 
@@ -276,7 +279,7 @@ export default function Home() {
     })
     .catch(function(err) {
       console.log(err);
-      MySwal.fire("Error: " + err.message);
+      showError(err.message);
     });
   }
 
@@ -356,11 +359,11 @@ export default function Home() {
       }
       else {
         setT212YearlyProfit("0€");
-        MySwal.fire("Error: " + response.data.error);
+        showError(response.data.error);
       }
     })
     .catch(function(err) {
-      MySwal.fire("Error: " + err.message);
+      showError(err.message);
     });
   }
 
@@ -372,11 +375,11 @@ export default function Home() {
       }
       else {
         setT212CurrentReturn("0€");
-        MySwal.fire("Error: " + response.data.error);
+        showError(response.data.error);
       }
     })
     .catch(function(err) {
-      MySwal.fire("Error: " + err.message);
+      showError(err.message);
     });
   }
 
@@ -473,7 +476,22 @@ export default function Home() {
     benefitsHourlyExpense
   ]);
 
+  function checkLogin() {
+    requestCheckLogin(function(isLoggedIn) {
+      if (!isLoggedIn) {
+        navigate("/login");
+      }
+    })
+  }
+
+  function showError(error) {
+    if (!(error == "Invalid Authorization." )) {
+      MySwal.fire(error)
+    }
+  }
+
   useEffect(() => {
+    checkLogin();
     getNetWorth();
     getAverageMonthlyExpense();
     getAverageDailyExpense();
