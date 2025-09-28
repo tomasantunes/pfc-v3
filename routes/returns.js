@@ -73,7 +73,21 @@ router.get("/get-net-worth", async (req, res) => {
     saldo_savings = result7[0][0].balance;
   }
 
-  var total = (Number(saldo_bpi) + Number(saldo_t212) + Number(saldo_coinbase) + Number(saldo_binance) + Number(saldo_polymarket) + Number(saldo_santander) + Number(saldo_savings)).toFixed(2);
+  var sql8 = "SELECT * FROM revolut_portfolio_snapshot_headers ORDER BY created_at DESC LIMIT 1";
+  var result8 = await con2.query(sql8);
+  var saldo_revolut_stocks = 0;
+  if (result8[0].length > 0) {
+    saldo_revolut_stocks = result8[0][0].balance;
+  }
+
+  var sql9 = "SELECT * FROM revolut_mov ORDER BY id DESC LIMIT 1";
+  var result9 = await con2.query(sql9);
+  var saldo_revolut = 0;
+  if (result9[0].length > 0) {
+    saldo_revolut = result9[0][0].saldo;
+  }
+
+  var total = (Number(saldo_bpi) + Number(saldo_t212) + Number(saldo_coinbase) + Number(saldo_binance) + Number(saldo_polymarket) + Number(saldo_santander) + Number(saldo_savings) + Number(saldo_revolut_stocks) + Number(saldo_revolut)).toFixed(2);
 
   res.json({status: "OK", data: total});
 });

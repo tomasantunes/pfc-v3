@@ -284,4 +284,44 @@ router.get("/get-portfolio-snapshots-revolut", async (req, res) => {
   res.json({status: "OK", data: groupedData});
 });
 
+router.get("/get-revolut-yearly-profit", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  try {
+    const [rows] = await con2.execute(`
+          SELECT
+              YEAR(date_mov) as year,
+              SUM(\`return\`) as total_profit
+          FROM revolut_account_activity
+          WHERE type = 'sell'
+          GROUP BY YEAR(date_mov)
+          ORDER BY year DESC
+      `);
+
+      res.json({status: "OK", data: rows[0] ? Number(rows[0].total_profit).toFixed(2) : "0.00"});
+  } catch (err) {
+    console.log(err);
+    res.json({status: "NOK", error: "Error getting Revolut yearly profit."});
+  }
+});
+
+router.get("/get-revolut-current-return", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var sql1 = "SELECT * FROM revolut_portfolio_snapshot_headers ORDER BY created_at DESC LIMIT 1";
+  var result1 = await con2.query(sql1);
+  var profit_revolut = 0;
+  if (result1[0].length > 0) {
+    profit_revolut = Number(result1[0][0].profit);
+  }
+
+  res.json({status: "OK", data: Number(profit_revolut).toFixed(2)});
+});
+
 module.exports = router;

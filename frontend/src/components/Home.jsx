@@ -24,6 +24,8 @@ export default function Home() {
   const [cryptoProfit, setCryptoProfit] = useState("");
   const [t212YearlyProfit, setT212YearlyProfit] = useState("");
   const [t212CurrentReturn, setT212CurrentReturn] = useState("");
+  const [revolutYearlyProfit, setRevolutYearlyProfit] = useState("");
+  const [revolutCurrentReturn, setRevolutCurrentReturn] = useState("");
   const [expenseLast12Months, setExpenseLast12Months] = useState();
   const [expenseLast12MonthsChartOptions, setExpenseLast12MonthsChartOptions] = useState();
   const [expenseLast12MonthsChartSeries, setExpenseLast12MonthsChartSeries] = useState();
@@ -384,6 +386,38 @@ export default function Home() {
     });
   }
 
+  function getRevolutYearlyProfit() {
+    axios.get(config.BASE_URL + "/get-revolut-yearly-profit")
+    .then(function(response) {
+      if (response.data.status == "OK") {
+        setRevolutYearlyProfit(response.data.data + "€");
+      }
+      else {
+        setRevolutYearlyProfit("0€");
+        showError(response.data.error);
+      }
+    })
+    .catch(function(err) {
+      showError(err.message);
+    });
+  }
+
+  function getRevolutCurrentReturn() {
+    axios.get(config.BASE_URL + "/get-revolut-current-return")
+    .then(function(response) {
+      if (response.data.status == "OK") {
+        setRevolutCurrentReturn(response.data.data + "€");
+      }
+      else {
+        setRevolutCurrentReturn("0€");
+        showError(response.data.error);
+      }
+    })
+    .catch(function(err) {
+      showError(err.message);
+    });
+  }
+
   function getBenefitsExpenses() {
     if (!estimatedData.benefitsPerYear || estimatedData.benefitsPerYear == "") return;
     setBenefitsAnnualExpense(estimatedData.benefitsPerYear);
@@ -502,6 +536,8 @@ export default function Home() {
     getCryptoProfit();
     getT212YearlyProfit();
     getT212CurrentReturn();
+    getRevolutYearlyProfit();
+    getRevolutCurrentReturn();
     getExpenseLast12Months();
     getEstimatedData();
   }, []);
@@ -524,6 +560,8 @@ export default function Home() {
                 <p><b>{i18n("Net Worth")}:</b> {netWorth}</p>
                 <p><b>{i18n("T212 Sales" + " " + new Date().getFullYear())}:</b> {t212YearlyProfit}</p>
                 <p><b>{i18n("T212 Current Return")}:</b> {t212CurrentReturn}</p>
+                <p><b>{i18n("Revolut Sales" + " " + new Date().getFullYear())}:</b> {revolutYearlyProfit}</p>
+                <p><b>{i18n("Revolut Current Return")}:</b> {revolutCurrentReturn}</p>
                 <p><b>{i18n("Crypto Profit")}:</b> {cryptoProfit}</p>
               </div>
             </div>
