@@ -449,13 +449,13 @@ export default function Home() {
           }
         },
         xaxis: {
-          categories: expenseLast12Months.reverse().map(item => (item.mnth < 10 ? "0" + item.mnth : item.mnth) + "/" + item.yr)
+          categories: expenseLast12Months.toReversed().map(item => (item.mnth < 10 ? "0" + item.mnth : item.mnth) + "/" + item.yr)
         }
       };
 
       const series = [{
         name: i18n("Expense Last 12 Months"),
-        data: expenseLast12Months.reverse().map(item => Number(item.monthly_sum))
+        data: expenseLast12Months.toReversed().map(item => Number(item.monthly_sum))
       }];
       setExpenseLast12MonthsChartOptions(options);
       setExpenseLast12MonthsChartSeries(series);
@@ -522,7 +522,7 @@ export default function Home() {
               </div>
               <div class="row">
                 <p><b>{i18n("Net Worth")}:</b> {netWorth}</p>
-                <p><b>{i18n("T212 Sales") + " " + new Date().getFullYear()}:</b> {t212YearlyProfit}</p>
+                <p><b>{i18n("T212 Sales" + " " + new Date().getFullYear())}:</b> {t212YearlyProfit}</p>
                 <p><b>{i18n("T212 Current Return")}:</b> {t212CurrentReturn}</p>
                 <p><b>{i18n("Crypto Profit")}:</b> {cryptoProfit}</p>
               </div>
