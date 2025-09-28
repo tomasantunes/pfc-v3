@@ -2,7 +2,6 @@
 
 ## EM CURSO
 
-- No módulo Revolut, criar tabelas para atividade de conta e snapshots de portfolio.
 - Criar página para orçamento mensal.
 
 ## MAIS TARDE
