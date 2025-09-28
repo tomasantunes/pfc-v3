@@ -449,7 +449,7 @@ export default function Home() {
           }
         },
         xaxis: {
-          categories: expenseLast12Months.map(item => (item.mnth < 10 ? "0" + item.mnth : item.mnth) + "/" + item.yr)
+          categories: expenseLast12Months.reverse().map(item => (item.mnth < 10 ? "0" + item.mnth : item.mnth) + "/" + item.yr)
         }
       };
 

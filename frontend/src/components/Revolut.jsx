@@ -22,6 +22,16 @@ export default function Revolut() {
   const [newMovementPrice, setNewMovementPrice] = useState("");
   const [newMovementValue, setNewMovementValue] = useState("");
   const [accountActivity, setAccountActivity] = useState(null);
+  const [newBalance, setNewBalance] = useState();
+  const [newProfit, setNewProfit] = useState();
+  const [newPositions, setNewPositions] = useState([]);
+  const [newPosition, setNewPosition] = useState({
+    name: "",
+    price: "",
+    quantity: "",
+    value: "",
+    return: ""
+  });
   const [portfolioSnapshots, setPortfolioSnapshots] = useState(null);
 
   function changeNewMovementType(e) {
@@ -122,6 +132,102 @@ export default function Revolut() {
       if (response.data.status == "OK") {
         MySwal.fire("Account movement has been updated.");
         loadAccountActivity();
+      }
+      else {
+        MySwal.fire("Error: " + response.data.error);
+      }
+    })
+    .catch(function(err) {
+      MySwal.fire("Error: " + err.message);
+    });
+  }
+
+  function changeNewBalance(e) {
+    setNewBalance(e.target.value);
+  }
+
+  function changeNewProfit(e) {
+    setNewProfit(e.target.value);
+  }
+
+  function changeNewPositionName(e) {
+    setNewPosition({
+      ...newPosition,
+      name: e.target.value
+    });
+  }
+
+  function changeNewPositionPrice(e) {
+    setNewPosition({
+      ...newPosition,
+      price: e.target.value
+    });
+  }
+
+  function changeNewPositionQuantity(e) {
+    setNewPosition({
+      ...newPosition,
+      quantity: e.target.value
+    });
+  }
+
+  function changeNewPositionValue(e) {
+    setNewPosition({
+      ...newPosition,
+      value: e.target.value
+    })
+  }
+
+  function changeNewPositionReturn(e) {
+    setNewPosition({
+      ...newPosition,
+      return: e.target.value
+    })
+  }
+
+  function addNewPosition() {
+    setNewPositions([
+      ...newPositions,
+      newPosition
+    ]);
+    setNewPosition({
+      name: "",
+      price: "",
+      quantity: "",
+      value: "",
+      return: ""
+    })
+  }
+
+  function submitPortfolioSnapshot() {
+    var data = {
+      balance: newBalance,
+      profit: newProfit,
+      positions: newPositions
+    };
+
+    axios.post(config.BASE_URL + "/insert-portfolio-snapshot-revolut", data)
+    .then(function (response) {
+      if (response.data.status == "OK") {
+        MySwal.fire("Portfolio snapshot has been submitted.");
+        setNewPositions([]);
+        setNewBalance("");
+        setNewProfit("");
+      }
+      else {
+        MySwal.fire("Error: " + response.data.error);
+      }
+    })
+    .catch(function(err) {
+      MySwal.fire("Error: " + err.message);
+    });
+  }
+
+  function loadPortfolioSnapshots() {
+    axios.get(config.BASE_URL + "/get-portfolio-snapshots-revolut")
+    .then(function(response) {
+      if (response.data.status == "OK") {
+        setPortfolioSnapshots(response.data.data);
       }
       else {
         MySwal.fire("Error: " + response.data.error);
@@ -237,6 +343,7 @@ export default function Revolut() {
   useEffect(() => {
     getMov();
     loadAccountActivity();
+    loadPortfolioSnapshots();
   }, []);
   
   return (
@@ -330,6 +437,66 @@ export default function Revolut() {
         <div className="row revolut-form mb-3">
           {accountActivity &&
             <EditableExpandableGroupedTable tableData={accountActivity} tableHeaders={["Movement Date", "Name", "Type", "Quantity", "Price", "Value", "Return"]} title={i18n("Account Activity")} onSave={handleUpdateMovement} />
+          }
+        </div>
+        <div className="row revolut-form mb-3">
+          <div className="col-md-3">
+            <h3>{i18n("Insert Portfolio Snapshot")}</h3>
+            <div className="form-group mb-2">
+                <label><b>{i18n("Balance")}</b></label>
+                <input type="text" className="form-control" value={newBalance} onChange={changeNewBalance} />
+            </div>
+            <div className="form-group mb-2">
+                <label><b>{i18n("Profit")}</b></label>
+                <input type="text" className="form-control" value={newProfit} onChange={changeNewProfit} />
+            </div>
+          </div>
+          <div>
+              <label><b>{i18n("Positions")}</b></label>
+              <div className="p-3 mb-3" style={{backgroundColor: "white", borderRadius: "10px"}}>
+              <table className="table table-striped">
+                  <thead>
+                      <tr>
+                          <th>{i18n("Name")}</th>
+                          <th>{i18n("Price")}</th>
+                          <th>{i18n("Quantity")}</th>
+                          <th>{i18n("Value")}</th>
+                          <th>{i18n("Return")}</th>
+                          <th></th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                    {newPositions.map((position) => (
+                      <tr>
+                        <td>{position.name}</td>
+                        <td>{position.price}</td>
+                        <td>{position.quantity}</td>
+                        <td>{position.value}</td>
+                        <td>{position.return}</td>
+                        <td></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot>
+                      <tr>
+                          <td><input type="text" className="form-control" value={newPosition.name} onChange={changeNewPositionName} /></td>
+                          <td><input type="text" className="form-control" value={newPosition.price} onChange={changeNewPositionPrice} /></td>
+                          <td><input type="text" className="form-control" value={newPosition.quantity} onChange={changeNewPositionQuantity} /></td>
+                          <td><input type="text" className="form-control" value={newPosition.value} onChange={changeNewPositionValue} /></td>
+                          <td><input type="text" className="form-control" value={newPosition.return} onChange={changeNewPositionReturn} /></td>
+                          <td><button className="btn btn-success" onClick={addNewPosition}>{i18n("Add")}</button></td>
+                      </tr>
+                  </tfoot>
+              </table>
+              </div>
+              <div style={{textAlign: "right"}}>
+                <button className="btn btn-primary" onClick={submitPortfolioSnapshot}>{i18n("Submit")}</button>
+              </div>
+          </div>
+        </div>
+        <div className="row revolut-form mb-3">
+          {portfolioSnapshots && 
+            <ExpandableGroupedTable tableData={portfolioSnapshots} tableHeaders={["Name", "Price", "Quantity", "Value", "Return"]} title={i18n("Portfolio Snapshots")} />
           }
         </div>
       </div>

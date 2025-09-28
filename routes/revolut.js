@@ -209,4 +209,79 @@ router.post("/update-account-movement-revolut", (req, res) => {
   });
 });
 
+router.post("/insert-portfolio-snapshot-revolut", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  try {
+    var balance = req.body.balance;
+    var profit = req.body.profit;
+    var positions = req.body.positions;
+
+    var sql1 = "INSERT INTO revolut_portfolio_snapshot_headers (balance, profit) VALUES (?, ?)";
+    var result1 = await con2.query(sql1, [balance, profit]);
+    var headerId = result1[0].insertId;
+
+    for (var i in positions) {
+      var sql2 = "INSERT INTO revolut_portfolio_snapshot_positions (snapshot_id, name, price, quantity, value, `return`) VALUES (?, ?, ?, ?, ?, ?)";
+      await con2.query(sql2, [headerId, positions[i].name, positions[i].price, positions[i].quantity, positions[i].value, positions[i].return]);
+    }
+  }
+  catch (err) {
+    console.log(err);
+  }
+
+  res.json({status: "OK", data: "Portfolio snapshot has been inserted successfully."});
+});
+
+router.get("/get-portfolio-snapshots-revolut", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  const query = `
+      SELECT 
+          h.id,
+          DATE_FORMAT(h.created_at, '%Y-%m-%d') as snapshot_date,
+          h.balance,
+          h.profit,
+          p.name,
+          p.price,
+          p.quantity,
+          p.value,
+          p.\`return\`
+      FROM revolut_portfolio_snapshot_headers h
+      LEFT JOIN revolut_portfolio_snapshot_positions p ON h.id = p.snapshot_id
+      ORDER BY h.created_at DESC, p.name ASC
+  `;
+
+  const [rows] = await con2.execute(query);
+  
+  const groupedData = {};
+  
+  rows.forEach(row => {
+      const key = `${row.snapshot_date} - Balance: ${row.balance} - Profit: ${row.profit}`;
+      
+      if (!groupedData[key]) {
+          groupedData[key] = [];
+      }
+      
+      if (row.name) {
+          groupedData[key].push({
+              id: row.id,
+              name: row.name,
+              price: parseFloat(row.price),
+              quantity: parseFloat(row.quantity),
+              value: parseFloat(row.value),
+              return: parseFloat(row.return)
+          });
+      }
+  });
+  
+  res.json({status: "OK", data: groupedData});
+});
+
 module.exports = router;
