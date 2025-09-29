@@ -26,6 +26,7 @@ var t212Router = require('./routes/trading212');
 var coinbaseRouter = require('./routes/coinbase');
 var binanceRouter = require('./routes/binance');
 var estimatedDataRouter = require('./routes/estimated-data');
+var budgetsRouter = require('./routes/budgets');
 
 var app = express();
 
@@ -62,6 +63,7 @@ app.use('/', t212Router);
 app.use('/', coinbaseRouter);
 app.use('/', binanceRouter);
 app.use('/', estimatedDataRouter);
+app.use('/', budgetsRouter);
 app.use(express.static(path.resolve(__dirname) + '/frontend/dist'));
 
 // catch 404 and forward to error handler

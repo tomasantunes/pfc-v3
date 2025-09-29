@@ -175,6 +175,23 @@ CREATE TABLE estimated_data (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE budgets (
+    id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(256),
+    income DECIMAL(17,2),
+    expense DECIMAL(17,2),
+    balance DECIMAL(17,2),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE budget_items (
+    id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    budget_id INT(11) NOT NULL,
+    category VARCHAR(256),
+    amount DECIMAL(17,2),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE savings (
     id INT(11) AUTO_INCREMENT PRIMARY KEY,
     cash DECIMAL(17,2),
