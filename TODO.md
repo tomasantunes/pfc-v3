@@ -2,7 +2,6 @@
 
 ## EM CURSO
 
-- Criar página para orçamento mensal.
 
 ## MAIS TARDE
 
