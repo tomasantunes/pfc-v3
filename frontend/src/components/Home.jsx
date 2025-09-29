@@ -470,7 +470,7 @@ export default function Home() {
   }, [estimatedData]);
 
   useEffect(() => {
-    if (expenseLast12Months) {
+    if (expenseLast12Months && benefitsMonthlyExpense != "") {
       const options = {
         chart: {
           id: 'expense-last-12-months',
@@ -488,12 +488,12 @@ export default function Home() {
 
       const series = [{
         name: i18n("Expense Last 12 Months"),
-        data: expenseLast12Months.toReversed().map(item => Number(item.monthly_sum))
+        data: expenseLast12Months.toReversed().map(item => Math.round(Number(item.monthly_sum) + Number(benefitsMonthlyExpense)))
       }];
       setExpenseLast12MonthsChartOptions(options);
       setExpenseLast12MonthsChartSeries(series);
     }
-  }, [expenseLast12Months]);
+  }, [expenseLast12Months, benefitsMonthlyExpense]);
 
   useEffect(() => {
     getTotalAnnualExpense();
