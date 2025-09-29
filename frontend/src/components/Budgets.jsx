@@ -10,6 +10,7 @@ import './Budgets.css';
 const MySwal = withReactContent(Swal);
 
 export default function Budgets() {
+  const [budgetId, setBudgetId] = useState(null);
   const [budgetTitle, setBudgetTitle] = useState("");
   const [budgets, setBudgets] = useState([]);
   const [rows, setRows] = useState([]);
@@ -59,6 +60,7 @@ export default function Budgets() {
 
   function saveBudget() {
     const newBudget = {
+      id: budgetId,
       title: budgetTitle,
       income: totalIncome,
       expense: totalExpense,
@@ -87,6 +89,7 @@ export default function Budgets() {
 
   function setBudget(idx) {
     const budget = budgets[idx];
+    setBudgetId(budget.id);
     setBudgetTitle(budget.title);
     setTotalIncome(budget.income);
     setTotalExpense(budget.expense);

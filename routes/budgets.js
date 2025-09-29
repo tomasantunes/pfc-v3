@@ -5,23 +5,40 @@ const database = require('../libs/database');
 var {con, con2} = database.getMySQLConnections();
 
 router.post('/save-budget', async function(req, res, next) {
-    const {title, income, expense, balance, rows} = req.body;
+    const {id, title, income, expense, balance, rows} = req.body;
     try {
-        const [result] = await con2.execute(
-            'INSERT INTO budgets (title, income, expense, balance) VALUES (?, ?, ?, ?)', 
-            [title, income, expense, balance]
-        );
-        const budgetId = result.insertId;
-
-        // Insert budget items
-        for (const row of rows) {
-            await con2.execute(
-                'INSERT INTO budget_items (budget_id, category, amount) VALUES (?, ?, ?)',
-                [budgetId, row.category, row.amount]
+        if (!id) {
+            const [result] = await con2.execute(
+                'INSERT INTO budgets (title, income, expense, balance) VALUES (?, ?, ?, ?)', 
+                [title, income, expense, balance]
             );
-        }
+            const budgetId = result.insertId;
 
-        res.json({status: "OK", data: "Budget saved successfully."});
+            // Insert budget items
+            for (const row of rows) {
+                await con2.execute(
+                    'INSERT INTO budget_items (budget_id, category, amount) VALUES (?, ?, ?)',
+                    [budgetId, row.category, row.amount]
+                );
+            }
+
+            res.json({status: "OK", data: "Budget saved successfully."});
+        } else {
+            await con2.execute(
+                'UPDATE budgets SET title = ?, income = ?, expense = ?, balance = ? WHERE id = ?', 
+                [title, income, expense, balance, id]
+            );
+            await con2.execute('DELETE FROM budget_items WHERE budget_id = ?', [id]);
+
+            // Insert updated budget items
+            for (const row of rows) {
+                await con2.execute(
+                    'INSERT INTO budget_items (budget_id, category, amount) VALUES (?, ?, ?)',
+                    [id, row.category, row.amount]
+                );
+            }
+            res.json({status: "OK", data: "Budget updated successfully."});
+        }
     } catch (error) {
         console.error(error);
         res.json({status: "NOK", error: "Error saving budget."});
