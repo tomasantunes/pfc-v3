@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import Chart from "react-apexcharts";
 import withReactContent from 'sweetalert2-react-content';
 import Navbar from './Navbar';
+import {i18n} from "../libs/translations";
 import './Budgets.css';
 
 const MySwal = withReactContent(Swal);
@@ -77,7 +78,7 @@ export default function Budgets() {
         setTotalBalance(0);
         setRows([]);
         loadBudgets();
-        MySwal.fire("Budget saved successfully.");
+        MySwal.fire(i18n("Budget saved successfully."));
       } else {
         MySwal.fire("Error: " + response.data.error);
       }
@@ -115,7 +116,7 @@ export default function Budgets() {
         },
       },
       title: {
-        text: 'Budget Distribution',
+        text: i18n('Budget Distribution'),
         align: 'center',
         style: {
           fontSize: '20px'
@@ -131,15 +132,15 @@ export default function Budgets() {
 
   function deleteBudget() {
     if (!budgetTitle) {
-      MySwal.fire("Please select a budget to delete.");
+      MySwal.fire(i18n("Please select a budget to delete."));
       return;
     }
     const budget = budgets.find(b => b.title === budgetTitle);
     if (!budget) {
-      MySwal.fire("Budget not found.");
+      MySwal.fire(i18n("Budget not found."));
       return;
     }
-    if (window.confirm(`Are you sure you want to delete the budget: "${budget.title}"?`)) {
+    if (window.confirm(i18n("Are you sure you want to delete the budget:") + ` "${budget.title}"?`)) {
       axios.post(config.BASE_URL + "/delete-budget", {id: budget.id})
       .then(response => {
         if (response.data.status === "OK") {
@@ -149,7 +150,7 @@ export default function Budgets() {
           setTotalExpense(0);
           setTotalBalance(0);
           setRows([]);
-          MySwal.fire("Budget deleted successfully.");
+          MySwal.fire(i18n("Budget deleted successfully."));
         } else {
           MySwal.fire("Error: " + response.data.error);
         }
@@ -171,7 +172,7 @@ export default function Budgets() {
       <div className="container">
         <div className="row">
           <div className="col-md-2 pt-4">
-            <h3>Budgets</h3>
+            <h3>{i18n("Budgets")}</h3>
             <ul>
               {budgets.map((b, index) => (
                 <li key={index} style={{cursor: "pointer"}} onClick={() => setBudget(index)}>{b.title}</li>
@@ -180,17 +181,17 @@ export default function Budgets() {
           </div>
           <div className="col-md-4">
             <div className="main">
-              <h1>Budget</h1>
+              <h1>{i18n("Budget")}</h1>
               <div className="form-group mb-2">
-                <label><b>Title</b></label>
+                <label><b>{i18n("Title")}</b></label>
                 <input type="text" className="form-control text-start" value={budgetTitle} onChange={e => setBudgetTitle(e.target.value)} />
               </div>
-              <h3>Expenses</h3>
+              <h3>{i18n("Expenses")}</h3>
               <table className="table-fill">
                 <thead>
                 <tr>
-                  <th style={{width: "40%"}}>Category</th>
-                  <th style={{width: "40%"}} className="text-end">Amount</th>
+                  <th style={{width: "40%"}}>{i18n("Category")}</th>
+                  <th style={{width: "40%"}} className="text-end">{i18n("Amount")}</th>
                   <th style={{width: "20%"}}></th>
                 </tr>
                 </thead>
@@ -218,22 +219,22 @@ export default function Budgets() {
                 </tfoot>
 
               </table>
-              <h3>Totals</h3>
+              <h3>{i18n("Totals")}</h3>
               <table className="table-fill">
                 <thead>
                 </thead>
                 <tr>
-                  <td style={{width: "40%"}}>Total Income</td>
+                  <td style={{width: "40%"}}>{i18n("Total Income")}</td>
                   <td style={{width: "40%"}}><input type="text" className="form-control" value={totalIncome} onChange={e => setTotalIncome(e.target.value)} /></td>
                   <td style={{width: "20%"}}></td>
                 </tr>
                 <tr>
-                  <td>Total Expense</td>
+                  <td>{i18n("Total Expense")}</td>
                   <td className="text-end">{totalExpense}</td>
                   <td></td>
                 </tr>
                 <tr>
-                  <td>Total Balance</td>
+                  <td>{i18n("Total Balance")}</td>
                   <td className="text-end">{totalBalance}</td>
                   <td></td>
                 </tr>
@@ -241,8 +242,8 @@ export default function Budgets() {
                 </tfoot>
               </table>
               <div className="mt-2 text-end">
-                <button className="btn btn-danger ms-auto" onClick={deleteBudget}>Delete</button>
-                <button className="btn btn-primary ms-2" onClick={saveBudget}>Save</button>
+                <button className="btn btn-danger ms-auto" onClick={deleteBudget}>{i18n("Delete")}</button>
+                <button className="btn btn-primary ms-2" onClick={saveBudget}>{i18n("Save")}</button>
               </div>
             </div>
           </div>

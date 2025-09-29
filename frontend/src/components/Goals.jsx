@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
+import {i18n} from "../libs/translations";
 import config from '../config';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -24,7 +25,7 @@ export default function Goals() {
 
   function addGoal() {
       if (newGoal.trim() === "") {
-          MySwal.fire("Goal description cannot be empty.");
+          MySwal.fire(i18n("Goal description cannot be empty."));
           return;
       }
       
@@ -42,7 +43,7 @@ export default function Goals() {
   function editGoal(index) {
       const updatedGoals = [...goals];
       const goal = updatedGoals[index];
-      const newDescription = prompt("Edit goal description:", goal.description);
+      const newDescription = prompt(i18n("Edit goal description:"), goal.description);
       if (newDescription !== null && newDescription.trim() !== "") {
           axios.post(config.BASE_URL + "/edit-goal", {id: goal.id, description: newDescription})
           .then(response => {
@@ -57,7 +58,7 @@ export default function Goals() {
 
   function deleteGoal(index) {
       const goal = goals[index];
-      if (window.confirm(`Are you sure you want to delete the goal: "${goal.description}"?`)) {
+      if (window.confirm(i18n("Are you sure you want to delete the goal:") + ` "${goal.description}"?`)) {
           axios.post(config.BASE_URL + "/delete-goal", {id: goal.id})
           .then(response => {
               loadGoals();
@@ -77,12 +78,12 @@ export default function Goals() {
       <Navbar />
       <div className="container">
         <div className="col-md-6 offset-md-3">
-          <h1>Goals</h1>
+          <h1>{i18n("Goals")}</h1>
           <table className="table table-striped">
             <thead>
               <tr>
-                <th>Description</th>
-                <th>Actions</th>
+                <th>{i18n("Description")}</th>
+                <th>{i18n("Actions")}</th>
               </tr>
             </thead>
             <tbody>
@@ -90,17 +91,17 @@ export default function Goals() {
                 <tr key={index}>
                   <td>{goal.description}</td>
                   <td>
-                    <button className="btn btn-warning me-2" onClick={() => editGoal(index)}>Edit</button>
-                    <button className="btn btn-danger" onClick={() => deleteGoal(index)}>Delete</button>
+                    <button className="btn btn-warning me-2" onClick={() => editGoal(index)}>{i18n("Edit")}</button>
+                    <button className="btn btn-danger" onClick={() => deleteGoal(index)}>{i18n("Delete")}</button>
                   </td>
                 </tr>
               ))}
             </tbody>
             <tfoot>
               <tr>
-                <td><input type="text" placeholder="New goal description" className="form-control" value={newGoal} onChange={(e) => setNewGoal(e.target.value)} /></td>
+                <td><input type="text" placeholder={i18n("New goal description")} className="form-control" value={newGoal} onChange={(e) => setNewGoal(e.target.value)} /></td>
                 <td>
-                  <button className="btn btn-primary" onClick={addGoal}>Add Goal</button>
+                  <button className="btn btn-primary" onClick={addGoal}>{i18n("Add Goal")}</button>
                 </td>
               </tr>
             </tfoot>
