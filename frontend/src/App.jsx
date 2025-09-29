@@ -10,6 +10,7 @@ import Trading212 from './components/Trading212';
 import Coinbase from './components/Coinbase';
 import Binance from './components/Binance';
 import Polymarket from './components/Polymarket';
+import Budgets from './components/Budgets';
 import {init} from './libs/translations';
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
         <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/budgets" element={<Budgets />} />
         <Route path="/bpi" element={<BPI />} />
         <Route path="/santander" element={<Santander />} />
         <Route path="/revolut" element={<Revolut />} />
