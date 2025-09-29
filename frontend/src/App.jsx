@@ -11,6 +11,7 @@ import Coinbase from './components/Coinbase';
 import Binance from './components/Binance';
 import Polymarket from './components/Polymarket';
 import Budgets from './components/Budgets';
+import Goals from './components/Goals';
 import {init} from './libs/translations';
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
         <Route path="/budgets" element={<Budgets />} />
+        <Route path="/goals" element={<Goals />} />
         <Route path="/bpi" element={<BPI />} />
         <Route path="/santander" element={<Santander />} />
         <Route path="/revolut" element={<Revolut />} />
