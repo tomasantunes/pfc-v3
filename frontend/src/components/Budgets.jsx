@@ -1,10 +1,13 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import Navbar from './Navbar';
 import './Budgets.css';
 
 export default function Budgets() {
-  const [rows, setRows] = React.useState([]);
-  const [newRow, setNewRow] = React.useState({category: "", amount: ""});
+  const [rows, setRows] = useState([]);
+  const [newRow, setNewRow] = useState({category: "", amount: ""});
+  const [totalIncome, setTotalIncome] = useState(0);
+  const [totalExpense, setTotalExpense] = useState(0);
+  const [totalBalance, setTotalBalance] = useState(0);
 
   function removeRow(index) {
     setRows(rows.filter((_, i) => i !== index));
@@ -14,6 +17,21 @@ export default function Budgets() {
     setRows([...rows, newRow]);
     setNewRow({category: "", amount: ""});
   }
+
+  function calculateTotals() {
+    let expense = 0;
+    let balance = 0;
+    rows.forEach(row => {
+      expense += Number(row.amount) || 0;
+    });
+    balance = totalIncome - expense;
+    setTotalExpense(expense);
+    setTotalBalance(balance);
+  }
+
+  useEffect(() => {
+    calculateTotals();
+  }, [rows, totalIncome]);
 
   return (
     <div className="budgets">
@@ -66,17 +84,17 @@ export default function Budgets() {
                 </thead>
                 <tr>
                   <td style={{width: "40%"}}>Total Income</td>
-                  <td style={{width: "40%"}}><input type="text" className="form-control" /></td>
+                  <td style={{width: "40%"}}><input type="text" className="form-control" value={totalIncome} onChange={e => setTotalIncome(e.target.value)} /></td>
                   <td style={{width: "20%"}}></td>
                 </tr>
                 <tr>
                   <td>Total Expense</td>
-                  <td className="text-end"></td>
+                  <td className="text-end">{totalExpense}</td>
                   <td></td>
                 </tr>
                 <tr>
                   <td>Total Balance</td>
-                  <td className="text-end"></td>
+                  <td className="text-end">{totalBalance}</td>
                   <td></td>
                 </tr>
                 <tfoot>
