@@ -69,12 +69,12 @@ export default function Budgets() {
     axios.post(config.BASE_URL + "/save-budget", newBudget)
     .then(response => {
       if (response.data.status === "OK") {
-        setBudgets([...budgets, newBudget]);
         setBudgetTitle("");
         setTotalIncome(0);
         setTotalExpense(0);
         setTotalBalance(0);
         setRows([]);
+        loadBudgets();
         MySwal.fire("Budget saved successfully.");
       } else {
         MySwal.fire("Error: " + response.data.error);
@@ -106,8 +106,9 @@ export default function Budgets() {
       },
       dataLabels: {
         enabled: true,
-        formatter: function (val) {
-          return val + "%" + " (" + (val * totalExpense / 100).toFixed(2) + ")";
+        formatter: function (val, opts) {
+          const value = opts.w.globals.series[opts.seriesIndex];
+          return val.toFixed(1) + "% (" + value + ")";
         },
       },
       title: {
@@ -123,6 +124,37 @@ export default function Budgets() {
 
     setBudgetChartOptions(options);
     setBudgetChartSeries(series);
+  }
+
+  function deleteBudget() {
+    if (!budgetTitle) {
+      MySwal.fire("Please select a budget to delete.");
+      return;
+    }
+    const budget = budgets.find(b => b.title === budgetTitle);
+    if (!budget) {
+      MySwal.fire("Budget not found.");
+      return;
+    }
+    if (window.confirm(`Are you sure you want to delete the budget: "${budget.title}"?`)) {
+      axios.post(config.BASE_URL + "/delete-budget", {id: budget.id})
+      .then(response => {
+        if (response.data.status === "OK") {
+          setBudgets(budgets.filter(b => b.id !== budget.id));
+          setBudgetTitle("");
+          setTotalIncome(0);
+          setTotalExpense(0);
+          setTotalBalance(0);
+          setRows([]);
+          MySwal.fire("Budget deleted successfully.");
+        } else {
+          MySwal.fire("Error: " + response.data.error);
+        }
+      })
+      .catch(error => {
+        MySwal.fire("Error: " + error.message);
+      });
+    }
   }
 
   useEffect(() => {
@@ -160,21 +192,19 @@ export default function Budgets() {
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                  {rows.map((row, index) => (
-                    <React.Fragment key={index}>
-                      <td>
-                        {row.category}
-                      </td>
-                      <td className="text-end">
-                        {row.amount}
-                      </td>
-                      <td>
-                        <button className="btn btn-danger" onClick={() => removeRow(index)}>-</button>
-                      </td>
-                    </React.Fragment>
-                  ))}
-                </tr>
+                {rows.map((row, index) => (
+                  <tr key={index}>
+                    <td>
+                      {row.category}
+                    </td>
+                    <td className="text-end">
+                      {row.amount}
+                    </td>
+                    <td>
+                      <button className="btn btn-danger" onClick={() => removeRow(index)}>-</button>
+                    </td>
+                  </tr>
+                ))}
                 </tbody>
                 <tfoot>
                 <tr>
@@ -208,7 +238,8 @@ export default function Budgets() {
                 </tfoot>
               </table>
               <div className="mt-2 text-end">
-                <button className="btn btn-primary ms-auto" onClick={saveBudget}>Save Budget</button>
+                <button className="btn btn-danger ms-auto" onClick={deleteBudget}>Delete</button>
+                <button className="btn btn-primary ms-2" onClick={saveBudget}>Save</button>
               </div>
             </div>
           </div>
