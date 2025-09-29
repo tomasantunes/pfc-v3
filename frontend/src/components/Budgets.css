@@ -1,11 +1,13 @@
 .budgets {
   background-color: #ccc;
+  min-height: 100vh;
 }
 
 .main {
   padding: 25px;
   background-color: white;
   margin: 0 auto;
+  min-height: 60vh;
 }
 
 .main table tr {
