@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 import config from '../config';
 import Swal from 'sweetalert2';
+import Chart from "react-apexcharts";
 import withReactContent from 'sweetalert2-react-content';
 import Navbar from './Navbar';
 import './Budgets.css';
@@ -16,6 +17,8 @@ export default function Budgets() {
   const [totalIncome, setTotalIncome] = useState(0);
   const [totalExpense, setTotalExpense] = useState(0);
   const [totalBalance, setTotalBalance] = useState(0);
+  const [budgetChartOptions, setBudgetChartOptions] = useState(null);
+  const [budgetChartSeries, setBudgetChartSeries] = useState(null);
 
   function removeRow(index) {
     setRows(rows.filter((_, i) => i !== index));
@@ -24,6 +27,7 @@ export default function Budgets() {
   function addRow() {
     setRows([...rows, newRow]);
     setNewRow({category: "", amount: ""});
+    loadPieChart();
   }
 
   function calculateTotals() {
@@ -43,6 +47,7 @@ export default function Budgets() {
       if (response.data.status === "OK") {
         console.log(response.data.data);
         setBudgets(response.data.data);
+        loadPieChart();
       } else {
         console.error(response.data.error);
       }
@@ -87,6 +92,37 @@ export default function Budgets() {
     setTotalExpense(budget.expense);
     setTotalBalance(budget.balance);
     setRows(budget.rows);
+    loadPieChart();
+  }
+
+  function loadPieChart() {
+    const options = {
+      labels: rows.map(r => r.category),
+      options: {
+        chart: { 
+          id: 'budget-chart'
+        },
+        legend: { position: 'bottom' }
+      },
+      dataLabels: {
+        enabled: true,
+        formatter: function (val) {
+          return val + "%" + " (" + (val * totalExpense / 100).toFixed(2) + ")";
+        },
+      },
+      title: {
+        text: 'Budget Distribution',
+        align: 'center',
+        style: {
+          fontSize: '20px'
+        }
+      }
+    };
+
+    const series = rows.map(r => Number(r.amount) || 0);
+
+    setBudgetChartOptions(options);
+    setBudgetChartSeries(series);
   }
 
   useEffect(() => {
@@ -99,7 +135,7 @@ export default function Budgets() {
       <Navbar />
       <div className="container">
         <div className="row">
-          <div className="col-md-4">
+          <div className="col-md-2 pt-4">
             <h3>Budgets</h3>
             <ul>
               {budgets.map((b, index) => (
@@ -112,7 +148,7 @@ export default function Budgets() {
               <h1>Budget</h1>
               <div className="form-group mb-2">
                 <label><b>Title</b></label>
-                <input type="text" className="form-control" value={budgetTitle} onChange={e => setBudgetTitle(e.target.value)} />
+                <input type="text" className="form-control text-start" value={budgetTitle} onChange={e => setBudgetTitle(e.target.value)} />
               </div>
               <h3>Expenses</h3>
               <table className="table-fill">
@@ -176,7 +212,15 @@ export default function Budgets() {
               </div>
             </div>
           </div>
-          <div className="col-md-4">
+          <div className="col-md-6 pt-4">
+            {budgetChartOptions && budgetChartSeries &&
+              <Chart
+                options={budgetChartOptions}
+                series={budgetChartSeries}
+                type="pie"
+                width="650"
+              />
+            }
           </div>
         </div>
       </div>

@@ -6,11 +6,6 @@ var {con, con2} = database.getMySQLConnections();
 
 router.post('/save-budget', async function(req, res, next) {
     const {title, income, expense, balance, rows} = req.body;
-    console.log(title);
-    console.log(income);
-    console.log(expense);
-    console.log(balance);
-    console.log(rows);
     try {
         const [result] = await con2.execute(
             'INSERT INTO budgets (title, income, expense, balance) VALUES (?, ?, ?, ?)', 
@@ -36,7 +31,23 @@ router.post('/save-budget', async function(req, res, next) {
 router.get('/load-budgets', async function(req, res, next) {
     try {
         const [budgets] = await con2.execute('SELECT * FROM budgets INNER JOIN budget_items ON budgets.id = budget_items.budget_id');
-        res.json({status: "OK", data: budgets});
+
+        // transform the flat list into structured budgets with items
+        const result = [];
+        budgets.forEach(row => {
+            let budget = {
+                id: row.id,
+                title: row.title,
+                income: row.income,
+                expense: row.expense,
+                balance: row.balance,
+                rows: []
+            };
+            result.push(budget);
+            budget.rows.push({category: row.category, amount: row.amount});
+        });
+
+        res.json({status: "OK", data: result});
     } catch (error) {
         console.error(error);
         res.json({status: "NOK", error: "Error loading budgets."});
