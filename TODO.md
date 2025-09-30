@@ -2,6 +2,8 @@
 
 ## EM CURSO
 
+- Mudar sistema de traduções para aceitar IDs inteiros.
+- Importar inventário do ScienceRPG e criar campo para valor por item.
 
 ## MAIS TARDE
 
@@ -14,5 +16,4 @@
 - Adicionar opções para editar e apagar movimentos e snapshots.
 - Criar calendário anual de despesas
 - Reativar sistema Paypal
-- Criar página de objetivos
 
