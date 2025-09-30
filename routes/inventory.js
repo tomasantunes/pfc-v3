@@ -43,4 +43,20 @@ router.get("/get-inventory", async (req, res) => {
   }
 });
 
+router.get("/get-inventory-value", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var sql = "SELECT SUM(total_value) AS total_inventory_value FROM inventory";
+  try {
+    const [rows] = await con2.query(sql);
+    res.json({status: "OK", data: rows[0].total_inventory_value || 0});
+  } catch (error) {
+    console.error("Error fetching inventory value:", error);
+    res.json({status: "NOK", error: "Database error."});
+  }
+});
+
 module.exports = router;

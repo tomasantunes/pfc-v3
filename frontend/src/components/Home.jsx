@@ -39,6 +39,7 @@ export default function Home() {
   const [totalWeeklyExpense, setTotalWeeklyExpense] = useState("0");
   const [totalDailyExpense, setTotalDailyExpense] = useState("0");
   const [totalHourlyExpense, setTotalHourlyExpense] = useState("0");
+  const [totalInventoryValue, setTotalInventoryValue] = useState("0");
   const [estimatedData, setEstimatedData] = useState({
     incomePerHour: "",
     incomePerDay: "",
@@ -417,6 +418,22 @@ export default function Home() {
     });
   }
 
+  function getTotalInventoryValue() {
+    axios.get(config.BASE_URL + "/get-inventory-value")
+    .then(function(response) {
+      if (response.data.status == "OK") {
+        setTotalInventoryValue(Number(response.data.data).toFixed(2));
+      }
+      else {
+        setTotalInventoryValue("0€");
+        showError(response.data.error);
+      }
+    })
+    .catch(function(err) {
+      showError(err.message);
+    });
+  }
+
   function getBenefitsExpenses() {
     if (!estimatedData.benefitsPerYear || estimatedData.benefitsPerYear == "") return;
     setBenefitsAnnualExpense(estimatedData.benefitsPerYear);
@@ -537,6 +554,7 @@ export default function Home() {
     getT212CurrentReturn();
     getRevolutYearlyProfit();
     getRevolutCurrentReturn();
+    getTotalInventoryValue();
     getExpenseLast12Months();
     getEstimatedData();
   }, []);
@@ -562,6 +580,7 @@ export default function Home() {
                 <p><b>{i18n("Revolut Sales" + " " + new Date().getFullYear())}:</b> {revolutYearlyProfit}</p>
                 <p><b>{i18n("Revolut Current Return")}:</b> {revolutCurrentReturn}</p>
                 <p><b>{i18n("Crypto Profit")}:</b> {cryptoProfit}</p>
+                <p><b>{i18n("Total Inventory Value")}:</b> {totalInventoryValue}€</p>
               </div>
             </div>
             <div class="dashboard-section mb-3">
