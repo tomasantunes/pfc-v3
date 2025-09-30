@@ -1,4 +1,4 @@
-export var translations = {
+var translations = {
     "Language": {"en-us": "Language", "pt-pt": "Língua"},
     "There has been an error updating this field.": {"en-us": "There has been an error updating this field.", "pt-pt": "Ocorreu um erro a atualizar este cmapo."},
     "Dashboard": {"en-us": "Dashboard", "pt-pt": "Painel de Estatísticas"},
@@ -167,3 +167,10 @@ export function init() {
         localStorage.setItem("language", "en-us");
     }
 }
+
+export default {
+  i18n,
+  setLanguage,
+  getLanguages,
+  init
+};

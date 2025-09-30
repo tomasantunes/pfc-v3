@@ -16,31 +16,34 @@ router.post('/external/upsert-inventory', async function(req, res) {
     }
 
     try {
+        var error = false;
         for (var i in inventory) {
             var item = inventory[i];
             if (!item.item_name || !item.description) {
-                return res.json({status: "NOK", error: "Item name and description are required."});
+                error = true;
+                break;
             }
 
             const [rows] = await con2.execute('SELECT id FROM inventory WHERE item_name = ?', [item.item_name]);
             if (rows.length > 0) {
                 // Update existing item
                 await con2.execute(
-                    'UPDATE inventory SET description = ? WHERE item_name = ?',
-                    [item.description, item.item_name]
+                    'UPDATE inventory SET description = ?, qtt = ? WHERE item_name = ?',
+                    [item.description, item.qtt, item.item_name]
                 );
             }
             else {
                 // Insert new item
                 await con2.execute(
-                    'INSERT INTO inventory (item_name, description) VALUES (?, ?)',
-                    [item.item_name, item.description]
+                    'INSERT INTO inventory (item_name, description, qtt) VALUES (?, ?, ?)',
+                    [item.item_name, item.description, item.qtt]
                 );
             }
-            res.json({status: "OK", data: "Inventory imported successfully."});
         }
+        if (error) return res.json({status: "NOK", error: "Error importing inventory."});
+        res.json({status: "OK", data: "Inventory imported successfully."});
     } catch (error) {
-        console.error("Error processing inventory:", error);
+        console.error("Error importing inventory:", error);
         return res.json({status: "NOK", error: "An error occurred while importing inventory."});
     }
 });

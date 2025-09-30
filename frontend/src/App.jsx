@@ -12,7 +12,10 @@ import Binance from './components/Binance';
 import Polymarket from './components/Polymarket';
 import Budgets from './components/Budgets';
 import Goals from './components/Goals';
-import {init} from './libs/translations';
+import Inventory from './components/Inventory';
+import translations from './libs/translations';
+
+translations.init();
 
 function App() {
   return (
@@ -23,10 +26,11 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/budgets" element={<Budgets />} />
         <Route path="/goals" element={<Goals />} />
+        <Route path="/inventory" element={<Inventory />} />
+        <Route path="/savings" element={<Savings />} />
         <Route path="/bpi" element={<BPI />} />
         <Route path="/santander" element={<Santander />} />
         <Route path="/revolut" element={<Revolut />} />
-        <Route path="/savings" element={<Savings />} />
         <Route path="/trading212" element={<Trading212 />} />
         <Route path="/coinbase" element={<Coinbase />} />
         <Route path="/binance" element={<Binance />} />

@@ -12,9 +12,7 @@ var fileUpload = require('express-fileupload');
 const fs = require("fs");
 const csv = require('fast-csv');
 
-var indexRouter = require('./routes/index');
 var authRouter = require('./routes/auth');
-var viewsRouter = require('./routes/views');
 var bpiRouter = require('./routes/bpi');
 var expensesRouter = require('./routes/expenses');
 var returnsRouter = require('./routes/returns');
@@ -29,6 +27,7 @@ var estimatedDataRouter = require('./routes/estimated-data');
 var budgetsRouter = require('./routes/budgets');
 var goalsRouter = require('./routes/goals');
 var externalRouter = require('./routes/external');
+var inventoryRouter = require('./routes/inventory');
 
 var app = express();
 
@@ -68,6 +67,7 @@ app.use('/', estimatedDataRouter);
 app.use('/', budgetsRouter);
 app.use('/', goalsRouter);
 app.use('/', externalRouter);
+app.use('/', inventoryRouter);
 app.use(express.static(path.resolve(__dirname) + '/frontend/dist'));
 
 // catch 404 and forward to error handler

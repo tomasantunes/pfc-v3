@@ -4,9 +4,11 @@ import {NavLink} from 'react-router-dom';
 import {i18n, getLanguages, setLanguage} from '../libs/translations';
 import axios from 'axios';
 
+var languages_arr = getLanguages();
+
 export default function Navbar() {
   const navigate = useNavigate();
-  const [languages, setLanguages] = useState(getLanguages());
+  const [languages, setLanguages] = useState(languages_arr);
 
   function logout() {
     axios.post("/api/logout");
@@ -30,6 +32,9 @@ export default function Navbar() {
                 </li>
                 <li class="nav-item">
                     <NavLink to="/goals" className="nav-link">{i18n("Goals")}</NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink to="/inventory" className="nav-link">{i18n("Inventory")}</NavLink>
                 </li>
                 <li class="nav-item">
                     <NavLink to="/bpi" className="nav-link">BPI</NavLink>
