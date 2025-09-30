@@ -124,6 +124,12 @@ var translations = {
     "Totals": {"en-us": "Totals", "pt-pt": "Totais"},
     "Loyalty Balance": {"en-us": "Loyalty Balance", "pt-pt": "Saldo de Fidelização"},
     "Savings": {"en-us": "Savings", "pt-pt": "Poupanças"},
+    "Items": {"en-us": "Items", "pt-pt": "Itens"},
+    "Item": {"en-us": "Item", "pt-pt": "Item"},
+    "Unit Price": {"en-us": "Unit Price", "pt-pt": "Preço Unitário"},
+    "Set Price": {"en-us": "Set Price", "pt-pt": "Definir Preço"},
+    "Price updated successfully": {"en-us": "Price updated successfully", "pt-pt": "Preço atualizado com sucesso"},
+    "Total": {"en-us": "Total", "pt-pt": "Total"}
 }
 
 export function i18n(text) {
