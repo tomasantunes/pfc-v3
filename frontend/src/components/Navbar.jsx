@@ -26,10 +26,10 @@ export default function Navbar() {
                     <NavLink to="/home" className="nav-link">Home</NavLink>
                 </li>
                 <li class="nav-item">
-                    <NavLink to="/budgets" className="nav-link">Budgets</NavLink>
+                    <NavLink to="/budgets" className="nav-link">{i18n("Budgets")}</NavLink>
                 </li>
                 <li class="nav-item">
-                    <NavLink to="/goals" className="nav-link">Goals</NavLink>
+                    <NavLink to="/goals" className="nav-link">{i18n("Goals")}</NavLink>
                 </li>
                 <li class="nav-item">
                     <NavLink to="/bpi" className="nav-link">BPI</NavLink>
@@ -41,7 +41,7 @@ export default function Navbar() {
                     <NavLink to="/revolut" className="nav-link">Revolut</NavLink>
                 </li>
                 <li class="nav-item">
-                    <NavLink to="/savings" className="nav-link">Savings</NavLink>
+                    <NavLink to="/savings" className="nav-link">{i18n("Savings")}</NavLink>
                 </li>
                 {/*<li class="nav-item">
                     <NavLink to="/paypal" className="nav-link">Paypal</NavLink>

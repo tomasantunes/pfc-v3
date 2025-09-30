@@ -122,6 +122,8 @@ export var translations = {
     "Are you sure you want to delete the goal:": {"en-us": "Are you sure you want to delete the goal:", "pt-pt": "Tem a certeza que pretende eliminar o objetivo:"},
     "Goals": {"en-us": "Goals", "pt-pt": "Objetivos"},
     "Totals": {"en-us": "Totals", "pt-pt": "Totais"},
+    "Loyalty Balance": {"en-us": "Loyalty Balance", "pt-pt": "Saldo de Fidelização"},
+    "Savings": {"en-us": "Savings", "pt-pt": "Poupanças"},
 }
 
 export function i18n(text) {
