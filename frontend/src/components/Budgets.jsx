@@ -161,6 +161,15 @@ export default function Budgets() {
     }
   }
 
+  function newBudget() {
+    setBudgetId(null);
+    setBudgetTitle("");
+    setTotalIncome(0);
+    setTotalExpense(0);
+    setTotalBalance(0);
+    setRows([]);
+  }
+
   useEffect(() => {
     loadBudgets();
     calculateTotals();
@@ -242,7 +251,8 @@ export default function Budgets() {
                 </tfoot>
               </table>
               <div className="mt-2 text-end">
-                <button className="btn btn-danger ms-auto" onClick={deleteBudget}>{i18n("Delete")}</button>
+                <button className="btn btn-secondary ms-auto" onClick={newBudget}>{i18n("New")}</button>
+                <button className="btn btn-danger ms-2" onClick={deleteBudget}>{i18n("Delete")}</button>
                 <button className="btn btn-primary ms-2" onClick={saveBudget}>{i18n("Save")}</button>
               </div>
             </div>
