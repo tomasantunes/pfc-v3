@@ -139,7 +139,6 @@ var translations = {
     "Commission": {"en-us": "Commission", "pt-pt": "Comissão"},
     "Currency": {"en-us": "Currency", "pt-pt": "Moeda"},
     "Status": {"en-us": "Status", "pt-pt": "Estado"},
-    "Account movement has been submitted.": {"en-us": "Account movement has been submitted.", "pt-pt": "O movimento de conta foi submetido com sucesso."},
     "File size cannot exceed more than 50MB": {"en-us": "File size cannot exceed more than 50MB", "pt-pt": "O tamanho do ficheiro não pode exceder os 50MB."},
 }
 
