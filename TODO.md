@@ -2,11 +2,11 @@
 
 ## EM CURSO
 
-- Mudar sistema de traduções para aceitar IDs inteiros.
-- Importar inventário do ScienceRPG e criar campo para valor por item.
+- Criar Line Chart com a variação de património por mês. 
 
 ## MAIS TARDE
 
+- Mudar sistema de traduções para aceitar IDs inteiros.
 - Criar menu lateral esquerdo
 - Criar página de definições
 - Adicionar campo "is_visible" à tabela "bpi_mov".
