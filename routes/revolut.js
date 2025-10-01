@@ -125,8 +125,8 @@ router.post("/insert-account-movement-revolut", (req, res) => {
   var price = req.body.price;
   var value = req.body.value;
 
-  var sql = "INSERT INTO revolut_account_activity (date_mov, type, name, quantity, price, value) VALUES (?, ?, ?, ?, ?, ?)";
-  con.query(sql, [date, type, name, quantity, price, value], function(err, result) {
+  var sql = "INSERT INTO revolut_account_activity (date_mov, type, name, quantity, price, value, `return`) VALUES (?, ?, ?, ?, ?, ?, ?)";
+  con.query(sql, [date, type, name, quantity, price, value, req.body.return], function(err, result) {
     if (err) {
       console.log(err);
       res.json({status: "NOK", error: "There was an error inserting the account movement."});

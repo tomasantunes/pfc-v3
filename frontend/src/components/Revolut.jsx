@@ -4,6 +4,7 @@ import Navbar from './Navbar';
 import axios from 'axios';
 import config from '../config';
 import {i18n} from '../libs/translations';
+import {toLocaleISOString} from '../libs/utils';
 import ExpandableGroupedTable from './ExpandableGroupedTable';
 import EditableExpandableGroupedTable from './EditableExpandableGroupedTable';
 import Flatpickr from "react-flatpickr";
@@ -21,6 +22,7 @@ export default function Revolut() {
   const [newMovementQuantity, setNewMovementQuantity] = useState("");
   const [newMovementPrice, setNewMovementPrice] = useState("");
   const [newMovementValue, setNewMovementValue] = useState("");
+  const [newMovementReturn, setNewMovementReturn] = useState("");
   const [accountActivity, setAccountActivity] = useState(null);
   const [newBalance, setNewBalance] = useState();
   const [newProfit, setNewProfit] = useState();
@@ -54,6 +56,10 @@ export default function Revolut() {
     setNewMovementValue(e.target.value);
   }
 
+  function changeNewMovementReturn(e) {
+    setNewMovementReturn(e.target.value);
+  }
+
   function loadAccountActivity() {
     axios.get(config.BASE_URL + "/get-account-activity-revolut")
     .then(function(response) {
@@ -76,7 +82,8 @@ export default function Revolut() {
       name: newMovementName,
       quantity: newMovementQuantity,
       price: newMovementPrice,
-      value: newMovementValue
+      value: newMovementValue,
+      return: newMovementReturn
     };
 
     axios.post(config.BASE_URL + "/insert-account-movement-revolut", data)
@@ -89,6 +96,7 @@ export default function Revolut() {
         setNewMovementQuantity("");
         setNewMovementPrice("");
         setNewMovementValue("");
+        setNewMovementReturn("");
         loadAccountActivity();
       }
       else {
@@ -298,48 +306,6 @@ export default function Revolut() {
     });
   }
 
-  function changeNewMovementDataMov(e) {
-    setNewMovement({
-      ...newMovement,
-      data_mov: e.target.value
-    });
-  }
-
-  function changeNewMovementDataValor(e) {
-    setNewMovement({
-      ...newMovement,
-      data_valor: e.target.value
-    });
-  }
-
-  function changeNewMovementDescMov(e) {
-    setNewMovement({
-      ...newMovement,
-      desc_mov: e.target.value
-    });
-  }
-
-  function changeNewMovementValor(e) {
-    setNewMovement({
-      ...newMovement,
-      valor: e.target.value
-    });
-  }
-
-  function changeNewMovementSaldo(e) {
-    setNewMovement({
-      ...newMovement,
-      saldo: e.target.value
-    });
-  }
-
-  function changeNewMovementIsExpense(e) {
-    setNewMovement({
-      ...newMovement,
-      is_expense: e.target.checked
-    });
-  }
-
   useEffect(() => {
     getMov();
     loadAccountActivity();
@@ -428,6 +394,10 @@ export default function Revolut() {
             <div className="form-group mb-2">
                 <label><b>{i18n("Value")}</b></label>
                 <input type="text" className="form-control" value={newMovementValue} onChange={changeNewMovementValue} />
+            </div>
+            <div className="form-group mb-2">
+                <label><b>{i18n("Return")}</b></label>
+                <input type="text" className="form-control" value={newMovementReturn} onChange={changeNewMovementReturn} />
             </div>
             <div style={{textAlign: "right"}}>
               <button className="btn btn-primary" onClick={submitAccountMovement}>{i18n("Submit")}</button>
