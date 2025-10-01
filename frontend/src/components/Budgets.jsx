@@ -116,7 +116,7 @@ export default function Budgets() {
         },
       },
       title: {
-        text: i18n('Budget Distribution'),
+        text: i18n('Budget Distribution') + " - " + budgetTitle,
         align: 'center',
         style: {
           fontSize: '20px'
