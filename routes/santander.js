@@ -43,7 +43,7 @@ router.post("/import-santander-xls", async (req, res) => {
     xls.reverse();
 
     const today = new Date();
-    let todayVerbose = formatDatePtVerbose(today).trim();
+    let todayVerbose = utils.formatDatePtVerbose(today).trim();
     console.log(todayVerbose);
 
     console.log("Before loop.");
@@ -57,8 +57,8 @@ router.post("/import-santander-xls", async (req, res) => {
         xls[i][todayVerbose] != "Data Operação"
       ) {
         console.log("+1 entered loop.")
-        var data_mov = convertExcelDate(xls[i][todayVerbose]);
-        var data_valor = convertExcelDate(xls[i]["__EMPTY"]);
+        var data_mov = utils.convertExcelDate(xls[i][todayVerbose]);
+        var data_valor = utils.convertExcelDate(xls[i]["__EMPTY"]);
         var desc_mov = xls[i]["__EMPTY_1"];
         var valor = xls[i]["__EMPTY_2"];
         var saldo = xls[i]["__EMPTY_3"];

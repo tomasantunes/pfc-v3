@@ -42,7 +42,7 @@ export default function Santander() {
       if (response.data.status == "OK") {
         MySwal.fire(i18n("XLS has been imported successfully"));
         setExcelFile("");
-        $("input[type=file]").val('');
+        document.querySelector("input[type=file]").value = "";
         getMov();
       }
       else {
