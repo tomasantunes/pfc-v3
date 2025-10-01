@@ -131,7 +131,16 @@ var translations = {
     "Set Price": {"en-us": "Set Price", "pt-pt": "Definir Preço"},
     "Price updated successfully": {"en-us": "Price updated successfully", "pt-pt": "Preço atualizado com sucesso"},
     "Total": {"en-us": "Total", "pt-pt": "Total"},
-    "Total Inventory Value": {"en-us": "Total Inventory Value", "pt-pt": "Valor Total do Inventário"}
+    "Total Inventory Value": {"en-us": "Total Inventory Value", "pt-pt": "Valor Total do Inventário"},
+    "Import CSV Revolut": {"en-us": "Import CSV Revolut", "pt-pt": "Importar CSV Revolut"},
+    "Start Date": {"en-us": "Start Date", "pt-pt": "Data Início"},
+    "Conclusion Date": {"en-us": "Conclusion Date", "pt-pt": "Data Conclusão"},
+    "Product": {"en-us": "Product", "pt-pt": "Produto"},
+    "Commission": {"en-us": "Commission", "pt-pt": "Comissão"},
+    "Currency": {"en-us": "Currency", "pt-pt": "Moeda"},
+    "Status": {"en-us": "Status", "pt-pt": "Estado"},
+    "Account movement has been submitted.": {"en-us": "Account movement has been submitted.", "pt-pt": "O movimento de conta foi submetido com sucesso."},
+    "File size cannot exceed more than 50MB": {"en-us": "File size cannot exceed more than 50MB", "pt-pt": "O tamanho do ficheiro não pode exceder os 50MB."},
 }
 
 export function i18n(text) {
