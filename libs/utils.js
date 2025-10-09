@@ -16,7 +16,7 @@ function getLocalDate() {
         ':' + pad(date.getSeconds()) ;
 }
 
-export function toLocaleISOString(date) {
+function toLocaleISOString(date) {
     function pad(number) {
         if (number < 10) {
             return '0' + number;

@@ -121,6 +121,14 @@ CREATE TABLE coinbase_portfolio_snapshot_assets (
     value DECIMAL(17, 2)
 );
 
+CREATE TABLE coinbase_expenses (
+    id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    value DECIMAL(17,2),
+    description VARCHAR(256),
+    date DATE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE binance_portfolio_snapshot_headers (
     id INT(11) AUTO_INCREMENT PRIMARY KEY,
     balance DECIMAL(17,2),
