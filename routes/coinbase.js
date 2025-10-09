@@ -66,9 +66,14 @@ router.post("/insert-expense-coinbase", async (req, res) => {
   var value = req.body.value;
 
   var sql = "INSERT INTO coinbase_expenses (date, description, value) VALUES (?, ?, ?)";
-  await con2.query(sql, [date, description, value]);
-
-  res.json({status: "OK", data: "Expense has been inserted successfully."});
+  con.query(sql, [date.slice(0, 10), description, value], function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: "There was an error inserting the expense."});
+      return;
+    }
+    res.json({status: "OK", data: "Expense has been inserted successfully."});
+  });
 });
 
 router.get("/get-expenses-coinbase", (req, res) => {

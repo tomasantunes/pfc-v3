@@ -44,10 +44,7 @@ export default function Coinbase() {
     .then(function (response) {
       if (response.data.status == "OK") {
         MySwal.fire(i18n("Expense has been submitted."));
-        setExpenses([
-          ...expenses,
-          newExpense
-        ]);
+        getExpenses();
         setNewExpense({
           date: "",
           description: "",
