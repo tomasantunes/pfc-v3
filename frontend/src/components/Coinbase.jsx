@@ -259,7 +259,7 @@ export default function Coinbase() {
                 <td><Flatpickr className="form-control" value={newExpenseDate} onChange={([date]) => setNewExpenseDate(date)} /></td>
                 <td><input type="text" className="form-control" value={newExpenseDescription} onChange={changeNewExpenseDescription} /></td>
                 <td><input type="text" className="form-control" value={newExpenseValue} onChange={changeNewExpenseValue} /></td>
-                <td><button className="btn btn-success" onClick={addNewExpense}>Add</button></td>
+                <td><button className="btn btn-success" onClick={addNewExpense}>{i18n("Add")}</button></td>
               </tr>
             </tfoot>
           </table>

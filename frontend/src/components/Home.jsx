@@ -756,7 +756,7 @@ export default function Home() {
               <p><b>{i18n("Total Debt")}: </b> {creditAndDebtData.total_debt}€ <div class="pencil-btn" onClick={showTotalDebt}><i class="fa-solid fa-pencil"></i></div></p>
               <p><b>{i18n("Monthly Debt Payment")}: </b> {creditAndDebtData.monthly_debt_payment}€ <div class="pencil-btn" onClick={showMonthlyDebtPayment}><i class="fa-solid fa-pencil"></i></div></p>
               <p><b>{i18n("Interest Rate")}: </b> {creditAndDebtData.interest_rate}% <div class="pencil-btn" onClick={showInterestRate}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>{i18n("Time to Payoff Months")}: </b> {creditAndDebtData.time_to_payoff_months} <div class="pencil-btn" onClick={showTimeToPayoffMonths}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Time to Payoff (Months)")}: </b> {creditAndDebtData.time_to_payoff_months} <div class="pencil-btn" onClick={showTimeToPayoffMonths}><i class="fa-solid fa-pencil"></i></div></p>
             </div>
           </div>
           <div class="col-md-8">

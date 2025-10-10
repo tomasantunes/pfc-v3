@@ -140,6 +140,14 @@ var translations = {
     "Currency": {"en-us": "Currency", "pt-pt": "Moeda"},
     "Status": {"en-us": "Status", "pt-pt": "Estado"},
     "File size cannot exceed more than 50MB": {"en-us": "File size cannot exceed more than 50MB", "pt-pt": "O tamanho do ficheiro não pode exceder os 50MB."},
+    "Expense has been submitted.": {"en-us": "Expense has been submitted.", "pt-pt": "A despesa foi submetida com sucesso."},
+    "Date": {"en-us": "Date", "pt-pt": "Data"},
+    "Credit and Debt": {"en-us": "Credit and Debt", "pt-pt": "Crédito e Dívida"},
+    "Credit Limit": {"en-us": "Credit Limit", "pt-pt": "Limite de Crédito"},
+    "Total Debt": {"en-us": "Total Debt", "pt-pt": "Dívida Total"},
+    "Monthly Debt Payment": {"en-us": "Monthly Debt Payment", "pt-pt": "Pagamento Mensal de Dívida"},
+    "Interest Rate": {"en-us": "Interest Rate", "pt-pt": "Taxa de Juro"},
+    "Time to Payoff (Months)": {"en-us": "Time to Payoff (Months)", "pt-pt": "Tempo para Quitar (Meses)"},
 }
 
 export function i18n(text) {
