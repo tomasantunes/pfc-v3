@@ -148,6 +148,7 @@ var translations = {
     "Monthly Debt Payment": {"en-us": "Monthly Debt Payment", "pt-pt": "Pagamento Mensal de Dívida"},
     "Interest Rate": {"en-us": "Interest Rate", "pt-pt": "Taxa de Juro"},
     "Time to Payoff (Months)": {"en-us": "Time to Payoff (Months)", "pt-pt": "Tempo para Quitar (Meses)"},
+    "Close": {"en-us": "Close", "pt-pt": "Fechar"},
 }
 
 export function i18n(text) {
