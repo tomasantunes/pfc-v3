@@ -39,8 +39,8 @@ export default function Budgets() {
       expense += Number(row.amount) || 0;
     });
     balance = totalIncome - expense;
-    setTotalExpense(expense);
-    setTotalBalance(balance);
+    setTotalExpense(expense.toFixed(2));
+    setTotalBalance(balance.toFixed(2));
   }
 
   function loadBudgets() {
