@@ -216,6 +216,16 @@ CREATE TABLE savings (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE credit_and_debt (
+    id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    credit_limit DECIMAL(17,2),
+    total_debt DECIMAL(17,2),
+    monthly_debt_payment DECIMAL(17, 2),
+    interest_rate DECIMAL(5,2),
+    time_to_payoff_months INT(11),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE inventory (
     id INT(11) AUTO_INCREMENT PRIMARY KEY,
     item_name VARCHAR(255) NOT NULL,

@@ -59,6 +59,13 @@ export default function Home() {
     grossMonthlySalaryPlusBenefits: "",
     grossAnnualSalaryPlusBenefits: "",
   });
+  const [creditAndDebtData, setCreditAndDebtData] = useState({
+    credit_limit: "",
+    total_debt: "",
+    monthly_debt_payment: "",
+    interest_rate: "",
+    time_to_payoff_months: ""
+  });
 
   function getNetWorth() {
     axios.get(config.BASE_URL + "/get-net-worth")
@@ -242,6 +249,41 @@ export default function Home() {
     }));
   }
 
+  function changeCreditLimit(newVal) {
+    setCreditAndDebtData(prev => ({
+      ...prev,
+      credit_limit: newVal
+    }));
+  }
+
+  function changeTotalDebt(newVal) {
+    setCreditAndDebtData(prev => ({
+      ...prev,
+      total_debt: newVal
+    }));
+  }
+  
+  function changeMonthlyDebtPayment(newVal) {
+    setCreditAndDebtData(prev => ({
+      ...prev,
+      monthly_debt_payment: newVal
+    }));
+  }
+
+  function changeInterestRate(newVal) {
+    setCreditAndDebtData(prev => ({
+      ...prev,
+      interest_rate: newVal
+    }));
+  }
+
+  function changeTimeToPayoffMonths(newVal) {
+    setCreditAndDebtData(prev => ({
+      ...prev,
+      time_to_payoff_months: newVal
+    }));
+  }
+
   function updateField(field, value) {
     axios.post("/update-estimated-data", {field, value})
     .then(function(response) {
@@ -251,23 +293,70 @@ export default function Home() {
       else {
         MySwal.fire(i18n("There has been an error updating this field."));
       }
-      $('#incomePerHourModal').modal('hide');
-      $('#incomePerDayModal').modal('hide');
-      $('#incomePerWorkHourModal').modal('hide');
-      $('#incomePerWorkDayModal').modal('hide');
-      $('#incomePerWeekModal').modal('hide');
-      $('#incomePerMonthModal').modal('hide');
-      $('#incomePerYearModal').modal('hide');
-      $('#netSalaryPerMonthModal').modal('hide');
-      $('#netSalaryPerYearModal').modal('hide');
-      $('#grossSalaryPerMonthModal').modal('hide');
-      $('#grossSalaryPerYearModal').modal('hide');
-      $('#benefitsPerYearModal').modal('hide');
-      $('#expenseBenefitsPerYearModal').modal('hide');
-      $('#foodAssistancePerYearModal').modal('hide');
-      $('#technologyBenefitsPerYearModal').modal('hide');
-      $('#grossMonthlySalaryPlusBenefitsModal').modal('hide');
-      $('#grossAnnualSalaryPlusBenefitsModal').modal('hide');
+      var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#incomePerHourModal'))
+      modal.hide();
+      var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#incomePerDayModal'))
+      modal.hide();
+      var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#incomePerWorkHourModal'))
+      modal.hide();
+      var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#incomePerWorkDayModal'))
+      modal.hide();
+      var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#incomePerWeekModal'))
+      modal.hide();
+      var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#incomePerMonthModal'))
+      modal.hide();
+      var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#incomePerYearModal'))
+      modal.hide();
+      var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#netSalaryPerMonthModal'))
+      modal.hide();
+      var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#netSalaryPerYearModal'))
+      modal.hide();
+      var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#grossSalaryPerMonthModal'))
+      modal.hide();
+      var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#grossSalaryPerYearModal'))
+      modal.hide();
+      var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#benefitsPerYearModal'))
+      modal.hide();
+      var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#expenseBenefitsPerYearModal'))
+      modal.hide();
+      var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#foodAssistancePerYearModal'))
+      modal.hide();
+      var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#technologyBenefitsPerYearModal'))
+      modal.hide();
+      var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#grossMonthlySalaryPlusBenefitsModal'))
+      modal.hide();
+      var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#grossAnnualSalaryPlusBenefitsModal'))
+      modal.hide();
+    })
+    .catch(function(err) {
+      console.log("Error: " + err.message);
+      showError(err.message);
+    });
+  }
+
+  function updateCreditAndDebtField(field, value) {
+    axios.post("/update-credit-and-debt-data", {field, value})
+    .then(function(response) {
+      if (response.data.status == "OK") {
+        console.log("This field has been updated.");
+      }
+      else {
+        MySwal.fire(i18n("There has been an error updating this field."));
+      }
+      var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#creditLimitModal'))
+      modal.hide();
+      var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#totalDebtModal'))
+      modal.hide();
+      var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#monthlyDebtPaymentModal'))
+      modal.hide();
+      var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#creditLimitModal'))
+      modal.hide();
+      var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#interestRateModal'))
+      modal.hide();
+      var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#creditLimitModal'))
+      modal.hide();
+      var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#timeToPayoffMonthsModal'))
+      modal.hide();
     })
     .catch(function(err) {
       console.log("Error: " + err.message);
@@ -286,72 +375,125 @@ export default function Home() {
     });
   }
 
+  function getCreditAndDebtData() {
+    axios.get("/get-credit-and-debt-data")
+    .then(function(response) {
+      setCreditAndDebtData(response.data.data);
+    })
+    .catch(function(err) {
+      console.log(err);
+      showError(err.message);
+    });
+  }
+
   function showIncomePerHourModal() {
-    $('#incomePerHourModal').modal('show');
+    var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#incomePerHourModal'))
+    modal.show();
   }
 
   function showIncomePerDayModal() {
-    $('#incomePerDayModal').modal('show');
+    var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#incomePerDayModal'))
+    modal.show();
   }
 
   function showIncomePerWorkHourModal() {
-    $('#incomePerWorkHourModal').modal('show');
+    var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#incomePerWorkHourModal'))
+    modal.show();
   }
 
   function showIncomePerWorkDayModal() {
-    $('#incomePerWorkDayModal').modal('show');
+    var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#incomePerWorkDayModal'))
+    modal.show();
   }
 
   function showIncomePerWeekModal() {
-    $('#incomePerWeekModal').modal('show');
+    var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#incomePerWeekModal'))
+    modal.show();
   }
 
   function showIncomePerMonthModal() {
-    $('#incomePerMonthModal').modal('show');
+    var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#incomePerMonthModal'))
+    modal.show();
   }
 
   function showIncomePerYearModal() {
-    $('#incomePerYearModal').modal('show');
+    var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#incomePerYearModal'))
+    modal.show();
   }
 
   function showNetSalaryPerMonth() {
-    $('#netSalaryPerMonthModal').modal('show');
+    var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#netSalaryPerMonthModal'))
+    modal.show();
   }
 
   function showNetSalaryPerYear() {
-    $('#netSalaryPerYearModal').modal('show');
+    var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#netSalaryPerYearModal'))
+    modal.show();
   }
 
   function showGrossSalaryPerMonth() {
-    $('#grossSalaryPerMonthModal').modal('show');
+    var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#grossSalaryPerMonthModal'))
+    modal.show();
   }
 
   function showGrossSalaryPerYear() {
-    $('#grossSalaryPerYearModal').modal('show');
+    var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#grossSalaryPerYearModal'))
+    modal.show();
   }
 
   function showBenefitsPerYear() {
-    $('#benefitsPerYearModal').modal('show');
+    var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#benefitsPerYearModal'))
+    modal.show();
+  }
+
+  function showCreditLimit() {
+    var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#creditLimitModal'))
+    modal.show();
+  }
+
+  function showTotalDebt() {
+    var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#totalDebtModal'))
+    modal.show();
+  }
+
+  function showMonthlyDebtPayment() {
+    var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#monthlyDebtPaymentModal'))
+    modal.show();
+  }
+
+  function showInterestRate() {
+    var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#interestRateModal'))
+    modal.show();
+  }
+
+  function showTimeToPayoffMonths() {
+    var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#timeToPayoffMonthsModal'))
+    modal.show();
   }
 
   function showExpenseBenefitsPerYear() {
-    $('#expenseBenefitsPerYearModal').modal('show');
+    var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#expenseBenefitsPerYearModal'))
+    modal.show();
   }
 
   function showFoodAssistancePerYear() {
-    $('#foodAssistancePerYearModal').modal('show');
+    var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#foodAssistancePerYearModal'))
+    modal.show();
   }
 
   function showTechnologyBenefitsPerYear() {
-    $('#technologyBenefitsPerYearModal').modal('show');
+    var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#technologyBenefitsPerYearModal'))
+    modal.show();
   }
 
   function showGrossMonthlySalaryPlusBenefits() {
-    $('#grossMonthlySalaryPlusBenefitsModal').modal('show');
+    var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#grossMonthlySalaryPlusBenefitsModal'))
+    modal.show();
   }
 
   function showGrossAnnualSalaryPlusBenefits() {
-    $('#grossAnnualSalaryPlusBenefitsModal').modal('show');
+    var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#grossAnnualSalaryPlusBenefitsModal'))
+    modal.show();
   }
 
   function getT212YearlyProfit() {
@@ -557,6 +699,7 @@ export default function Home() {
     getTotalInventoryValue();
     getExpenseLast12Months();
     getEstimatedData();
+    getCreditAndDebtData();
   }, []);
 
   if (isLoggedIn) {
@@ -606,6 +749,14 @@ export default function Home() {
               <p><b>{i18n("Expense Benefits Per Year")}: </b> {estimatedData.expenseBenefitsPerYear}€ <div class="pencil-btn" onClick={showExpenseBenefitsPerYear}><i class="fa-solid fa-pencil"></i></div></p>
               <p><b>{i18n("Food Assistance Per Year")}: </b> {estimatedData.foodAssistancePerYear}€ <div class="pencil-btn" onClick={showFoodAssistancePerYear}><i class="fa-solid fa-pencil"></i></div></p>
               <p><b>{i18n("Technology Benefits Per Year")}: </b> {estimatedData.technologyBenefitsPerYear}€ <div class="pencil-btn" onClick={showTechnologyBenefitsPerYear}><i class="fa-solid fa-pencil"></i></div></p>
+            </div>
+            <div class="dashboard-section mb-3">
+              <h2>{i18n("Credit and Debt")}</h2>
+              <p><b>{i18n("Credit Limit")}: </b> {creditAndDebtData.credit_limit}€ <div class="pencil-btn" onClick={showCreditLimit}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Total Debt")}: </b> {creditAndDebtData.total_debt}€ <div class="pencil-btn" onClick={showTotalDebt}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Monthly Debt Payment")}: </b> {creditAndDebtData.monthly_debt_payment}€ <div class="pencil-btn" onClick={showMonthlyDebtPayment}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Interest Rate")}: </b> {creditAndDebtData.interest_rate}% <div class="pencil-btn" onClick={showInterestRate}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Time to Payoff Months")}: </b> {creditAndDebtData.time_to_payoff_months} <div class="pencil-btn" onClick={showTimeToPayoffMonths}><i class="fa-solid fa-pencil"></i></div></p>
             </div>
           </div>
           <div class="col-md-8">
@@ -757,6 +908,36 @@ export default function Home() {
         value={estimatedData.grossAnnualSalaryPlusBenefits}
         setValue={changeGrossAnnualSalaryPlusBenefits}
         updateField={() => updateField("grossAnnualSalaryPlusBenefits", estimatedData.grossAnnualSalaryPlusBenefits)}
+      />
+      <TextInputModal
+        id="creditLimitModal"
+        value={creditAndDebtData.credit_limit}
+        setValue={changeCreditLimit}
+        updateField={() => updateCreditAndDebtField("credit_limit", creditAndDebtData.credit_limit)}
+      />
+      <TextInputModal
+        id="totalDebtModal"
+        value={creditAndDebtData.total_debt}
+        setValue={changeTotalDebt}
+        updateField={() => updateCreditAndDebtField("total_debt", creditAndDebtData.total_debt)}
+      />
+      <TextInputModal
+        id="monthlyDebtPaymentModal"
+        value={creditAndDebtData.monthly_debt_payment}
+        setValue={changeMonthlyDebtPayment}
+        updateField={() => updateCreditAndDebtField("monthly_debt_payment", creditAndDebtData.monthly_debt_payment)}
+      />
+      <TextInputModal
+        id="interestRateModal"
+        value={creditAndDebtData.interest_rate}
+        setValue={changeInterestRate}
+        updateField={() => updateCreditAndDebtField("interest_rate", creditAndDebtData.interest_rate)}
+      />
+      <TextInputModal
+        id="timeToPayoffMonthsModal"
+        value={creditAndDebtData.time_to_payoff_months}
+        setValue={changeTimeToPayoffMonths}
+        updateField={() => updateCreditAndDebtField("time_to_payoff_months", creditAndDebtData.time_to_payoff_months)}
       />
     </>
   )
