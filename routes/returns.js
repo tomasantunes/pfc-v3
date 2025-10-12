@@ -80,6 +80,43 @@ router.get("/get-net-worth", async (req, res) => {
   res.json({status: "OK", data: total});
 });
 
+router.post("/save-net-worth", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  const { net_worth } = req.body;
+
+  console.log("Received net worth to save:", net_worth);
+
+  if (isNaN(net_worth)) {
+    res.json({status: "NOK", error: "Invalid net worth value."});
+    return;
+  }
+
+  var sql = "INSERT INTO net_worth_snapshots (net_worth) VALUES (?)";
+  await con2.query(sql, [net_worth]);
+
+  res.json({status: "OK", data: "Net worth saved successfully."});
+});
+
+router.get("/get-net-worth-snapshots", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var sql = "SELECT * FROM net_worth_snapshots WHERE YEAR(created_at) = YEAR(NOW()) ORDER BY created_at DESC LIMIT 12";
+  var result = await con2.query(sql);
+  var snapshots = [];
+  if (result[0].length > 0) {
+    snapshots = result[0];
+  }
+
+  res.json({status: "OK", data: snapshots});
+});
+
 router.get("/get-crypto-profit", async (req, res) => {
   if (!req.session.isLoggedIn) {
     res.json({status: "NOK", error: "Invalid Authorization."});

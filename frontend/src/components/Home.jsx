@@ -5,6 +5,7 @@ import Navbar from './Navbar';
 import axios from 'axios';
 import config from '../config';
 import TextInputModal from './TextInputModal';
+import NetWorthChart from './NetWorthChart';
 import {i18n} from '../libs/translations';
 import Chart from "react-apexcharts";
 import Swal from 'sweetalert2';
@@ -40,6 +41,8 @@ export default function Home() {
   const [totalDailyExpense, setTotalDailyExpense] = useState("0");
   const [totalHourlyExpense, setTotalHourlyExpense] = useState("0");
   const [totalInventoryValue, setTotalInventoryValue] = useState("0");
+  const [netWorthSnapshots, setNetWorthSnapshots] = useState([]);
+  const [netWorthChartData, setNetWorthChartData] = useState(Array(12).fill(null));
   const [estimatedData, setEstimatedData] = useState({
     incomePerHour: "",
     incomePerDay: "",
@@ -70,7 +73,7 @@ export default function Home() {
   function getNetWorth() {
     axios.get(config.BASE_URL + "/get-net-worth")
     .then(function(response) {
-      setNetWorth(response.data.data?.toString() + "€");
+      setNetWorth(response.data.data?.toString());
     })
     .catch(function(err) {
       showError(err.message);
@@ -585,6 +588,38 @@ export default function Home() {
     setBenefitsHourlyExpense((Number(estimatedData.benefitsPerYear) / 8760).toFixed(2));
   }
 
+  function getNetWorthSnapshots() {
+    axios.get(config.BASE_URL + "/get-net-worth-snapshots")
+    .then(function(response) {
+      if (response.data.status == "OK") {
+        setNetWorthSnapshots(response.data.data);
+      }
+      else {
+        setNetWorthSnapshots([]);
+        showError(response.data.error);
+      }
+    })
+    .catch(function(err) {
+      showError(err.message);
+    });
+  }
+
+  function saveCurrentNetWorth() {
+    axios.post(config.BASE_URL + "/save-net-worth", { net_worth: Number(netWorth) })
+    .then(function(response) {
+      if (response.data.status == "OK") {
+        MySwal.fire(i18n("Net worth has been saved."));
+        getNetWorthSnapshots();
+      }
+      else {
+        showError(response.data.error);
+      }
+    })
+    .catch(function(err) {
+      showError(err.message);
+    });
+  }
+
   function getTotalAnnualExpense() {
     if (
       !averageAnnualExpense || 
@@ -614,6 +649,20 @@ export default function Home() {
     setTotalDailyExpense(((Number(averageDailyExpense) + Number(benefitsDailyExpense))).toFixed(2));
     setTotalHourlyExpense(((Number(averageHourlyExpense) + Number(benefitsHourlyExpense))).toFixed(2));
   }
+
+  useEffect(() => {
+    if (netWorthSnapshots.length > 0) {
+      const monthlyData = Array(12).fill(null);
+      netWorthSnapshots.forEach(snapshot => {
+        const month = new Date(snapshot.created_at).getMonth();
+        if (monthlyData[month] === null) {
+          monthlyData[month] = 0;
+        }
+        monthlyData[month] += snapshot.net_worth;
+      });
+      setNetWorthChartData(monthlyData);
+    }
+  }, [netWorthSnapshots]);
 
   useEffect(() => {
     getAverageWeeklyExpense();
@@ -700,6 +749,7 @@ export default function Home() {
     getExpenseLast12Months();
     getEstimatedData();
     getCreditAndDebtData();
+    getNetWorthSnapshots();
   }, []);
 
   if (isLoggedIn) {
@@ -707,17 +757,17 @@ export default function Home() {
     <>
       <Navbar />
       <div className="container">
-        <div class="row">
-          <div class="row text-center">
+        <div className="row">
+          <div className="row text-center my-4">
             <h1>{i18n("Dashboard")}</h1>
           </div>
-          <div class="col-md-4">
-            <div class="dashboard-section mb-3">
-              <div class="row">
+          <div className="col-md-4">
+            <div className="dashboard-section mb-3">
+              <div className="row">
                 <h2>{i18n("Returns")}</h2>
               </div>
-              <div class="row">
-                <p><b>{i18n("Net Worth")}:</b> {netWorth}</p>
+              <div className="row">
+                <p><b>{i18n("Net Worth")}:</b> {netWorth}€</p>
                 <p><b>{i18n("T212 Sales" + " " + new Date().getFullYear())}:</b> {t212YearlyProfit}</p>
                 <p><b>{i18n("T212 Current Return")}:</b> {t212CurrentReturn}</p>
                 <p><b>{i18n("Revolut Sales" + " " + new Date().getFullYear())}:</b> {revolutYearlyProfit}</p>
@@ -726,46 +776,80 @@ export default function Home() {
                 <p><b>{i18n("Total Inventory Value")}:</b> {totalInventoryValue}€</p>
               </div>
             </div>
-            <div class="dashboard-section mb-3">
+            <div className="dashboard-section mb-3">
               <h2>{i18n("Earnings")}</h2>
-              <p><b>{i18n("Income Per Hour")}: </b> {estimatedData.incomePerHour}€ <div class="pencil-btn" onClick={showIncomePerHourModal}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>{i18n("Income Per Day")}: </b> {estimatedData.incomePerDay}€ <div class="pencil-btn" onClick={showIncomePerDayModal}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>{i18n("Income Per Work Hour")}: </b> {estimatedData.incomePerWorkHour}€ <div class="pencil-btn" onClick={showIncomePerWorkHourModal}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>{i18n("Income Per Work Day")}: </b> {estimatedData.incomePerWorkDay}€ <div class="pencil-btn" onClick={showIncomePerWorkDayModal}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>{i18n("Income Per Week")}: </b> {estimatedData.incomePerWeek}€ <div class="pencil-btn" onClick={showIncomePerWeekModal}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>{i18n("Income Per Month")}:  </b> {estimatedData.incomePerMonth}€ <div class="pencil-btn" onClick={showIncomePerMonthModal}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>{i18n("Income Per Year")}: </b> {estimatedData.incomePerYear}€ <div class="pencil-btn" onClick={showIncomePerYearModal}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Income Per Hour")}: </b> {estimatedData.incomePerHour}€ <div className="pencil-btn" onClick={showIncomePerHourModal}><i className="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Income Per Day")}: </b> {estimatedData.incomePerDay}€ <div className="pencil-btn" onClick={showIncomePerDayModal}><i className="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Income Per Work Hour")}: </b> {estimatedData.incomePerWorkHour}€ <div className="pencil-btn" onClick={showIncomePerWorkHourModal}><i className="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Income Per Work Day")}: </b> {estimatedData.incomePerWorkDay}€ <div className="pencil-btn" onClick={showIncomePerWorkDayModal}><i className="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Income Per Week")}: </b> {estimatedData.incomePerWeek}€ <div className="pencil-btn" onClick={showIncomePerWeekModal}><i className="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Income Per Month")}:  </b> {estimatedData.incomePerMonth}€ <div className="pencil-btn" onClick={showIncomePerMonthModal}><i className="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Income Per Year")}: </b> {estimatedData.incomePerYear}€ <div className="pencil-btn" onClick={showIncomePerYearModal}><i className="fa-solid fa-pencil"></i></div></p>
               <hr />
-              <p><b>{i18n("Net Monthly Salary")}: </b> {estimatedData.netSalaryPerMonth}€ <div class="pencil-btn" onClick={showNetSalaryPerMonth}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>{i18n("Net Annual Salary")}:  </b>{estimatedData.netSalaryPerYear}€ <div class="pencil-btn" onClick={showNetSalaryPerYear}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Net Monthly Salary")}: </b> {estimatedData.netSalaryPerMonth}€ <div className="pencil-btn" onClick={showNetSalaryPerMonth}><i className="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Net Annual Salary")}:  </b>{estimatedData.netSalaryPerYear}€ <div className="pencil-btn" onClick={showNetSalaryPerYear}><i className="fa-solid fa-pencil"></i></div></p>
               <hr />
-              <p><b>{i18n("Gross Monthly Salary")}: </b> {estimatedData.grossSalaryPerMonth}€ <div class="pencil-btn" onClick={showGrossSalaryPerMonth}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>{i18n("Gross Annual Salary")}: </b> {estimatedData.grossSalaryPerYear}€ <div class="pencil-btn" onClick={showGrossSalaryPerYear}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Gross Monthly Salary")}: </b> {estimatedData.grossSalaryPerMonth}€ <div className="pencil-btn" onClick={showGrossSalaryPerMonth}><i className="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Gross Annual Salary")}: </b> {estimatedData.grossSalaryPerYear}€ <div className="pencil-btn" onClick={showGrossSalaryPerYear}><i className="fa-solid fa-pencil"></i></div></p>
               <hr />
-              <p><b>{i18n("Gross Monthly Salary Plus Benefits")}: </b> {estimatedData.grossMonthlySalaryPlusBenefits}€ <div class="pencil-btn" onClick={showGrossMonthlySalaryPlusBenefits}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>{i18n("Gross Annual Salary Plus Benefits")}: </b> {estimatedData.grossAnnualSalaryPlusBenefits}€ <div class="pencil-btn" onClick={showGrossAnnualSalaryPlusBenefits}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Gross Monthly Salary Plus Benefits")}: </b> {estimatedData.grossMonthlySalaryPlusBenefits}€ <div className="pencil-btn" onClick={showGrossMonthlySalaryPlusBenefits}><i className="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Gross Annual Salary Plus Benefits")}: </b> {estimatedData.grossAnnualSalaryPlusBenefits}€ <div className="pencil-btn" onClick={showGrossAnnualSalaryPlusBenefits}><i className="fa-solid fa-pencil"></i></div></p>
               <hr />
-              <p><b>{i18n("Total Benefits Per Year")}: </b> {estimatedData.benefitsPerYear}€ <div class="pencil-btn" onClick={showBenefitsPerYear}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>{i18n("Expense Benefits Per Year")}: </b> {estimatedData.expenseBenefitsPerYear}€ <div class="pencil-btn" onClick={showExpenseBenefitsPerYear}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>{i18n("Food Assistance Per Year")}: </b> {estimatedData.foodAssistancePerYear}€ <div class="pencil-btn" onClick={showFoodAssistancePerYear}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>{i18n("Technology Benefits Per Year")}: </b> {estimatedData.technologyBenefitsPerYear}€ <div class="pencil-btn" onClick={showTechnologyBenefitsPerYear}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Total Benefits Per Year")}: </b> {estimatedData.benefitsPerYear}€ <div className="pencil-btn" onClick={showBenefitsPerYear}><i className="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Expense Benefits Per Year")}: </b> {estimatedData.expenseBenefitsPerYear}€ <div className="pencil-btn" onClick={showExpenseBenefitsPerYear}><i className="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Food Assistance Per Year")}: </b> {estimatedData.foodAssistancePerYear}€ <div className="pencil-btn" onClick={showFoodAssistancePerYear}><i className="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Technology Benefits Per Year")}: </b> {estimatedData.technologyBenefitsPerYear}€ <div className="pencil-btn" onClick={showTechnologyBenefitsPerYear}><i className="fa-solid fa-pencil"></i></div></p>
             </div>
-            <div class="dashboard-section mb-3">
+            <div className="dashboard-section mb-3">
               <h2>{i18n("Credit and Debt")}</h2>
-              <p><b>{i18n("Credit Limit")}: </b> {creditAndDebtData.credit_limit}€ <div class="pencil-btn" onClick={showCreditLimit}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>{i18n("Total Debt")}: </b> {creditAndDebtData.total_debt}€ <div class="pencil-btn" onClick={showTotalDebt}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>{i18n("Monthly Debt Payment")}: </b> {creditAndDebtData.monthly_debt_payment}€ <div class="pencil-btn" onClick={showMonthlyDebtPayment}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>{i18n("Interest Rate")}: </b> {creditAndDebtData.interest_rate}% <div class="pencil-btn" onClick={showInterestRate}><i class="fa-solid fa-pencil"></i></div></p>
-              <p><b>{i18n("Time to Payoff (Months)")}: </b> {creditAndDebtData.time_to_payoff_months} <div class="pencil-btn" onClick={showTimeToPayoffMonths}><i class="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Credit Limit")}: </b> {creditAndDebtData.credit_limit}€ <div className="pencil-btn" onClick={showCreditLimit}><i className="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Total Debt")}: </b> {creditAndDebtData.total_debt}€ <div className="pencil-btn" onClick={showTotalDebt}><i className="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Monthly Debt Payment")}: </b> {creditAndDebtData.monthly_debt_payment}€ <div className="pencil-btn" onClick={showMonthlyDebtPayment}><i className="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Interest Rate")}: </b> {creditAndDebtData.interest_rate}% <div className="pencil-btn" onClick={showInterestRate}><i className="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Time to Payoff (Months)")}: </b> {creditAndDebtData.time_to_payoff_months} <div className="pencil-btn" onClick={showTimeToPayoffMonths}><i className="fa-solid fa-pencil"></i></div></p>
+            </div>
+            <div className="dashboard-section mb-3">
+              <h2>{i18n("Expenses")}</h2>
+              <h3>{i18n("Total Expenses")}</h3>
+              <div className="row">
+                <p><b>{i18n("Total Annual Expense")}:</b> {totalAnnualExpense}€</p>
+                <p><b>{i18n("Total Monthly Expense")}:</b> {totalMonthlyExpense}€</p>
+                <p><b>{i18n("Total Weekly Expense")}:</b> {totalWeeklyExpense}€</p>
+                <p><b>{i18n("Total Daily Expense")}:</b> {totalDailyExpense}€</p>
+                <p><b>{i18n("Total Hourly Expense")}:</b> {totalHourlyExpense}€</p>
+              </div>
+              <hr />
+              <h3>{i18n("Average Cash Expenses")}</h3>
+              <div className="row">
+                <p><b>{i18n("Average Annual Expense")}:</b> {averageAnnualExpense}€</p>
+                <p><b>{i18n("Average Monthly Expense")}:</b> {averageMonthlyExpense}€</p>
+                <p><b>{i18n("Average Weekly Expense")}:</b> {averageWeeklyExpense}€</p>
+                <p><b>{i18n("Average Daily Expense")}:</b> {averageDailyExpense}€</p>
+                <p><b>{i18n("Average Hourly Expense")}:</b> {averageHourlyExpense}€</p>
+              </div>
+              <hr />
+              <h3>{i18n("Benefits Expenses")}</h3>
+              <div className="row">
+                <p><b>{i18n("Benefits Annual Expense")}:</b> {benefitsAnnualExpense}€</p>
+                <p><b>{i18n("Benefits Monthly Expense")}:</b> {benefitsMonthlyExpense}€</p>
+                <p><b>{i18n("Benefits Weekly Expense")}:</b> {benefitsWeeklyExpense}€</p>
+                <p><b>{i18n("Benefits Daily Expense")}:</b> {benefitsDailyExpense}€</p>
+                <p><b>{i18n("Benefits Hourly Expense")}:</b> {benefitsHourlyExpense}€</p>
+              </div>
             </div>
           </div>
-          <div class="col-md-8">
-            <div class="dashboard-section mb-3">
-              <h2>{i18n("Expenses")}</h2>
-              <div class="row">
+          <div className="col-md-8">
+            <div className="dashboard-section mb-3">
+              <h2>{i18n("Net Worth Over Time")}</h2>
+              <NetWorthChart netWorthData={netWorthChartData} />
+              <button className="btn btn-primary" onClick={saveCurrentNetWorth}>Save Net Worth</button>
+            </div>
+            <hr />
+            <div className="dashboard-section mb-3">
+              <div className="row">
                 <h3>{i18n("Expense Last 12 Months")}</h3>
               </div>
-              <div class="row">
+              <div className="row">
                 {expenseLast12MonthsChartOptions && expenseLast12MonthsChartSeries && (
                   <Chart
                     options={expenseLast12MonthsChartOptions}
@@ -777,32 +861,6 @@ export default function Home() {
                 )}
               </div>
               <hr />
-              <h3>{i18n("Total Expenses")}</h3>
-              <div class="row">
-                <p><b>{i18n("Total Annual Expense")}:</b> {totalAnnualExpense}€</p>
-                <p><b>{i18n("Total Monthly Expense")}:</b> {totalMonthlyExpense}€</p>
-                <p><b>{i18n("Total Weekly Expense")}:</b> {totalWeeklyExpense}€</p>
-                <p><b>{i18n("Total Daily Expense")}:</b> {totalDailyExpense}€</p>
-                <p><b>{i18n("Total Hourly Expense")}:</b> {totalHourlyExpense}€</p>
-              </div>
-              <hr />
-              <h3>{i18n("Average Cash Expenses")}</h3>
-              <div class="row">
-                <p><b>{i18n("Average Annual Expense")}:</b> {averageAnnualExpense}€</p>
-                <p><b>{i18n("Average Monthly Expense")}:</b> {averageMonthlyExpense}€</p>
-                <p><b>{i18n("Average Weekly Expense")}:</b> {averageWeeklyExpense}€</p>
-                <p><b>{i18n("Average Daily Expense")}:</b> {averageDailyExpense}€</p>
-                <p><b>{i18n("Average Hourly Expense")}:</b> {averageHourlyExpense}€</p>
-              </div>
-              <hr />
-              <h3>{i18n("Benefits Expenses")}</h3>
-              <div class="row">
-                <p><b>{i18n("Benefits Annual Expense")}:</b> {benefitsAnnualExpense}€</p>
-                <p><b>{i18n("Benefits Monthly Expense")}:</b> {benefitsMonthlyExpense}€</p>
-                <p><b>{i18n("Benefits Weekly Expense")}:</b> {benefitsWeeklyExpense}€</p>
-                <p><b>{i18n("Benefits Daily Expense")}:</b> {benefitsDailyExpense}€</p>
-                <p><b>{i18n("Benefits Hourly Expense")}:</b> {benefitsHourlyExpense}€</p>
-              </div>
             </div>
           </div>
         </div>
