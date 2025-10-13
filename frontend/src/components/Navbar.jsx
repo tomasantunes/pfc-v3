@@ -1,9 +1,20 @@
 import React, {useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 import {NavLink} from 'react-router-dom';
 import {i18n, getLanguages, setLanguage} from '../libs/translations';
+import axios from 'axios';
+
+var languages_arr = getLanguages();
 
 export default function Navbar() {
-    const [languages, setLanguages] = useState(getLanguages());
+  const navigate = useNavigate();
+  const [languages, setLanguages] = useState(languages_arr);
+
+  function logout() {
+    axios.post("/api/logout");
+    navigate("/login");
+  }
+
   return (
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
@@ -17,6 +28,15 @@ export default function Navbar() {
                     <NavLink to="/home" className="nav-link">Home</NavLink>
                 </li>
                 <li class="nav-item">
+                    <NavLink to="/budgets" className="nav-link">{i18n("Budgets")}</NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink to="/goals" className="nav-link">{i18n("Goals")}</NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink to="/inventory" className="nav-link">{i18n("Inventory")}</NavLink>
+                </li>
+                <li class="nav-item">
                     <NavLink to="/bpi" className="nav-link">BPI</NavLink>
                 </li>
                 <li class="nav-item">
@@ -26,7 +46,7 @@ export default function Navbar() {
                     <NavLink to="/revolut" className="nav-link">Revolut</NavLink>
                 </li>
                 <li class="nav-item">
-                    <NavLink to="/savings" className="nav-link">Savings</NavLink>
+                    <NavLink to="/savings" className="nav-link">{i18n("Savings")}</NavLink>
                 </li>
                 {/*<li class="nav-item">
                     <NavLink to="/paypal" className="nav-link">Paypal</NavLink>
@@ -58,7 +78,7 @@ export default function Navbar() {
                 </div>
             </div>
             <div class="logout-btn">
-                <a href="/api/logout"><i class="fa-solid fa-right-from-bracket"></i></a>
+                <div onClick={logout} style={{cursor: "pointer"}}><i class="fa-solid fa-right-from-bracket"></i></div>
             </div>
         </div>
     </nav>

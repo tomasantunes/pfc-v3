@@ -12,9 +12,7 @@ var fileUpload = require('express-fileupload');
 const fs = require("fs");
 const csv = require('fast-csv');
 
-var indexRouter = require('./routes/index');
 var authRouter = require('./routes/auth');
-var viewsRouter = require('./routes/views');
 var bpiRouter = require('./routes/bpi');
 var expensesRouter = require('./routes/expenses');
 var returnsRouter = require('./routes/returns');
@@ -26,6 +24,11 @@ var t212Router = require('./routes/trading212');
 var coinbaseRouter = require('./routes/coinbase');
 var binanceRouter = require('./routes/binance');
 var estimatedDataRouter = require('./routes/estimated-data');
+var creditAndDebtRouter = require('./routes/credit_and_debt');
+var budgetsRouter = require('./routes/budgets');
+var goalsRouter = require('./routes/goals');
+var externalRouter = require('./routes/external');
+var inventoryRouter = require('./routes/inventory');
 
 var app = express();
 
@@ -62,9 +65,12 @@ app.use('/', t212Router);
 app.use('/', coinbaseRouter);
 app.use('/', binanceRouter);
 app.use('/', estimatedDataRouter);
-app.use('/', indexRouter);
+app.use('/', creditAndDebtRouter);
+app.use('/', budgetsRouter);
+app.use('/', goalsRouter);
+app.use('/', externalRouter);
+app.use('/', inventoryRouter);
 app.use(express.static(path.resolve(__dirname) + '/frontend/dist'));
-app.use('/', viewsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

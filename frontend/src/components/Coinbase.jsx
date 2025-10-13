@@ -3,6 +3,7 @@ import Navbar from './Navbar';
 import axios from 'axios';
 import config from '../config';
 import {i18n} from '../libs/translations';
+import Flatpickr from "react-flatpickr";
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
@@ -18,6 +19,46 @@ export default function Coinbase() {
     quantity: "",
     value: ""
   });
+  const [expenses, setExpenses] = useState([]);
+  const [newExpenseDate, setNewExpenseDate] = useState("");
+  const [newExpenseDescription, setNewExpenseDescription] = useState("");
+  const [newExpenseValue, setNewExpenseValue] = useState("");
+
+
+  function changeNewExpenseDescription(e) {
+    setNewExpenseDescription(e.target.value);
+  }
+
+  function changeNewExpenseValue(e) {
+    setNewExpenseValue(e.target.value);
+  }
+
+  function addNewExpense() {
+    var data = {
+      date: newExpenseDate,
+      description: newExpenseDescription,
+      value: newExpenseValue
+    };
+
+    axios.post(config.BASE_URL + "/insert-expense-coinbase", data)
+    .then(function (response) {
+      if (response.data.status == "OK") {
+        MySwal.fire(i18n("Expense has been submitted."));
+        getExpenses();
+        setNewExpense({
+          date: "",
+          description: "",
+          value: ""
+        });
+      }
+      else {
+        MySwal.fire("Error: " + response.data.error);
+      }
+    })
+    .catch(function(err) {
+      MySwal.fire("Error: " + err.message);
+    });
+  }
 
   function changeNewBalance(e) {
     setNewBalance(e.target.value);
@@ -97,8 +138,19 @@ export default function Coinbase() {
     });
   }
 
+  function getExpenses() {
+    axios.get(config.BASE_URL + "/get-expenses-coinbase")
+    .then(function (response) {
+      setExpenses(response.data.data);
+    })
+    .catch(function(err) {
+      MySwal.fire("Error: " + err.message);
+    });
+  }
+
   useEffect(() => {
     getLastSnapshot();
+    getExpenses();
   }, []);
 
   return (
@@ -177,6 +229,39 @@ export default function Coinbase() {
                 </tr>
               ))}
             </tbody>
+          </table>
+        </div>
+      </div>
+      <div className="row">
+        <div class="col-12">
+          <h3>Expenses</h3>
+          <table className="table table-striped coinbase-expenses-table">
+            <thead>
+                <tr>
+                  <th>{i18n("Date")}</th>
+                  <th>{i18n("Description")}</th>
+                  <th>{i18n("Value")}</th>
+                  <th></th>
+                </tr>
+            </thead>
+            <tbody>
+              {expenses.map((e) => (
+                <tr>
+                  <td>{e.date}</td>
+                  <td>{e.description}</td>
+                  <td>{e.value}</td>
+                  <td></td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot>
+              <tr>
+                <td><Flatpickr className="form-control" value={newExpenseDate} onChange={([date]) => setNewExpenseDate(date)} /></td>
+                <td><input type="text" className="form-control" value={newExpenseDescription} onChange={changeNewExpenseDescription} /></td>
+                <td><input type="text" className="form-control" value={newExpenseValue} onChange={changeNewExpenseValue} /></td>
+                <td><button className="btn btn-success" onClick={addNewExpense}>{i18n("Add")}</button></td>
+              </tr>
+            </tfoot>
           </table>
         </div>
       </div>

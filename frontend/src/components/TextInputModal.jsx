@@ -1,4 +1,5 @@
 import React from 'react';
+import {i18n} from '../libs/translations';
 
 export default function TextInputModal({id, value, setValue, updateField}) {
   return (
@@ -18,8 +19,8 @@ export default function TextInputModal({id, value, setValue, updateField}) {
               />
           </div>
           <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary" onClick={updateField}>Save</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{i18n("Close")}</button>
+              <button type="button" class="btn btn-primary" onClick={updateField}>{i18n("Save")}</button>
           </div>
           </div>
       </div>

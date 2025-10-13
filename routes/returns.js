@@ -1,17 +1,5 @@
 var express = require('express');
 var router = express.Router();
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var mysql = require("mysql2");
-var mysql2 = require('mysql2/promise');
-var secretConfig = require('../secret-config');
-var session = require('express-session');
-const readerXLS = require('xlsx');
-var fileUpload = require('express-fileupload');
-const fs = require("fs");
-const csv = require('fast-csv');
-const utils = require('../libs/utils');
 const database = require('../libs/database');
 
 var {con, con2} = database.getMySQLConnections();
@@ -73,9 +61,60 @@ router.get("/get-net-worth", async (req, res) => {
     saldo_savings = result7[0][0].balance;
   }
 
-  var total = (Number(saldo_bpi) + Number(saldo_t212) + Number(saldo_coinbase) + Number(saldo_binance) + Number(saldo_polymarket) + Number(saldo_santander) + Number(saldo_savings)).toFixed(2);
+  var sql8 = "SELECT * FROM revolut_portfolio_snapshot_headers ORDER BY created_at DESC LIMIT 1";
+  var result8 = await con2.query(sql8);
+  var saldo_revolut_stocks = 0;
+  if (result8[0].length > 0) {
+    saldo_revolut_stocks = result8[0][0].balance;
+  }
+
+  var sql9 = "SELECT * FROM revolut_mov ORDER BY id DESC LIMIT 1";
+  var result9 = await con2.query(sql9);
+  var saldo_revolut = 0;
+  if (result9[0].length > 0) {
+    saldo_revolut = result9[0][0].saldo;
+  }
+
+  var total = (Number(saldo_bpi) + Number(saldo_t212) + Number(saldo_coinbase) + Number(saldo_binance) + Number(saldo_polymarket) + Number(saldo_santander) + Number(saldo_savings) + Number(saldo_revolut_stocks) + Number(saldo_revolut)).toFixed(2);
 
   res.json({status: "OK", data: total});
+});
+
+router.post("/save-net-worth", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  const { net_worth } = req.body;
+
+  console.log("Received net worth to save:", net_worth);
+
+  if (isNaN(net_worth)) {
+    res.json({status: "NOK", error: "Invalid net worth value."});
+    return;
+  }
+
+  var sql = "INSERT INTO net_worth_snapshots (net_worth) VALUES (?)";
+  await con2.query(sql, [net_worth]);
+
+  res.json({status: "OK", data: "Net worth saved successfully."});
+});
+
+router.get("/get-net-worth-snapshots", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var sql = "SELECT * FROM net_worth_snapshots WHERE YEAR(created_at) = YEAR(NOW()) ORDER BY created_at DESC LIMIT 12";
+  var result = await con2.query(sql);
+  var snapshots = [];
+  if (result[0].length > 0) {
+    snapshots = result[0];
+  }
+
+  res.json({status: "OK", data: snapshots});
 });
 
 router.get("/get-crypto-profit", async (req, res) => {

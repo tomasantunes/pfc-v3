@@ -42,6 +42,12 @@
   border-radius: 10px;
 }
 
+.revolut-form {
+  padding: 25px;
+  background-color: #ccc;
+  border-radius: 10px;
+}
+
 .dashboard-section {
   padding: 25px;
   border-radius: 10px;
@@ -56,4 +62,8 @@
 .set-language-btn {
   padding: 15px;
   cursor: pointer;
+}
+
+.coinbase-expenses-table tfoot tr td {
+  background-color: #888;
 }

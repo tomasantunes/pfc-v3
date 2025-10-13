@@ -16,6 +16,22 @@ function getLocalDate() {
         ':' + pad(date.getSeconds()) ;
 }
 
+function toLocaleISOString(date) {
+    function pad(number) {
+        if (number < 10) {
+            return '0' + number;
+        }
+        return number;
+    }
+
+    return date.getFullYear() +
+        '-' + pad(date.getMonth() + 1) +
+        '-' + pad(date.getDate()) +
+        'T' + pad(date.getHours()) +
+        ':' + pad(date.getMinutes()) +
+        ':' + pad(date.getSeconds()) ;
+}
+
 function convertExcelDate(dateStr) {
   if (dateStr == "") return "1900-01-01";
   const [day, month, year] = dateStr.split('-'); // Split the input string by '-'
@@ -70,6 +86,7 @@ function formatDatePtVerbose(date) {
 // Export in a way that works with both require() and import
 module.exports = {
     getLocalDate,
+    toLocaleISOString,
     convertExcelDate,
     convertPaypalDate,
     convertRevolutDate,
@@ -77,6 +94,7 @@ module.exports = {
     formatDatePtVerbose,
     default: {
         getLocalDate,
+        toLocaleISOString,
         convertExcelDate,
         convertPaypalDate,
         convertRevolutDate,

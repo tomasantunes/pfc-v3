@@ -43,13 +43,17 @@ router.get("/get-average-monthly-expense", async (req, res) => {
         SELECT data_inicio AS date, montante AS amount
         FROM revolut_mov
         WHERE is_expense = 1 AND montante < 0
+
+        UNION ALL
+
+        SELECT date, ABS(value) * -1 AS amount
+        FROM coinbase_expenses
       ) t
       WHERE date < DATE_FORMAT(CURDATE(), '%Y-%m-01')
       GROUP BY ym
     ) m
   `);
 
-  console.log(rows);
   let averageMonthlyExpense = Number(rows[0].average_monthly_expense) || 0;
   averageMonthlyExpense = averageMonthlyExpense.toFixed(2);
   res.json({status: "OK", data: averageMonthlyExpense});
@@ -66,7 +70,8 @@ router.get("/get-average-daily-expense", async (req, res) => {
       SELECT LEAST(
         IFNULL((SELECT MIN(data_mov) FROM bpi_mov), CURDATE()),
         IFNULL((SELECT MIN(data_mov) FROM santander_mov), CURDATE()),
-        IFNULL((SELECT MIN(data_inicio) FROM revolut_mov), CURDATE())
+        IFNULL((SELECT MIN(data_inicio) FROM revolut_mov), CURDATE()),
+        IFNULL((SELECT MIN(date) FROM coinbase_expenses), CURDATE())
       ) AS first_date
     `);
 
@@ -83,6 +88,8 @@ router.get("/get-average-daily-expense", async (req, res) => {
         SELECT SUM(ABS(valor)) AS valor FROM santander_mov WHERE valor < 0 AND is_expense = 1
         UNION ALL
         SELECT SUM(ABS(montante)) AS valor FROM revolut_mov WHERE montante < 0 AND is_expense = 1
+        UNION ALL
+        SELECT SUM(ABS(value)) AS valor FROM coinbase_expenses
       ) t
     `);
 
@@ -159,9 +166,26 @@ router.get("/get-expense-last-12-months", async (req, res) => {
     LIMIT 12;
   `);
 
+  const [rows4] = await con2.execute(`
+    SELECT 
+        YEAR(date) AS yr,
+        MONTH(date) AS mnth,
+        SUM(ABS(value)) AS monthly_sum
+    FROM coinbase_expenses
+    WHERE
+        (
+          YEAR(date) <> YEAR(CURDATE())
+          OR MONTH(date) <> MONTH(CURDATE())
+        )
+    GROUP BY YEAR(date), MONTH(date)
+    ORDER BY yr DESC, mnth DESC
+    LIMIT 12;
+  `);
+
   const expenseLast12MonthsBpi = rows1;
   const expenseLast12MonthsSantander = rows2;
   const expenseLast12MonthsRevolut = rows3;
+  const expenseLast12MonthsCoinbase = rows4;
   const expenseLast12Months = [];
 
   for (let i = 0; i < 12; i++) {
@@ -173,10 +197,12 @@ router.get("/get-expense-last-12-months", async (req, res) => {
     const bpiEntry = expenseLast12MonthsBpi.find(entry => entry.yr === year && entry.mnth === month);
     const santanderEntry = expenseLast12MonthsSantander.find(entry => entry.yr === year && entry.mnth === month);
     const revolutEntry = expenseLast12MonthsRevolut.find(entry => entry.yr === year && entry.mnth === month);
+    const coinbaseEntry = expenseLast12MonthsCoinbase.find(entry => entry.yr === year && entry.mnth === month);
 
     const totalExpense = (bpiEntry ? Number(bpiEntry.monthly_sum) : 0) +
                         (santanderEntry ? Number(santanderEntry.monthly_sum) : 0) +
-                        (revolutEntry ? Number(revolutEntry.monthly_sum) : 0);
+                        (revolutEntry ? Number(revolutEntry.monthly_sum) : 0) +
+                        (coinbaseEntry ? Number(coinbaseEntry.monthly_sum) : 0);
 
     expenseLast12Months.push({
       yr: year,

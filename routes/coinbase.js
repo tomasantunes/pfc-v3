@@ -55,4 +55,42 @@ router.get("/get-last-snapshot-coinbase", (req, res) => {
   });
 });
 
+router.post("/insert-expense-coinbase", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var date = req.body.date;
+  var description = req.body.description;
+  var value = req.body.value;
+
+  var sql = "INSERT INTO coinbase_expenses (date, description, value) VALUES (?, ?, ?)";
+  con.query(sql, [date.slice(0, 10), description, value], function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: "There was an error inserting the expense."});
+      return;
+    }
+    res.json({status: "OK", data: "Expense has been inserted successfully."});
+  });
+});
+
+router.get("/get-expenses-coinbase", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var sql = "SELECT * FROM coinbase_expenses";
+  con.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: "There was an error getting the expenses."});
+      return;
+    }
+    res.json({status: "OK", data: result});
+  });
+});
+
 module.exports = router;
