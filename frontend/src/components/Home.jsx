@@ -69,6 +69,7 @@ export default function Home() {
     interest_rate: "",
     time_to_payoff_months: ""
   });
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
 
   function getNetWorth() {
     axios.get(config.BASE_URL + "/get-net-worth")
@@ -841,8 +842,8 @@ export default function Home() {
           <div className="col-md-8">
             <div className="dashboard-section mb-3">
               <h2>{i18n("Net Worth Over Time")}</h2>
-              <NetWorthChart netWorthData={netWorthChartData} />
-              <button className="btn btn-primary" onClick={saveCurrentNetWorth}>Save Net Worth</button>
+              <NetWorthChart title={i18n("Net Worth") + ` (${currentYear})`} netWorthData={netWorthChartData} />
+              <button className="btn btn-primary" onClick={saveCurrentNetWorth}>{i18n("Save Net Worth")}</button>
             </div>
             <hr />
             <div className="dashboard-section mb-3">

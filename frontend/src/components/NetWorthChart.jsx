@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Chart from "react-apexcharts";
 
-export default function NetWorthChart({netWorthData}) {
+export default function NetWorthChart({title, netWorthData}) {
   const [series, setSeries] = useState([]);
-  // Get current year and month names
-  const year = new Date().getFullYear();
   const months = [
     "Jan", "Feb", "Mar", "Apr", "May", "Jun",
     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
@@ -17,7 +15,7 @@ export default function NetWorthChart({netWorthData}) {
       zoom: { enabled: false },
     },
     title: {
-      text: `Net Worth Growth (${year})`,
+      text: title,
       align: "center",
       style: { fontSize: "18px", fontWeight: "bold" }
     },

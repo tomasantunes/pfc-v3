@@ -149,6 +149,9 @@ var translations = {
     "Interest Rate": {"en-us": "Interest Rate", "pt-pt": "Taxa de Juro"},
     "Time to Payoff (Months)": {"en-us": "Time to Payoff (Months)", "pt-pt": "Tempo para Quitar (Meses)"},
     "Close": {"en-us": "Close", "pt-pt": "Fechar"},
+    "Net Worth Over Time": {"en-us": "Net Worth Over Time", "pt-pt": "Património ao Longo do Tempo"},
+    "Save Net Worth": {"en-us": "Save Net Worth", "pt-pt": "Guardar Património"},
+    "Net Worth has been saved.": {"en-us": "Net Worth has been saved.", "pt-pt": "O património foi guardado."},
 }
 
 export function i18n(text) {
