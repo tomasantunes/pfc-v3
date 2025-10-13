@@ -144,6 +144,9 @@ Esta aplicação assume que o BPI é a conta principal e as outras são secundá
 ##### Retornos
 
 - O Património inclui os saldos da Trading 212 e do Revolut de acordo com os resumos de portfolio e no Revolut também a conta à ordem.
+- As vendas da T212, se forem reinvestidas irão-se refletir no saldo T212. Se não terão que ser transferidas para o BPI ou Santander de modo a serem refletidas no Património.
+- No Revolut poderá transferir o valor dessas vendas para a conta à ordem Revolut e será contabilizado.
+- Se tiver dinheiro na conta de ações da Revolut que não esteja investido (ativo Euros) este não será contabilizado.
 - O lucro de criptomoedas também está incluído no património de acordo com os resumos do Coinbase, Binance e Polymarket.
 - O Valor Total do Inventário não está incluído no Património.
 - Os campos que têm um lápis à frente podem ser editados.
