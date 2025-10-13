@@ -25,9 +25,11 @@ PFC (Personal Finance Center) v3
 
 O PFC3 deve ser preenchido mensalmente.
 
+Esta aplicação assume que o BPI é a conta principal e as outras são secundárias.
+
 ### BPI
 
-#### Descarregar o extrato mensal
+#### Descarregar o extrato mensal BPI
 
 - Ir ao site  https://www.bancobpi.pt/particulares
 - Iniciar sessão
@@ -45,6 +47,67 @@ O PFC3 deve ser preenchido mensalmente.
 - Clicar no botão "Import XLS"
 - Depois de receber confirmação que o ficheiro foi importado corretamente, pode definir certos movimentos como sendo ou não sendo despesas clicando no botão da última coluna.
 
+#### Adicionar movimento BPI
+
+- Caso queira reportar por exemplo uma entrada e saída em cash que não passe pelo banco pode adicionar movimentos no extrato BPI.
+- Preencha os campos "Data Mov.", "Data Valor", "Descrição", "Valor", "Saldo" e "Despesa".
+- Atenção que o saldo deve ser a soma do saldo do movimento anterior a essa data com o valor do movimento que vai inserir.
+- Clicar em "Submeter"
+
+#### Definir saídas como não-despesas
+
+- Nas páginas BPI, Santander e Revolut pode definir valores negativos como não sendo despesas (por exemplo se forem transferências ou investimentos).
+- Basta clicar no botão da última coluna para definir se é ou não despesa. (Este botão apenas está visível para valores negativos)
+
+#### Descarregar o extrato mensal Santander
+
+- Entrar no NetBanco Particulares.
+- Na página iniciar clicar em "Ver movimentos" debaixo do seu saldo.
+- Clicar em "Pesquisar e ordenar" por cima da tabela do extrato.
+- Selecionar "Data inicial" e "Data final" como 1 e 31 do mês passado.
+- Clicar em "Pesquisar"
+- Debaixo da tabela clicar em "Exportar (Excel)"
+
+#### Importar o extrato mensal Santander
+
+- Ir à página "Santander"
+- Introduza o saldo atual no Santander.
+- Carregar no botão "Escolher ficheiro"
+- Selecionar o ficheiro Excel.
+- Clicar no botão "Submeter"
+
+#### Descarregar o extrato mensal Revolut
+
+- Inicie sessão no Revolut em browser desktop.
+- Na página "Início" clicar no botão "Extrato".
+- Escolher o formato Excel.
+- Definir o mês de início e o mês de fim para o mês anterior.
+- Clicar em "Gerar"
+
+#### Importar o extrato mensal Revolut
+
+- Ir à página "Revolut"
+- Carregar no botão "Escolher ficheiro"
+- Selecionar o ficheiro Excel.
+- Clicar no botão "Submeter"
+
+#### Inserir movimento de conta Revolut
+
+- Caso realize alguma transação no mercado da bolsa no Revolut terá que adicionar um movimento de conta na página Revolut.
+- Preencha os campos "Data Mov.", "Tipo", "Nome", "Quantidade", "Preço", "Valor" e "Retorno".
+- O campo "Quantidade" é o número de ações.
+- O campo "Preço" é o preço por cada ação (em euros).
+- O campo "Valor" é o preço vezes a quantidade (em euros).
+- O campo "Retorno" apenas deve ser preenchido em vendas e é o lucro ou perda dessa venda.
+
+#### Inserir Resumo do Portfolio
+
+- Todos os meses nas páginas "Revolut" e "Trading 212" poderá inserir um resumo do portfolio.
+- Preencha os campos "Saldo" e "Lucro" com os valores atuais do Portfolio no total.
+- Preencha os campos "Nome", "Preço", "Quantidade", "Valor" e "Retorno" para cada posição.
+- Clique em "Submeter".
+- Os valores devem ser em euros. O preço é o preço atual por cada ação, a quantidade é a quantidade de ações, o valor é o preço atual vezes a quantidade e o retorno é o lucro ou perda.
+
 #### Trading212
 
 - Preencher o campo "Balance" com o saldo total da conta Trading212 em euros.
@@ -61,12 +124,27 @@ O PFC3 deve ser preenchido mensalmente.
 - Clicar no botão "Submit" para submeter o snapshot do portfolio.
 - Se tiver snapshot do mês anterior ele aparecerá em baixo de modo a poder comparar com o atual.
 
+#### Despesas Coinbase
+
+- Na página Coinbase pode adicionar despesas preenchendo os campos "Data", "Descrição" e "Valor".
+- O valor deve ser um número positivo apesar de ser uma despesa neste caso.
+
 #### Binance
 
-- As instruções para o Binance são iguais às do Coinbase.
+- As instruções para o Binance são iguais às do Coinbase em termos dos resumos de portfolio.
 
 #### Polymarket
 
 - Preencher o campo "Balance" com o saldo total da sua conta Polymarket em euros.
 - Preencher o campo "Profit" com o retorno atual, seja ele positivo ou negativo.
 - Preencher o campo "Deposit" com o valor total de depósito que efetuou neste site.
+
+#### Painel de Estatísticas
+
+##### Retornos
+
+- O Património inclui os saldos da Trading 212 e do Revolut de acordo com os resumos de portfolio e no Revolut também a conta à ordem.
+- O lucro de criptomoedas também está incluído no património de acordo com os resumos do Coinbase, Binance e Polymarket.
+- O Valor Total do Inventário não está incluído no Património.
+- Os campos que têm um lápis à frente podem ser editados.
+- Em cada mês depois de importar os extratos e preencher os resumos deverá clicar no botão "Guardar Património" debaixo do gráfico do património de modo a poder visualizar a variação do património ao longo dos meses.
