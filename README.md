@@ -148,7 +148,7 @@ Esta aplicação assume que o BPI é a conta principal e as outras são secundá
 - No Revolut poderá transferir o valor dessas vendas para a conta à ordem Revolut e será contabilizado ou poderá reinvestir.
 - Se tiver dinheiro na conta de ações da Revolut que não esteja investido (ativo Euros) este não será contabilizado a não ser que o preencha nos resumos de portfolio.
 - A atividade de conta na T212 e no Revolut serve para determinar as vendas por ano. Não tem impacto no património.
-- O lucro de criptomoedas também está incluído no património de acordo com os resumos do Coinbase, Binance e Polymarket.
+- O lucro de criptomoedas também está incluído no património de acordo com os resumos do Coinbase, Binance e Polymarket. Este valor é ao longo de todo o tempo e não apenas por ano.
 - O Valor Total do Inventário não está incluído no Património.
 - Os campos que têm um lápis à frente podem ser editados.
 - Em cada mês depois de importar os extratos e preencher os resumos deverá clicar no botão "Guardar Património" debaixo do gráfico do património de modo a poder visualizar a variação do património ao longo dos meses.
