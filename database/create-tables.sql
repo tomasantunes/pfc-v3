@@ -242,3 +242,10 @@ CREATE TABLE net_worth_snapshots (
     net_worth DECIMAL(17,2),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE yearly_expense_calendar (
+    id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    yedate DATE NOT NULL,
+    description VARCHAR(256) DEFAULT '',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
