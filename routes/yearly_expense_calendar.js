@@ -6,22 +6,30 @@ const database = require('../libs/database');
 
 var {con, con2} = database.getMySQLConnections();
 
-router.post("/api/yearly-expense-calendar/add", (req, res) => {
+router.post("/api/yearly-expense-calendar/add", async (req, res) => {
   if (!req.session.isLoggedIn) {
     return res.status(401).json({status: "NOK", error: "Invalid Authorization."});
   }
 
-	var yedate = req.body.yedate;
-	var description = req.body.description;
+  try {
+    var yedate = req.body.yedate;
+    var description = req.body.description;
+    var amount = req.body.amount;
 
-	var sql = "INSERT INTO yearly_expense_calendar (yedate, description) VALUES (? ?)";
+    var sql = "INSERT INTO yearly_expense_calendar (yedate, description, amount) VALUES (?, ?, ?)";
 
-	con2.query(sql, []);
+    var result = await con2.query(sql, [yedate, description, amount]);
 
-	res.json({status: 'OK', data: con2[0][insertId]});
+    console.log(result);
+
+    res.json({status: 'OK', data: result[0]['insertId']});
+  } catch (error) {
+    console.log("Error adding yearly expense calendar entry:", error);
+    res.json({status: "NOK", error: "Error: " + error.message});
+  }
 });
 
-router.post("/api/yearly-expense-calendar/list", (req, res) => {
+router.get("/api/yearly-expense-calendar/list", (req, res) => {
   if (!req.session.isLoggedIn) {
     return res.status(401).json({status: "NOK", error: "Invalid Authorization."});
   }

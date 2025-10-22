@@ -37,6 +37,9 @@ export default function Navbar() {
                     <NavLink to="/inventory" className="nav-link">{i18n("Inventory")}</NavLink>
                 </li>
                 <li class="nav-item">
+                    <NavLink to="/yearly-expense-calendar" className="nav-link">{i18n("Yearly Expense Calendar")}</NavLink>
+                </li>
+                <li class="nav-item">
                     <NavLink to="/bpi" className="nav-link">BPI</NavLink>
                 </li>
                 <li class="nav-item">

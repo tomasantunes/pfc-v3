@@ -97,4 +97,13 @@ router.get('/revolut', (req, res) => {
   }
 });
 
+router.get('/yearly-expense-calendar', (req, res) => {
+  if(req.session.isLoggedIn) {
+    res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+  }
+  else {
+    res.redirect('/login');
+  }
+});
+
 module.exports = router;

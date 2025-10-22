@@ -71,7 +71,7 @@ app.use('/', budgetsRouter);
 app.use('/', goalsRouter);
 app.use('/', externalRouter);
 app.use('/', inventoryRouter);
-app.user('', yearlyExpenseCalendarRouter)
+app.use('', yearlyExpenseCalendarRouter)
 app.use(express.static(path.resolve(__dirname) + '/frontend/dist'));
 
 // catch 404 and forward to error handler

@@ -6,27 +6,12 @@ import config from '../config';
 import ExpandableGroupedTable from './ExpandableGroupedTable';
 import EditableExpandableGroupedTable from './EditableExpandableGroupedTable';
 import {i18n} from '../libs/translations';
+import { toLocaleISOString } from '../libs/utils';
 import Flatpickr from "react-flatpickr";
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
 const MySwal = withReactContent(Swal);
-
-function toLocaleISOString(date) {
-  function pad(number) {
-      if (number < 10) {
-          return '0' + number;
-      }
-      return number;
-  }
-
-  return date.getFullYear() +
-      '-' + pad(date.getMonth() + 1) +
-      '-' + pad(date.getDate()) +
-      'T' + pad(date.getHours()) +
-      ':' + pad(date.getMinutes()) +
-      ':' + pad(date.getSeconds()) ;
-}
 
 export default function Trading212() {
   const [newBalance, setNewBalance] = useState();

@@ -13,6 +13,7 @@ import Polymarket from './components/Polymarket';
 import Budgets from './components/Budgets';
 import Goals from './components/Goals';
 import Inventory from './components/Inventory';
+import YearlyExpenseCalendar from './components/YearlyExpenseCalendar';
 import translations from './libs/translations';
 
 translations.init();
@@ -28,6 +29,7 @@ function App() {
         <Route path="/goals" element={<Goals />} />
         <Route path="/inventory" element={<Inventory />} />
         <Route path="/savings" element={<Savings />} />
+        <Route path="/yearly-expense-calendar" element={<YearlyExpenseCalendar />} />
         <Route path="/bpi" element={<BPI />} />
         <Route path="/santander" element={<Santander />} />
         <Route path="/revolut" element={<Revolut />} />
