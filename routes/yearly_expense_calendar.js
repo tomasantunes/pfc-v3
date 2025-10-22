@@ -6,7 +6,7 @@ const database = require('../libs/database');
 
 var {con, con2} = database.getMySQLConnections();
 
-router.post("/api/yearly-expense-calendar", (req, res) {
+router.post("/api/yearly-expense-calendar", (req, res) => {
   if (!req.session.isLoggedIn) {
     res.json({status: "NOK", error: "Invalid Authorization."});
     return;
