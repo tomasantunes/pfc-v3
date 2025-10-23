@@ -17,11 +17,23 @@ router.post("/api/yearly-expense-calendar/add", async (req, res) => {
     var description = req.body.description;
     var amount = req.body.amount;
 
-    var sql = "INSERT INTO yearly_expense_calendar (yeday, yemonth, description, amount) VALUES (?, ?, ?, ?)";
+    if (req.body.isMonthly) {
+      yemonth = null;
 
-    var result = await con2.query(sql, [yeday, yemonth, description, amount]);
+      for (let month = 1; month <= 12; month++) {
+        var sql = "INSERT INTO yearly_expense_calendar (yeday, yemonth, description, amount) VALUES (?, ?, ?, ?)";
+        await con2.query(sql, [yeday, month, description, amount]);
+      }
 
-    res.json({status: 'OK', data: result[0]['insertId']});
+      return res.json({status: 'OK', data: 'Monthly expenses added.'});
+    }
+    else {
+      var sql = "INSERT INTO yearly_expense_calendar (yeday, yemonth, description, amount) VALUES (?, ?, ?, ?)";
+
+      await con2.query(sql, [yeday, yemonth, description, amount]);
+
+      res.json({status: 'OK', data: "Expense has been added."});
+    }
   } catch (error) {
     console.log("Error adding yearly expense calendar entry:", error);
     res.json({status: "NOK", error: "Error: " + error.message});

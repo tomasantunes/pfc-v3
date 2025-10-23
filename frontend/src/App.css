@@ -67,3 +67,10 @@
 .coinbase-expenses-table tfoot tr td {
   background-color: #888;
 }
+
+input[type="checkbox"] {
+  width: 35px;
+  height: 35px;
+  vertical-align: middle;
+  margin-right: 5px;
+}

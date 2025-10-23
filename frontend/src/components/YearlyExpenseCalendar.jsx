@@ -17,6 +17,8 @@ export default function YearlyExpenseCalendar() {
   const [newExpenseMonth, setNewExpenseMonth] = useState('');
   const [newExpenseDescription, setNewExpenseDescription] = useState('');
   const [newExpenseAmount, setNewExpenseAmount] = useState('');
+  const [isMonthly, setIsMonthly] = useState(false);
+  const [showMonthInput, setShowMonthInput] = useState(true);
 
   function loadExpenses() {
     axios.get(config.BASE_URL + "/api/yearly-expense-calendar/list")
@@ -34,7 +36,8 @@ export default function YearlyExpenseCalendar() {
       yeday: newExpenseDay,
       yemonth: newExpenseMonth,
       description: newExpenseDescription,
-      amount: newExpenseAmount
+      amount: newExpenseAmount,
+      isMonthly: isMonthly
     };
 
     axios.post(config.BASE_URL + "/api/yearly-expense-calendar/add", newExpense)
@@ -84,6 +87,16 @@ export default function YearlyExpenseCalendar() {
   }
 
   useEffect(() => {
+    if (isMonthly) {
+      setShowMonthInput(false);
+      setNewExpenseMonth("");
+    }
+    else {
+      setShowMonthInput(true);
+    }
+  }, [isMonthly]);
+
+  useEffect(() => {
     loadExpenses();
   }, []);
   return (
@@ -115,11 +128,18 @@ export default function YearlyExpenseCalendar() {
         </table>
         <div className="row mt-3">
           <div className="col-md-3">
+            <h3>{i18n("Add New Expense")}</h3>
+            <div className="form-group mb-2">
+              <input type="checkbox" checked={isMonthly} onChange={(e) => setIsMonthly(e.target.checked)} />
+              <label>{i18n("Monthly")}</label>
+            </div>
             <div className="form-group mb-2">
               <label>{i18n("Date")}</label>
               <div className="d-flex gap-2">
                 <input type="number" className="form-control w-auto" value={newExpenseDay} onChange={(e) => setNewExpenseDay(e.target.value)} placeholder={i18n("Day")} />
-                <input type="number" className="form-control w-auto" value={newExpenseMonth} onChange={(e) => setNewExpenseMonth(e.target.value)} placeholder={i18n("Month")} />
+                {showMonthInput && 
+                  <input type="number" className="form-control w-auto" value={newExpenseMonth} onChange={(e) => setNewExpenseMonth(e.target.value)} placeholder={i18n("Month")} />
+                }
               </div>
             </div>
             <div className="form-group mb-2">
