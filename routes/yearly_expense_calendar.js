@@ -46,4 +46,22 @@ router.get("/api/yearly-expense-calendar/list", (req, res) => {
   });
 });
 
+router.post("/api/yearly-expense-calendar/delete/:id", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    return res.status(401).json({status: "NOK", error: "Invalid Authorization."});
+  }
+
+  try {
+    var id = req.params.id;
+
+    var sql = "DELETE FROM yearly_expense_calendar WHERE id = ?";
+    var result = await con2.query(sql, [id]);
+
+    res.json({status: 'OK', data: result.affectedRows});
+  } catch (error) {
+    console.log("Error deleting yearly expense calendar entry:", error);
+    res.json({status: "NOK", error: "Error: " + error.message});
+  }
+});
+
 module.exports = router;

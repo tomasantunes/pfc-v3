@@ -51,6 +51,33 @@ export default function YearlyExpenseCalendar() {
     });
   }
 
+  function deleteExpense(expenseId) {
+    MySwal.fire({
+      title: i18n("Are you sure?"),
+      text: i18n("Are you sure you want to delete this expense?"),
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: i18n("Yes"),
+      cancelButtonText: i18n("No")
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios.post(config.BASE_URL + "/api/yearly-expense-calendar/delete/" + expenseId)
+        .then((response) => {
+          if (response.data.status === "OK") {
+            MySwal.fire(i18n("Deleted!"), i18n("Expense has been deleted."), "success");
+            loadExpenses();
+          } else {
+            MySwal.fire("Error: " + response.data.error);
+          }
+        })
+        .catch((error) => {
+          console.error("Error deleting expense:", error);
+          MySwal.fire("Error: " + error.message);
+        });
+      }
+    });
+  }
+
   useEffect(() => {
     loadExpenses();
   }, []);
@@ -75,7 +102,7 @@ export default function YearlyExpenseCalendar() {
                 <td>{expense.description}</td>
                 <td>{expense.amount}€</td>
                 <td>
-                  
+                  <button className="btn btn-danger btn-sm" onClick={() => { deleteExpense(expense.id); }}>{i18n("Delete")}</button>
                 </td>
               </tr>
               ))}
