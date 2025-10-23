@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 const database = require('../libs/database');
+const axios = require('axios');
+const secretConfig = require('../secret-config');
 
 var {con, con2} = database.getMySQLConnections();
 
@@ -180,6 +182,26 @@ router.get("/get-crypto-profit", async (req, res) => {
 
   var total_profit = (profit_polymarket + coinbaseProfit + binanceProfit).toFixed(2);
   res.json({status: "OK", data: total_profit});
+});
+
+router.get("/get-xp", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  axios.get(secretConfig.SCIENCE_RPG_URL + "/external/get-stats", {
+    params: {
+      api_key: secretConfig.SCIENCE_RPG_API_KEY
+    }
+  })
+  .then(function(response) {
+    res.json({status: "OK", data: Number(response.data.data.xp)});
+  })
+  .catch(function(error) {
+    console.error("Error fetching XP:", error);
+    res.json({status: "NOK", error: "Failed to fetch XP."});
+  });
 });
 
 module.exports = router;

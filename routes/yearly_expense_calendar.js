@@ -45,7 +45,7 @@ router.get("/api/yearly-expense-calendar/list", (req, res) => {
     return res.status(401).json({status: "NOK", error: "Invalid Authorization."});
   }
 
-  var sql = "SELECT * FROM yearly_expense_calendar";
+  var sql = "SELECT * FROM yearly_expense_calendar ORDER BY yemonth, yeday ASC";
 
   con.query(sql, function(err, result) {
     if (err) {

@@ -43,6 +43,7 @@ export default function Home() {
   const [totalInventoryValue, setTotalInventoryValue] = useState("0");
   const [netWorthSnapshots, setNetWorthSnapshots] = useState([]);
   const [netWorthChartData, setNetWorthChartData] = useState(Array(12).fill(null));
+  const [xpValue, setXpValue] = useState("0");
   const [estimatedData, setEstimatedData] = useState({
     incomePerHour: "",
     incomePerDay: "",
@@ -621,6 +622,22 @@ export default function Home() {
     });
   }
 
+  function getXpValue() {
+    axios.get(config.BASE_URL + "/get-xp")
+    .then(function(response) {
+      if (response.data.status == "OK") {
+        setXpValue(String(response.data.data * 10));
+      }
+      else {
+        setXpValue("0");
+        showError(response.data.error);
+      }
+    })
+    .catch(function(err) {
+      showError(err.message);
+    });
+  }
+
   function getTotalAnnualExpense() {
     if (
       !averageAnnualExpense || 
@@ -751,6 +768,7 @@ export default function Home() {
     getEstimatedData();
     getCreditAndDebtData();
     getNetWorthSnapshots();
+    getXpValue();
   }, []);
 
   if (isLoggedIn) {
@@ -775,6 +793,7 @@ export default function Home() {
                 <p><b>{i18n("Revolut Current Return")}:</b> {revolutCurrentReturn}</p>
                 <p><b>{i18n("Crypto Profit")}:</b> {cryptoProfit}</p>
                 <p><b>{i18n("Total Inventory Value")}:</b> {totalInventoryValue}€</p>
+                <p><b>{i18n("XP Value")}:</b> {xpValue}€</p>
               </div>
             </div>
             <div className="dashboard-section mb-3">
