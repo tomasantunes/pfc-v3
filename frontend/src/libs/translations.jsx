@@ -152,6 +152,15 @@ var translations = {
     "Net Worth Over Time": {"en-us": "Net Worth Over Time", "pt-pt": "Património ao Longo do Tempo"},
     "Save Net Worth": {"en-us": "Save Net Worth", "pt-pt": "Guardar Património"},
     "Net Worth has been saved.": {"en-us": "Net Worth has been saved.", "pt-pt": "O património foi guardado."},
+    "Expense added successfully": {"en-us": "Expense added successfully", "pt-pt": "Despesa adicionada com sucesso"},
+    "Yearly Expense Calendar": {"en-us": "Yearly Expense Calendar", "pt-pt": "Calendário Anual de Despesas"},
+    "Expense has been deleted.": {"en-us": "Expense has been deleted.", "pt-pt": "A despesa foi eliminada."},
+    "Monthly": {"en-us": "Monthly", "pt-pt": "Mensal"},
+    "Day": {"en-us": "Day", "pt-pt": "Dia"},
+    "Month": {"en-us": "Month", "pt-pt": "Mês"},
+    "Add Expense": {"en-us": "Add Expense", "pt-pt": "Adicionar Despesa"},
+    "Add New Expense": {"en-us": "Add New Expense", "pt-pt": "Adicionar Nova Despesa"},
+
 }
 
 export function i18n(text) {
