@@ -245,7 +245,8 @@ CREATE TABLE net_worth_snapshots (
 
 CREATE TABLE yearly_expense_calendar (
     id INT(11) AUTO_INCREMENT PRIMARY KEY,
-    yedate DATE NOT NULL,
+    yeday INT(5), NOT NULL,
+    yemonth INT(5) NOT NULL,
     description VARCHAR(256) DEFAULT '',
     amount DECIMAL(17,2) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP

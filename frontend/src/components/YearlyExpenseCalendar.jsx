@@ -5,7 +5,6 @@ import config from '../config';
 import axios from 'axios';
 import {i18n} from '../libs/translations';
 import { toLocaleISOString } from '../libs/utils';
-import Flatpickr from "react-flatpickr";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 
@@ -14,7 +13,8 @@ const MySwal = withReactContent(Swal)
 
 export default function YearlyExpenseCalendar() {
   const [expenses, setExpenses] = useState([]);
-  const [newExpenseDate, setNewExpenseDate] = useState('');
+  const [newExpenseDay, setNewExpenseDay] = useState('');
+  const [newExpenseMonth, setNewExpenseMonth] = useState('');
   const [newExpenseDescription, setNewExpenseDescription] = useState('');
   const [newExpenseAmount, setNewExpenseAmount] = useState('');
 
@@ -31,7 +31,8 @@ export default function YearlyExpenseCalendar() {
 
   function handleAddExpense() {
     const newExpense = {
-      yedate: toLocaleISOString(newExpenseDate).substring(0, 10),
+      yeday: newExpenseDay,
+      yemonth: newExpenseMonth,
       description: newExpenseDescription,
       amount: newExpenseAmount
     };
@@ -41,6 +42,10 @@ export default function YearlyExpenseCalendar() {
       if (response.data.status === "OK") {
         MySwal.fire(i18n("Success"), i18n("Expense added successfully"), "success");
         loadExpenses();
+        setNewExpenseDay('');
+        setNewExpenseMonth('');
+        setNewExpenseDescription('');
+        setNewExpenseAmount('');
       } else {
         MySwal.fire("Error: " + response.data.error);
       }
@@ -98,7 +103,7 @@ export default function YearlyExpenseCalendar() {
           <tbody>
               {expenses.map((expense, index) => (
               <tr>
-                <td>{expense.yedate}</td>
+                <td>{expense.yeday + "/" + expense.yemonth}</td>
                 <td>{expense.description}</td>
                 <td>{expense.amount}€</td>
                 <td>
@@ -112,7 +117,10 @@ export default function YearlyExpenseCalendar() {
           <div className="col-md-3">
             <div className="form-group mb-2">
               <label>{i18n("Date")}</label>
-              <Flatpickr className="form-control" value={newExpenseDate} onChange={([date]) => setNewExpenseDate(date)} />
+              <div className="d-flex gap-2">
+                <input type="number" className="form-control w-auto" value={newExpenseDay} onChange={(e) => setNewExpenseDay(e.target.value)} placeholder={i18n("Day")} />
+                <input type="number" className="form-control w-auto" value={newExpenseMonth} onChange={(e) => setNewExpenseMonth(e.target.value)} placeholder={i18n("Month")} />
+              </div>
             </div>
             <div className="form-group mb-2">
               <label>{i18n("Description")}</label>
