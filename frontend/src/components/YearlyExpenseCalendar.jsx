@@ -49,6 +49,7 @@ export default function YearlyExpenseCalendar() {
         setNewExpenseMonth('');
         setNewExpenseDescription('');
         setNewExpenseAmount('');
+        setIsMonthly(false);
       } else {
         MySwal.fire("Error: " + response.data.error);
       }
