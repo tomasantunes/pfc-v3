@@ -74,3 +74,7 @@ input[type="checkbox"] {
   vertical-align: middle;
   margin-right: 5px;
 }
+
+.bot-answer {
+  white-space: pre-wrap;
+}

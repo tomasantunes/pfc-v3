@@ -30,6 +30,7 @@ var goalsRouter = require('./routes/goals');
 var externalRouter = require('./routes/external');
 var inventoryRouter = require('./routes/inventory');
 var yearlyExpenseCalendarRouter = require('./routes/yearly_expense_calendar');
+var aiRouter = require('./routes/ai');
 
 var app = express();
 
@@ -71,7 +72,8 @@ app.use('/', budgetsRouter);
 app.use('/', goalsRouter);
 app.use('/', externalRouter);
 app.use('/', inventoryRouter);
-app.use('', yearlyExpenseCalendarRouter)
+app.use('/', yearlyExpenseCalendarRouter);
+app.use('/', aiRouter);
 app.use(express.static(path.resolve(__dirname) + '/frontend/dist'));
 
 // catch 404 and forward to error handler

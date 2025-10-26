@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router";
 import './App.css';
 import Login from './components/Login';
 import Home from './components/Home';
+import AI from './components/AI';
 import BPI from './components/BPI';
 import Santander from './components/Santander';
 import Revolut from './components/Revolut';
@@ -25,6 +26,7 @@ function App() {
         <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/ai" element={<AI />} />
         <Route path="/budgets" element={<Budgets />} />
         <Route path="/goals" element={<Goals />} />
         <Route path="/inventory" element={<Inventory />} />

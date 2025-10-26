@@ -16,6 +16,15 @@ router.get('/home', (req, res) => {
   }
 });
 
+router.get('/ai', (req, res) => {
+  if(req.session.isLoggedIn) {
+    res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+  }
+  else {
+    res.redirect('/login');
+  }
+});
+
 router.get('/bpi', (req, res) => {
   if(req.session.isLoggedIn) {
     res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));

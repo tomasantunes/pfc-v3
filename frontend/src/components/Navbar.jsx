@@ -28,6 +28,9 @@ export default function Navbar() {
                     <NavLink to="/home" className="nav-link">Home</NavLink>
                 </li>
                 <li class="nav-item">
+                    <NavLink to="/ai" className="nav-link">{i18n("AI")}</NavLink>
+                </li>
+                <li class="nav-item">
                     <NavLink to="/budgets" className="nav-link">{i18n("Budgets")}</NavLink>
                 </li>
                 <li class="nav-item">
