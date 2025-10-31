@@ -44,6 +44,8 @@ export default function Home() {
   const [netWorthSnapshots, setNetWorthSnapshots] = useState([]);
   const [netWorthChartData, setNetWorthChartData] = useState(Array(12).fill(null));
   const [xpValue, setXpValue] = useState("0");
+  const [yearlyInflow, setYearlyInflow] = useState("0");
+  const [currentYearOutflow, setCurrentYearOutflow] = useState("0");
   const [estimatedData, setEstimatedData] = useState({
     incomePerHour: "",
     incomePerDay: "",
@@ -638,6 +640,42 @@ export default function Home() {
     });
   }
 
+  function getYearlyInflow() {
+    axios.get(config.BASE_URL + "/get-yearly-inflows")
+    .then(function(response) {
+      if (response.data.status == "OK") {
+        var currentYear = new Date().getFullYear();
+        var idx = response.data.data.years.findIndex(year => year == currentYear);
+        setYearlyInflow(response.data.data?.inflows[idx].toString() + "€");
+      }
+      else {
+        setYearlyInflow("0€");
+        showError(response.data.error);
+      }
+    })
+    .catch(function(err) {
+      showError(err.message);
+    });
+  }
+
+  function getCurrentYearOutflow() {
+    axios.get(config.BASE_URL + "/get-yearly-outflows")
+    .then(function(response) {
+      if (response.data.status == "OK") {
+        var currentYear = new Date().getFullYear();
+        var idx = response.data.data.years.findIndex(year => year == currentYear);
+        setCurrentYearOutflow(response.data.data?.outflows[idx].toString() + "€");
+      }
+      else {
+        setCurrentYearOutflow("0€");
+        showError(response.data.error);
+      }
+    })
+    .catch(function(err) {
+      showError(err.message);
+    });
+  }
+
   function getTotalAnnualExpense() {
     if (
       !averageAnnualExpense || 
@@ -769,6 +807,8 @@ export default function Home() {
     getCreditAndDebtData();
     getNetWorthSnapshots();
     getXpValue();
+    getYearlyInflow();
+    getCurrentYearOutflow();
   }, []);
 
   if (isLoggedIn) {
@@ -787,6 +827,7 @@ export default function Home() {
               </div>
               <div className="row">
                 <p><b>{i18n("Net Worth")}:</b> {netWorth}€</p>
+                <p><b>{i18n("Inflow")} {new Date().getFullYear()}:</b> {yearlyInflow}</p>
                 <p><b>{i18n("T212 Sales" + " " + new Date().getFullYear())}:</b> {t212YearlyProfit}</p>
                 <p><b>{i18n("T212 Current Return")}:</b> {t212CurrentReturn}</p>
                 <p><b>{i18n("Revolut Sales" + " " + new Date().getFullYear())}:</b> {revolutYearlyProfit}</p>
@@ -837,6 +878,7 @@ export default function Home() {
                 <p><b>{i18n("Total Weekly Expense")}:</b> {totalWeeklyExpense}€</p>
                 <p><b>{i18n("Total Daily Expense")}:</b> {totalDailyExpense}€</p>
                 <p><b>{i18n("Total Hourly Expense")}:</b> {totalHourlyExpense}€</p>
+                <p><b>{i18n("Outflow")} {new Date().getFullYear()}:</b> {currentYearOutflow}€</p>
               </div>
               <hr />
               <h3>{i18n("Average Cash Expenses")}</h3>

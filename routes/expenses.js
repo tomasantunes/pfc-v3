@@ -1,17 +1,5 @@
 var express = require('express');
 var router = express.Router();
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var mysql = require("mysql2");
-var mysql2 = require('mysql2/promise');
-var secretConfig = require('../secret-config');
-var session = require('express-session');
-const readerXLS = require('xlsx');
-var fileUpload = require('express-fileupload');
-const fs = require("fs");
-const csv = require('fast-csv');
-const utils = require('../libs/utils');
 const database = require('../libs/database');
 
 var {con, con2} = database.getMySQLConnections();
@@ -212,6 +200,67 @@ router.get("/get-expense-last-12-months", async (req, res) => {
   }
 
   res.json({status: "OK", data: expenseLast12Months});
+});
+
+router.get("/get-yearly-outflows", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  try {
+    // Get years that have at least one positive value in January
+    const [yearsWithJanuaryNegatives] = await con2.execute(`
+      SELECT DISTINCT YEAR(data_mov) AS year
+      FROM bpi_mov
+      WHERE MONTH(data_mov) = 1 
+        AND valor < 0
+      ORDER BY year
+    `);
+
+    if (yearsWithJanuaryNegatives.length === 0) {
+      res.json({status: "OK", data: {years: [], outflows: []}});
+      return;
+    }
+
+    // Create list of years for the WHERE IN clause
+    const years = yearsWithJanuaryNegatives.map(row => row.year);
+    const yearsList = years.join(',');
+
+    // Get sum of negative values grouped by year for those years only
+    const [outflowData] = await con2.execute(`
+      SELECT 
+        YEAR(data_mov) AS year,
+        SUM(ABS(valor)) AS total_outflow
+      FROM bpi_mov
+      WHERE valor < 0 
+        AND YEAR(data_mov) IN (${yearsList})
+      GROUP BY YEAR(data_mov)
+      ORDER BY year
+    `);
+
+    // Prepare the response data
+    const responseYears = [];
+    const responseOutflows = [];
+
+    // Ensure we have data for all years that had January positives
+    years.forEach(year => {
+      const outflowEntry = outflowData.find(entry => entry.year === year);
+      responseYears.push(year);
+      responseOutflows.push(outflowEntry ? Number(outflowEntry.total_outflow) : 0);
+    });
+
+    res.json({
+      status: "OK", 
+      data: {
+        years: responseYears,
+        outflows: responseOutflows
+      }
+    });
+  } catch(err) {
+    console.log(err);
+    res.json({status: "NOK", error: "Error getting yearly outflows."});
+  }
 });
 
 module.exports = router;

@@ -204,4 +204,74 @@ router.get("/get-xp", (req, res) => {
   });
 });
 
+router.get("/get-yearly-inflows", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  try {
+    // First, get years that have at least one positive value in January
+    var sqlYearsWithJanuaryInflows = `
+      SELECT DISTINCT YEAR(data_mov) as year
+      FROM bpi_mov 
+      WHERE MONTH(data_mov) = 1 
+      AND valor > 0
+      ORDER BY year DESC
+    `;
+    
+    var yearsResult = await con2.query(sqlYearsWithJanuaryInflows);
+    
+    if (yearsResult[0].length === 0) {
+      res.json({
+        status: "OK",
+        data: {
+          years: [],
+          inflows: []
+        }
+      });
+      return;
+    }
+
+    // Get the years as an array
+    var validYears = yearsResult[0].map(row => row.year);
+    
+    // Now get the sum of positive values for each valid year
+    var sqlYearlyInflows = `
+      SELECT 
+        YEAR(data_mov) as year,
+        SUM(valor) as total_inflow
+      FROM bpi_mov 
+      WHERE valor > 0 
+      AND YEAR(data_mov) IN (${validYears.join(',')})
+      GROUP BY YEAR(data_mov)
+      ORDER BY year DESC
+    `;
+    
+    var inflowsResult = await con2.query(sqlYearlyInflows);
+    
+    var years = [];
+    var inflows = [];
+    
+    if (inflowsResult[0].length > 0) {
+      inflowsResult[0].forEach(row => {
+        years.push(row.year);
+        inflows.push(Number(row.total_inflow));
+      });
+    }
+
+    res.json({
+      status: "OK",
+      data: {
+        years: years,
+        inflows: inflows
+      }
+    });
+    
+  } catch (error) {
+    console.error("Error getting yearly inflows:", error);
+    res.json({status: "NOK", error: "Failed to fetch yearly inflows."});
+  }
+});
+
 module.exports = router;

@@ -161,7 +161,8 @@ var translations = {
     "Add Expense": {"en-us": "Add Expense", "pt-pt": "Adicionar Despesa"},
     "Add New Expense": {"en-us": "Add New Expense", "pt-pt": "Adicionar Nova Despesa"},
     "XP Value": {"en-us": "XP Value", "pt-pt": "Valor XP"},
-
+    "Inflow": {"en-us": "Inflow", "pt-pt": "Entradas"},
+    "Outflow": {"en-us": "Outflow", "pt-pt": "Saídas"}
 }
 
 export function i18n(text) {
