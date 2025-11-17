@@ -30,6 +30,7 @@ export default function Trading212() {
   const [newMovementQuantity, setNewMovementQuantity] = useState("");
   const [newMovementPrice, setNewMovementPrice] = useState("");
   const [newMovementValue, setNewMovementValue] = useState("");
+  const [newMovementReturn, setNewMovementReturn] = useState("");
   const [accountActivity, setAccountActivity] = useState(null);
   const [portfolioSnapshots, setPortfolioSnapshots] = useState(null);
 
@@ -53,6 +54,10 @@ export default function Trading212() {
     setNewMovementValue(e.target.value);
   }
 
+  function changeNewMovementReturn(e) {
+    setNewMovementReturn(e.target.value);
+  }
+
   function submitAccountMovement() {
     var data = {
       date: toLocaleISOString(newMovementDate).substring(0, 10),
@@ -60,7 +65,8 @@ export default function Trading212() {
       name: newMovementName,
       quantity: newMovementQuantity,
       price: newMovementPrice,
-      value: newMovementValue
+      value: newMovementValue,
+      return: newMovementReturn
     };
 
     axios.post(config.BASE_URL + "/insert-account-movement-t212", data)
@@ -73,6 +79,7 @@ export default function Trading212() {
         setNewMovementQuantity("");
         setNewMovementPrice("");
         setNewMovementValue("");
+        setNewMovementReturn("");
         loadAccountActivity();
       }
       else {
@@ -216,11 +223,11 @@ export default function Trading212() {
 
   const handleUpdateMovement = (itemId, updatedValues) => {
     console.log('Saving movement:', itemId, 'with values:', updatedValues);
-    
+
     // Update the data state
     setAccountActivity(prevData => {
       const newData = { ...prevData };
-      
+
       // Find and update the item in the appropriate group
       Object.keys(newData).forEach(groupName => {
         const itemIndex = newData[groupName].findIndex(item => item.id === itemId);
@@ -276,6 +283,10 @@ export default function Trading212() {
           <div className="form-group mb-2">
               <label><b>{i18n("Value")}</b></label>
               <input type="text" className="form-control" value={newMovementValue} onChange={changeNewMovementValue} />
+          </div>
+          <div className="form-group mb-2">
+              <label><b>{i18n("Return")}</b></label>
+              <input type="text" className="form-control" value={newMovementReturn} onChange={changeNewMovementReturn} />
           </div>
           <div style={{textAlign: "right"}}>
             <button className="btn btn-primary" onClick={submitAccountMovement}>{i18n("Submit")}</button>
@@ -343,7 +354,7 @@ export default function Trading212() {
         </div>
       </div>
       <div className="row t212-form mb-3">
-        {portfolioSnapshots && 
+        {portfolioSnapshots &&
           <ExpandableGroupedTable tableData={portfolioSnapshots} tableHeaders={["Name", "Price", "Quantity", "Value", "Return"]} title={i18n("Portfolio Snapshots")} />
         }
       </div>

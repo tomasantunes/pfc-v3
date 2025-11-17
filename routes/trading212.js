@@ -55,9 +55,10 @@ router.post("/insert-account-movement-t212", (req, res) => {
   var quantity = req.body.quantity;
   var price = req.body.price;
   var value = req.body.value;
+  var ret = req.body.return;
 
-  var sql = "INSERT INTO t212_account_activity (date_mov, type, name, quantity, price, value) VALUES (?, ?, ?, ?, ?, ?)";
-  con.query(sql, [date, type, name, quantity, price, value], function(err, result) {
+  var sql = "INSERT INTO t212_account_activity (date_mov, type, name, quantity, price, value, `return`) VALUES (?, ?, ?, ?, ?, ?, ?)";
+  con.query(sql, [date, type, name, quantity, price, value, ret], function(err, result) {
     if (err) {
       console.log(err);
       res.json({status: "NOK", error: "There was an error inserting the account movement."});
@@ -74,30 +75,30 @@ router.get("/get-account-activity-t212", async (req, res) => {
   }
 
   const [rows] = await con2.execute(`
-        SELECT 
+        SELECT
             id,
             date_mov,
             name,
             type,
-            quantity, 
+            quantity,
             price,
             value,
             \`return\`,
-            YEAR(date_mov) as year 
-        FROM t212_account_activity 
+            YEAR(date_mov) as year
+        FROM t212_account_activity
         ORDER BY date_mov DESC, id DESC
     `);
 
     const groupedByYear = rows.reduce((acc, row) => {
         const year = row.year.toString();
-        
+
         if (!acc[year]) {
             acc[year] = [];
         }
-        
+
         const { year: _, ...rowData } = row;
         acc[year].push(rowData);
-        
+
         return acc;
     }, {});
 
@@ -138,7 +139,7 @@ router.get("/get-portfolio-snapshots-t212", async (req, res) => {
   }
 
   const query = `
-      SELECT 
+      SELECT
           h.id,
           DATE_FORMAT(h.created_at, '%Y-%m-%d') as snapshot_date,
           h.balance,
@@ -154,16 +155,16 @@ router.get("/get-portfolio-snapshots-t212", async (req, res) => {
   `;
 
   const [rows] = await con2.execute(query);
-  
+
   const groupedData = {};
-  
+
   rows.forEach(row => {
       const key = `${row.snapshot_date} - Balance: ${row.balance} - Profit: ${row.profit}`;
-      
+
       if (!groupedData[key]) {
           groupedData[key] = [];
       }
-      
+
       if (row.name) {
           groupedData[key].push({
               id: row.id,
@@ -175,7 +176,7 @@ router.get("/get-portfolio-snapshots-t212", async (req, res) => {
           });
       }
   });
-  
+
   res.json({status: "OK", data: groupedData});
 });
 
