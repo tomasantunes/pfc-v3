@@ -1,5 +1,7 @@
 # pfc-v3
-PFC (Personal Finance Center) v3
+PFC (Personal Finance Center) v3 
+
+Self-hosted. Single user.
 
 ## How to install on localhost
 
