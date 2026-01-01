@@ -3,10 +3,8 @@ import Chart from "react-apexcharts";
 
 export default function NetWorthChart({title, netWorthData}) {
   const [series, setSeries] = useState([]);
-  const months = [
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-  ];
+  // months array for x-axis labels must be filled with empty strings to match data length
+  const months = Array.from({ length: netWorthData.length }, (_, i) => `Month ${i + 1}`);
 
   const chartOptions = {
     chart: {

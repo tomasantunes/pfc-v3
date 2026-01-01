@@ -23,9 +23,11 @@ export default function Home() {
   const [averageHourlyExpense, setAverageHourlyExpense] = useState("");
   const [averageAnnualExpense, setAverageAnnualExpense] = useState("");
   const [cryptoProfit, setCryptoProfit] = useState("");
-  const [t212YearlyProfit, setT212YearlyProfit] = useState("");
+  const [t212CurrentYearlyProfit, setT212CurrentYearlyProfit] = useState("");
+  const [t212LastYearlyProfit, setT212LastYearlyProfit] = useState("");
   const [t212CurrentReturn, setT212CurrentReturn] = useState("");
-  const [revolutYearlyProfit, setRevolutYearlyProfit] = useState("");
+  const [revolutCurrentYearlyProfit, setRevolutCurrentYearlyProfit] = useState("");
+  const [revolutLastYearlyProfit, setRevolutLastYearlyProfit] = useState("");
   const [revolutCurrentReturn, setRevolutCurrentReturn] = useState("");
   const [expenseLast12Months, setExpenseLast12Months] = useState();
   const [expenseLast12MonthsChartOptions, setExpenseLast12MonthsChartOptions] = useState();
@@ -42,10 +44,12 @@ export default function Home() {
   const [totalHourlyExpense, setTotalHourlyExpense] = useState("0");
   const [totalInventoryValue, setTotalInventoryValue] = useState("0");
   const [netWorthSnapshots, setNetWorthSnapshots] = useState([]);
-  const [netWorthChartData, setNetWorthChartData] = useState(Array(12).fill(null));
+  const [netWorthChartData, setNetWorthChartData] = useState([]);
   const [xpValue, setXpValue] = useState("0");
-  const [yearlyInflow, setYearlyInflow] = useState("0");
+  const [currentYearlyInflow, setCurrentYearlyInflow] = useState("0");
+  const [lastYearlyInflow, setLastYearlyInflow] = useState("0");
   const [currentYearOutflow, setCurrentYearOutflow] = useState("0");
+  const [lastYearOutflow, setLastYearOutflow] = useState("0");
   const [estimatedData, setEstimatedData] = useState({
     incomePerHour: "",
     incomePerDay: "",
@@ -507,10 +511,12 @@ export default function Home() {
     axios.get(config.BASE_URL + "/get-t212-yearly-profit")
     .then(function(response) {
       if (response.data.status == "OK") {
-        setT212YearlyProfit(response.data.data + "€");
+        setT212CurrentYearlyProfit(response.data.data[0] ? response.data.data[0].total_profit + "€" : "0€");
+        setT212LastYearlyProfit(response.data.data[1] ? response.data.data[1].total_profit + "€" : "0€");
       }
       else {
-        setT212YearlyProfit("0€");
+        setT212CurrentYearlyProfit("0€");
+        setT212LastYearlyProfit("0€");
         showError(response.data.error);
       }
     })
@@ -539,10 +545,12 @@ export default function Home() {
     axios.get(config.BASE_URL + "/get-revolut-yearly-profit")
     .then(function(response) {
       if (response.data.status == "OK") {
-        setRevolutYearlyProfit(response.data.data + "€");
+        setRevolutCurrentYearlyProfit(response.data.data[0] ? response.data.data[0].total_profit + "€" : "0€");
+        setRevolutLastYearlyProfit(response.data.data[1] ? response.data.data[1].total_profit + "€" : "0€");
       }
       else {
-        setRevolutYearlyProfit("0€");
+        setRevolutCurrentYearlyProfit("0€");
+        setRevolutLastYearlyProfit("0€");
         showError(response.data.error);
       }
     })
@@ -645,11 +653,15 @@ export default function Home() {
     .then(function(response) {
       if (response.data.status == "OK") {
         var currentYear = new Date().getFullYear();
-        var idx = response.data.data.years.findIndex(year => year == currentYear);
-        setYearlyInflow(response.data.data?.inflows[idx].toString() + "€");
+        var lastYear = currentYear - 1;
+        var idx_cur = response.data.data.years.findIndex(year => year == currentYear);
+        var idx_last = response.data.data.years.findIndex(year => year == lastYear);
+        if (idx_cur !== -1) setCurrentYearlyInflow(response.data.data?.inflows[idx_cur].toString() + "€");
+        if (idx_last !== -1) setLastYearlyInflow(response.data.data?.inflows[idx_last].toString() + "€");
       }
       else {
-        setYearlyInflow("0€");
+        setCurrentYearlyInflow("0€");
+        setLastYearlyInflow("0€");
         showError(response.data.error);
       }
     })
@@ -663,8 +675,11 @@ export default function Home() {
     .then(function(response) {
       if (response.data.status == "OK") {
         var currentYear = new Date().getFullYear();
-        var idx = response.data.data.years.findIndex(year => year == currentYear);
-        setCurrentYearOutflow(response.data.data?.outflows[idx].toString() + "€");
+        var lastYear = currentYear - 1;
+        var idx_cur = response.data.data.years.findIndex(year => year == currentYear);
+        var idx_last = response.data.data.years.findIndex(year => year == lastYear);
+        if (idx_cur !== -1) setCurrentYearOutflow(response.data.data?.outflows[idx_cur].toString() + "€");
+        if (idx_last !== -1) setLastYearOutflow(response.data.data?.outflows[idx_last].toString() + "€");
       }
       else {
         setCurrentYearOutflow("0€");
@@ -708,13 +723,9 @@ export default function Home() {
 
   useEffect(() => {
     if (netWorthSnapshots.length > 0) {
-      const monthlyData = Array(12).fill(null);
-      netWorthSnapshots.forEach(snapshot => {
-        const month = new Date(snapshot.created_at).getMonth();
-        if (monthlyData[month] === null) {
-          monthlyData[month] = 0;
-        }
-        monthlyData[month] += snapshot.net_worth;
+      const monthlyData = [];
+      netWorthSnapshots.reverse().forEach(snapshot => {
+        monthlyData.push(snapshot.net_worth);
       });
       setNetWorthChartData(monthlyData);
     }
@@ -827,10 +838,13 @@ export default function Home() {
               </div>
               <div className="row">
                 <p><b>{i18n("Net Worth")}:</b> {netWorth}€</p>
-                <p><b>{i18n("Inflow")} {new Date().getFullYear()}:</b> {yearlyInflow}</p>
-                <p><b>{i18n("T212 Sales" + " " + new Date().getFullYear())}:</b> {t212YearlyProfit}</p>
+                <p><b>{i18n("Inflow")} {new Date().getFullYear()}:</b> {currentYearlyInflow}</p>
+                <p><b>{i18n("Inflow")} {new Date().getFullYear() - 1}:</b> {lastYearlyInflow}</p>
+                <p><b>{i18n("T212 Sales" + " " + new Date().getFullYear())}:</b> {t212CurrentYearlyProfit}</p>
+                <p><b>{i18n("T212 Sales" + " " + (new Date().getFullYear() - 1))}:</b> {t212LastYearlyProfit}</p>
                 <p><b>{i18n("T212 Current Return")}:</b> {t212CurrentReturn}</p>
-                <p><b>{i18n("Revolut Sales" + " " + new Date().getFullYear())}:</b> {revolutYearlyProfit}</p>
+                <p><b>{i18n("Revolut Sales" + " " + new Date().getFullYear())}:</b> {revolutCurrentYearlyProfit}</p>
+                <p><b>{i18n("Revolut Sales" + " " + (new Date().getFullYear() - 1))}:</b> {revolutLastYearlyProfit}</p>
                 <p><b>{i18n("Revolut Current Return")}:</b> {revolutCurrentReturn}</p>
                 <p><b>{i18n("Crypto Profit")}:</b> {cryptoProfit}</p>
                 <p><b>{i18n("Total Inventory Value")}:</b> {totalInventoryValue}€</p>
@@ -879,6 +893,7 @@ export default function Home() {
                 <p><b>{i18n("Total Daily Expense")}:</b> {totalDailyExpense}€</p>
                 <p><b>{i18n("Total Hourly Expense")}:</b> {totalHourlyExpense}€</p>
                 <p><b>{i18n("Outflow")} {new Date().getFullYear()}:</b> {currentYearOutflow}€</p>
+                <p><b>{i18n("Outflow")} {new Date().getFullYear() - 1}:</b> {lastYearOutflow}€</p>
               </div>
               <hr />
               <h3>{i18n("Average Cash Expenses")}</h3>
@@ -903,7 +918,7 @@ export default function Home() {
           <div className="col-md-8">
             <div className="dashboard-section mb-3">
               <h2>{i18n("Net Worth Over Time")}</h2>
-              <NetWorthChart title={i18n("Net Worth") + ` (${currentYear})`} netWorthData={netWorthChartData} />
+              <NetWorthChart title={i18n("Net Worth")} netWorthData={netWorthChartData} />
               <button className="btn btn-primary" onClick={saveCurrentNetWorth}>{i18n("Save Net Worth")}</button>
             </div>
             <hr />

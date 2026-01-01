@@ -282,17 +282,27 @@ router.get("/get-revolut-yearly-profit", async (req, res) => {
   }
 
   try {
+    const currentYear = new Date().getFullYear();
     const [rows] = await con2.execute(`
-          SELECT
-              YEAR(date_mov) as year,
-              SUM(\`return\`) as total_profit
-          FROM revolut_account_activity
-          WHERE type = 'sell'
-          GROUP BY YEAR(date_mov)
-          ORDER BY year DESC
-      `);
+        SELECT
+            YEAR(date_mov) as year,
+            SUM(\`return\`) as total_profit
+        FROM revolut_account_activity
+        WHERE type = 'sell'
+        GROUP BY YEAR(date_mov)
+        ORDER BY year DESC
+    `);
 
-      res.json({status: "OK", data: rows[0] ? Number(rows[0].total_profit).toFixed(2) : "0.00"});
+    const hasCurrentYear = rows.some(r => r.year === currentYear);
+
+    if (!hasCurrentYear) {
+      rows.unshift({
+        year: currentYear,
+        total_profit: 0
+      });
+    }
+
+    res.json({status: "OK", data: rows});
   } catch (err) {
     console.log(err);
     res.json({status: "NOK", error: "Error getting Revolut yearly profit."});

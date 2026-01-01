@@ -187,21 +187,33 @@ router.get("/get-t212-yearly-profit", async (req, res) => {
   }
 
   try {
-    const [rows] = await con2.execute(`
-          SELECT
-              YEAR(date_mov) as year,
-              SUM(\`return\`) as total_profit
-          FROM t212_account_activity
-          WHERE type = 'sell'
-          GROUP BY YEAR(date_mov)
-          ORDER BY year DESC
-      `);
+    const currentYear = new Date().getFullYear();
 
-      res.json({status: "OK", data: rows[0] ? Number(rows[0].total_profit).toFixed(2) : "0.00"});
+    const [rows] = await con2.execute(`
+        SELECT
+            YEAR(date_mov) AS year,
+            SUM(\`return\`) AS total_profit
+        FROM t212_account_activity
+        WHERE type = 'sell'
+        GROUP BY YEAR(date_mov)
+        ORDER BY year DESC
+    `);
+
+    const hasCurrentYear = rows.some(r => r.year === currentYear);
+
+    if (!hasCurrentYear) {
+      rows.unshift({
+        year: currentYear,
+        total_profit: 0
+      });
+    }
+
+    res.json({ status: "OK", data: rows });
   } catch (err) {
-    console.log(err);
-    res.json({status: "NOK", error: "Error getting T212 yearly profit."});
+    console.error(err);
+    res.json({ status: "NOK", error: "Error getting T212 yearly profit." });
   }
+
 });
 
 router.get("/get-t212-current-return", async (req, res) => {

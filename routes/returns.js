@@ -109,7 +109,7 @@ router.get("/get-net-worth-snapshots", async (req, res) => {
     return;
   }
 
-  var sql = "SELECT * FROM net_worth_snapshots WHERE YEAR(created_at) = YEAR(NOW()) ORDER BY created_at DESC LIMIT 12";
+  var sql = "SELECT * FROM net_worth_snapshots ORDER BY created_at DESC";
   var result = await con2.query(sql);
   var snapshots = [];
   if (result[0].length > 0) {
