@@ -164,6 +164,9 @@ var translations = {
     "Inflow": {"en-us": "Inflow", "pt-pt": "Entradas"},
     "Outflow": {"en-us": "Outflow", "pt-pt": "Saídas"},
     "Expense Tracker": {"en-us": "Expense Tracker", "pt-pt": "Rastreador de Despesas"},
+    "Expenses by Category": {"en-us": "Expenses by Category", "pt-pt": "Despesas por Categoria"},
+    "Expenses by Month": {"en-us": "Expenses by Month", "pt-pt": "Despesas por Mês"},
+    "Percentage": {"en-us": "Percentage", "pt-pt": "Percentagem"},
 }
 
 export function i18n(text) {

@@ -60,6 +60,10 @@ export default function ExpenseTracker() {
       <Navbar />
       <div className="container">
         <div className="row mb-3">
+          <h1>{i18n("Expense Tracker")}</h1>
+          <h3>{i18n("Total Expense")}: {totalExpense.toFixed(2)}€</h3>
+        </div>
+        <div className="row mb-3">
           <h2>{i18n("Expenses By Category")}</h2>
           <table className="table table-striped table-bordered align-middle tasks">
             <thead className="table-dark">
