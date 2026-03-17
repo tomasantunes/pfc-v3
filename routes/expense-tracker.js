@@ -43,4 +43,26 @@ router.get("/expense-tracker/get-expense-by-month", (req, res) => {
   });
 });
 
+router.get("/expense-tracker/get-expenses-by-category", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var sql = `SELECT ec.name AS category_name, SUM(et.amount) AS total_expense
+             FROM expense_tracker et
+             INNER JOIN expense_categories ec ON et.category_id = ec.id
+             GROUP BY category_name
+             ORDER BY total_expense DESC`;
+
+  con.query(sql, (err, result) => {
+    if (err) {
+      console.log("Error fetching expenses by category:", err);
+      res.json({status: "NOK", error: "Database error."});
+    }
+
+    res.json({status: "OK", data: result});
+  });
+});
+
 module.exports = router;
