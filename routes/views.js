@@ -115,4 +115,40 @@ router.get('/yearly-expense-calendar', (req, res) => {
   }
 });
 
+router.get('/goals', (req, res) => {
+  if(req.session.isLoggedIn) {
+    res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+  }
+  else {
+    res.redirect('/login');
+  }
+});
+
+router.get('/inventory', (req, res) => {
+  if(req.session.isLoggedIn) {
+    res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+  }
+  else {
+    res.redirect('/login');
+  }
+});
+
+router.get('/budgets', (req, res) => {
+  if(req.session.isLoggedIn) {
+    res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+  }
+  else {
+    res.redirect('/login');
+  }
+});
+
+router.get('/expense-tracker', (req, res) => {
+  if(req.session.isLoggedIn) {
+    res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+  }
+  else {
+    res.redirect('/login');
+  }
+});
+
 module.exports = router;

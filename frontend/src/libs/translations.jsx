@@ -162,7 +162,8 @@ var translations = {
     "Add New Expense": {"en-us": "Add New Expense", "pt-pt": "Adicionar Nova Despesa"},
     "XP Value": {"en-us": "XP Value", "pt-pt": "Valor XP"},
     "Inflow": {"en-us": "Inflow", "pt-pt": "Entradas"},
-    "Outflow": {"en-us": "Outflow", "pt-pt": "Saídas"}
+    "Outflow": {"en-us": "Outflow", "pt-pt": "Saídas"},
+    "Expense Tracker": {"en-us": "Expense Tracker", "pt-pt": "Rastreador de Despesas"},
 }
 
 export function i18n(text) {

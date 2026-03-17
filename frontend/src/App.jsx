@@ -15,6 +15,7 @@ import Budgets from './components/Budgets';
 import Goals from './components/Goals';
 import Inventory from './components/Inventory';
 import YearlyExpenseCalendar from './components/YearlyExpenseCalendar';
+import ExpenseTracker from './components/ExpenseTracker';
 import translations from './libs/translations';
 
 translations.init();
@@ -28,6 +29,7 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/ai" element={<AI />} />
         <Route path="/budgets" element={<Budgets />} />
+        <Route path="/expense-tracker" element={<ExpenseTracker />} />
         <Route path="/goals" element={<Goals />} />
         <Route path="/inventory" element={<Inventory />} />
         <Route path="/savings" element={<Savings />} />
