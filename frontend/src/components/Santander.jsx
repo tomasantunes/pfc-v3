@@ -161,6 +161,7 @@ export default function Santander() {
       if (response.data.status == "OK") {
         MySwal.fire("Santander balance has been submitted.");
         setNewBalance("");
+        setCurrentbalance(newBalance);
       }
       else {
         MySwal.fire("Error: " + response.data.error);
