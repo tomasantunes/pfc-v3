@@ -93,4 +93,49 @@ router.get("/get-expenses-coinbase", (req, res) => {
   });
 });
 
+router.get("/get-portfolio-snapshots-coinbase", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  const query = `
+      SELECT
+          h.id,
+          DATE_FORMAT(h.created_at, '%Y-%m-%d') as snapshot_date,
+          h.balance,
+          a.name,
+          a.deposit,
+          a.quantity,
+          a.value
+      FROM coinbase_portfolio_snapshot_headers h
+      LEFT JOIN coinbase_portfolio_snapshot_assets a ON h.id = a.snapshot_id
+      ORDER BY h.created_at DESC, a.name ASC
+  `;
+
+  const [rows] = await con2.execute(query);
+
+  const groupedData = {};
+
+  rows.forEach(row => {
+      const key = `${row.snapshot_date} - Balance: ${row.balance}`;
+
+      if (!groupedData[key]) {
+          groupedData[key] = [];
+      }
+
+      if (row.name) {
+          groupedData[key].push({
+              id: row.id,
+              name: row.name,
+              deposit: parseFloat(row.deposit),
+              quantity: parseFloat(row.quantity),
+              value: parseFloat(row.value)
+          });
+      }
+  });
+
+  res.json({status: "OK", data: groupedData});
+});
+
 module.exports = router;
