@@ -163,6 +163,15 @@ export default function Coinbase() {
     });
   }
 
+  const handleAssetChange = (index, field, value) => {
+    const updated = [...newAssets];
+    updated[index] = {
+      ...updated[index],
+      [field]: value,
+    };
+    setNewAssets(updated);
+  };
+
   useEffect(() => {
     getLastSnapshot();
     getExpenses();
@@ -196,12 +205,12 @@ export default function Coinbase() {
                     </tr>
                 </thead>
                 <tbody>
-                  {newAssets.map((asset) => (
-                    <tr>
-                      <td>{asset.name}</td>
-                      <td>{asset.deposit}</td>
-                      <td>{asset.quantity}</td>
-                      <td>{asset.value}</td>
+                  {newAssets.map((asset, index) => (
+                    <tr key={index}>
+                      <td><input type="text" className="form-control" value={asset.name} onChange={(e) => handleAssetChange(index, "name", e.target.value)} /></td>
+                      <td><input type="text" className="form-control" value={asset.deposit} onChange={(e) => handleAssetChange(index, "deposit", e.target.value)} /></td>
+                      <td><input type="text" className="form-control" value={asset.quantity} onChange={(e) => handleAssetChange(index, "quantity", e.target.value)} /></td>
+                      <td><input type="text" className="form-control" value={asset.value} onChange={(e) => handleAssetChange(index, "value", e.target.value)} /></td>
                       <td></td>
                     </tr>
                   ))}

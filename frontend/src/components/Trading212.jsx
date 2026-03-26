@@ -244,6 +244,15 @@ export default function Trading212() {
     updateMovement(itemId, updatedValues);
   };
 
+  const handlePositionChange = (index, field, value) => {
+    const updated = [...newPositions];
+    updated[index] = {
+      ...updated[index],
+      [field]: value,
+    };
+    setNewPositions(updated);
+  };
+
   useEffect(() => {
     loadAccountActivity();
     loadPortfolioSnapshots();
@@ -325,13 +334,13 @@ export default function Trading212() {
                     </tr>
                 </thead>
                 <tbody>
-                  {newPositions.map((position) => (
-                    <tr>
-                      <td>{position.name}</td>
-                      <td>{position.price}</td>
-                      <td>{position.quantity}</td>
-                      <td>{position.value}</td>
-                      <td>{position.return}</td>
+                  {newPositions.map((position, index) => (
+                    <tr key={index}>
+                      <td><input type="text" className="form-control" value={position.name} onChange={(e) => handlePositionChange(index, "name", e.target.value)}/></td>
+                      <td><input type="text" className="form-control" value={position.price} onChange={(e) => handlePositionChange(index, "price", e.target.value)}/></td>
+                      <td><input type="text" className="form-control" value={position.quantity} onChange={(e) => handlePositionChange(index, "quantity", e.target.value)}/></td>
+                      <td><input type="text" className="form-control" value={position.value} onChange={(e) => handlePositionChange(index, "value", e.target.value)}/></td>
+                      <td><input type="text" className="form-control" value={position.return} onChange={(e) => handlePositionChange(index, "return", e.target.value)}/></td>
                       <td></td>
                     </tr>
                   ))}
