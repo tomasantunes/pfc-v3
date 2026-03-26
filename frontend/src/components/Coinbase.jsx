@@ -166,7 +166,7 @@ export default function Coinbase() {
   useEffect(() => {
     getLastSnapshot();
     getExpenses();
-    loadPortfolioSnapshots(); 
+    loadPortfolioSnapshots();
   }, []);
 
   return (

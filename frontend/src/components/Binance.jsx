@@ -5,6 +5,7 @@ import config from '../config';
 import {i18n} from '../libs/translations';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import ExpandableGroupedTable from './ExpandableGroupedTable';
 
 const MySwal = withReactContent(Swal);
 
@@ -12,6 +13,7 @@ export default function Binance() {
   const [newBalance, setNewBalance] = useState();
   const [newAssets, setNewAssets] = useState([]);
   const [lastSnapshot, setLastSnapshot] = useState([]);
+  const [portfolioSnapshots, setPortfolioSnapshots] = useState(null);
   const [newAsset, setNewAsset] = useState({
     name: "",
     deposit: "",
@@ -97,8 +99,24 @@ export default function Binance() {
     });
   }
 
+  function loadPortfolioSnapshots() {
+    axios.get(config.BASE_URL + "/get-portfolio-snapshots-binance")
+    .then(function(response) {
+      if (response.data.status == "OK") {
+        setPortfolioSnapshots(response.data.data);
+      }
+      else {
+        MySwal.fire("Error: " + response.data.error);
+      }
+    })
+    .catch(function(err) {
+      MySwal.fire("Error: " + err.message);
+    });
+  }
+
   useEffect(() => {
     getLastSnapshot();
+    loadPortfolioSnapshots();
   }, []);
 
   return (
@@ -177,6 +195,11 @@ export default function Binance() {
             ))}
           </tbody>
         </table>
+      </div>
+      <div className="row">
+        {portfolioSnapshots &&
+          <ExpandableGroupedTable tableData={portfolioSnapshots} tableHeaders={["Name", "Deposit", "Quantity", "Value"]} title={i18n("Binance Snapshots")} />
+        }
       </div>
     </div>
     </>

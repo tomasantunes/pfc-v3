@@ -168,6 +168,7 @@ var translations = {
     "Expenses by Month": {"en-us": "Expenses by Month", "pt-pt": "Despesas por Mês"},
     "Percentage": {"en-us": "Percentage", "pt-pt": "Percentagem"},
     "Coinbase Snapshots": {"en-us": "Coinbase Snapshots", "pt-pt": "Resumos do Coinbase"},
+    "Binance Snapshots": {"en-us": "Binance Snapshots", "pt-pt": "Resumos do Binance"},
 }
 
 export function i18n(text) {
