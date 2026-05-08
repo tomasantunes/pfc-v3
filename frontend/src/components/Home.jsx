@@ -24,6 +24,7 @@ export default function Home() {
   const [averageAnnualExpense, setAverageAnnualExpense] = useState("");
   const [cryptoProfit, setCryptoProfit] = useState("");
   const [t212CurrentYearlyProfit, setT212CurrentYearlyProfit] = useState("");
+  const [t212CurrentYearBalancePercentage, setT212CurrentYearBalancePercentage] = useState("");
   const [t212LastYearlyProfit, setT212LastYearlyProfit] = useState("");
   const [t212CurrentReturn, setT212CurrentReturn] = useState("");
   const [revolutCurrentYearlyProfit, setRevolutCurrentYearlyProfit] = useState("");
@@ -541,6 +542,22 @@ export default function Home() {
     });
   }
 
+  function getT212CurrentYearBalancePercentage() {
+    axios.get(config.BASE_URL + "/get-t212-percentage")
+    .then(function(response) {
+      if (response.data.status == "OK") {
+        setT212CurrentYearBalancePercentage(response.data.data + "%");
+      }
+      else {
+        setT212CurrentYearBalancePercentage("0%");
+        showError(response.data.error);
+      }
+    })
+    .catch(function(err) {
+      showError(err.message);
+    });
+  }
+
   function getRevolutYearlyProfit() {
     axios.get(config.BASE_URL + "/get-revolut-yearly-profit")
     .then(function(response) {
@@ -810,6 +827,7 @@ export default function Home() {
     getCryptoProfit();
     getT212YearlyProfit();
     getT212CurrentReturn();
+    getT212CurrentYearBalancePercentage();
     getRevolutYearlyProfit();
     getRevolutCurrentReturn();
     getTotalInventoryValue();
@@ -843,6 +861,7 @@ export default function Home() {
                 <p><b>{i18n("T212 Sales" + " " + new Date().getFullYear())}:</b> {t212CurrentYearlyProfit}</p>
                 <p><b>{i18n("T212 Sales" + " " + (new Date().getFullYear() - 1))}:</b> {t212LastYearlyProfit}</p>
                 <p><b>{i18n("T212 Current Return")}:</b> {t212CurrentReturn}</p>
+                <p><b>{i18n("T212 Current Percentage")}:</b> {t212CurrentYearBalancePercentage}</p>
                 <p><b>{i18n("Revolut Sales" + " " + new Date().getFullYear())}:</b> {revolutCurrentYearlyProfit}</p>
                 <p><b>{i18n("Revolut Sales" + " " + (new Date().getFullYear() - 1))}:</b> {revolutLastYearlyProfit}</p>
                 <p><b>{i18n("Revolut Current Return")}:</b> {revolutCurrentReturn}</p>

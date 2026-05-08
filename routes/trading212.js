@@ -13,6 +13,7 @@ const fs = require("fs");
 const csv = require('fast-csv');
 const utils = require('../libs/utils');
 const database = require('../libs/database');
+const {getT212BalancePercentage} = require("../libs/returns.js");
 
 var {con, con2} = database.getMySQLConnections();
 
@@ -230,6 +231,22 @@ router.get("/get-t212-current-return", async (req, res) => {
   }
 
   res.json({status: "OK", data: Number(profit_t212).toFixed(2)});
+});
+
+router.get("/get-t212-percentage", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  getT212BalancePercentage(function(result) {
+    if (result) {
+      res.json({status: "OK", data: result});
+    }
+    else {
+      res.json({status: "NOK", error: "Error fetching data"});
+    }
+  });
 });
 
 module.exports = router;

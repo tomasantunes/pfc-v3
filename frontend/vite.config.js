@@ -36,5 +36,10 @@ export default defineConfig({
         ]
       }
     })
-  ]
+  ],
+  css: {
+    lightningcss: {
+      errorRecovery: true,
+    },
+  },
 })
