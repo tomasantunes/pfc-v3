@@ -649,6 +649,35 @@ export default function Home() {
     });
   }
 
+  function requestDeleteLastNetWorth() {
+    axios.post(config.BASE_URL + "/delete-last-net-worth")
+    .then(function(response) {
+      if (response.data.status == "OK") {
+        MySwal.fire(i18n("Last net worth snapshot has been deleted."));
+        getNetWorthSnapshots();
+      }
+      else {
+        showError(response.data.error);
+      }
+    })
+    .catch(function(err) {
+      showError(err.message);
+    });
+  }
+
+  function deleteLastNetWorth() {
+    MySwal.fire({
+      title: i18n("Are you sure you want to delete the last net worth snapshot?"),
+      showCancelButton: true,
+      confirmButtonText: i18n("Yes"),
+      cancelButtonText: i18n("No")
+    }).then((result) => {
+      if (result.isConfirmed) {
+        requestDeleteLastNetWorth();
+      }
+    });
+  }
+
   function getXpValue() {
     axios.get(config.BASE_URL + "/get-xp")
     .then(function(response) {
@@ -938,7 +967,8 @@ export default function Home() {
             <div className="dashboard-section mb-3">
               <h2>{i18n("Net Worth Over Time")}</h2>
               <NetWorthChart title={i18n("Net Worth")} netWorthData={netWorthChartData} />
-              <button className="btn btn-primary" onClick={saveCurrentNetWorth}>{i18n("Save Net Worth")}</button>
+              <button className="btn btn-primary me-2" onClick={saveCurrentNetWorth}>{i18n("Save Net Worth")}</button>
+              <button className="btn btn-danger" onClick={deleteLastNetWorth}>{i18n("Delete Last Net Worth")}</button>
             </div>
             <hr />
             <div className="dashboard-section mb-3">

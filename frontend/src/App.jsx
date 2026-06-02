@@ -16,6 +16,7 @@ import Goals from './components/Goals';
 import Inventory from './components/Inventory';
 import YearlyExpenseCalendar from './components/YearlyExpenseCalendar';
 import ExpenseTracker from './components/ExpenseTracker';
+import Other from './components/Other';
 import translations from './libs/translations';
 
 translations.init();
@@ -41,6 +42,7 @@ function App() {
         <Route path="/coinbase" element={<Coinbase />} />
         <Route path="/binance" element={<Binance />} />
         <Route path="/polymarket" element={<Polymarket />} />
+        <Route path="/other" element={<Other />} />
       </Routes>
     </BrowserRouter>
   );

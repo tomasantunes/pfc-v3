@@ -213,6 +213,7 @@ CREATE TABLE savings (
     gift_cards DECIMAL(17, 2),
     savings_accounts_total DECIMAL(17, 2),
     loyalty_balance DECIMAL(17, 2) DEFAULT 0,
+    other_wallets_balance DECIMAL(17, 2) DEFAULT 0,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -265,4 +266,11 @@ CREATE TABLE expense_categories (
     name VARCHAR(255) NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE extra_expenses (
+    id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    amount DECIMAL(17,2) NOT NULL,
+    date DATE NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

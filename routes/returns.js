@@ -56,7 +56,7 @@ router.get("/get-net-worth", async (req, res) => {
     saldo_santander = result6[0][0].balance;
   }
 
-  var sql7 = "SELECT cash + vouchers + gift_cards + savings_accounts_total AS balance FROM savings ORDER BY created_at DESC LIMIT 1";
+  var sql7 = "SELECT cash + vouchers + gift_cards + savings_accounts_total + loyalty_balance + other_wallets_balance AS balance FROM savings ORDER BY created_at DESC LIMIT 1";
   var result7 = await con2.query(sql7);
   var saldo_savings = 0;
   if (result7[0].length > 0) {
@@ -101,6 +101,18 @@ router.post("/save-net-worth", async (req, res) => {
   await con2.query(sql, [net_worth]);
 
   res.json({status: "OK", data: "Net worth saved successfully."});
+});
+
+router.post("/delete-last-net-worth", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var sql = "DELETE FROM net_worth_snapshots ORDER BY created_at DESC LIMIT 1";
+  await con2.query(sql);
+
+  res.json({status: "OK", data: "Last net worth deleted successfully."});
 });
 
 router.get("/get-net-worth-snapshots", async (req, res) => {

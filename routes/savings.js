@@ -33,7 +33,8 @@ router.get("/get-savings", async (req, res) => {
         vouchers: 0,
         gift_cards: 0,
         savings_accounts_total: 0,
-        loyalty_balance: 0
+        loyalty_balance: 0,
+        other_wallets_balance: 0
       }});
       return;
     }
@@ -56,9 +57,10 @@ router.post("/insert-savings", async (req, res) => {
   var gift_cards = req.body.giftCards;
   var savings_accounts_total = req.body.savingsAccountsTotal;
   var loyalty_balance = req.body.loyaltyBalance;
+  var other_wallets_balance = req.body.otherWalletsBalance;
 
-  var sql = "INSERT INTO savings (cash, vouchers, gift_cards, savings_accounts_total, loyalty_balance) VALUES (?, ?, ?, ?, ?)";
-  con.query(sql, [cash, vouchers, gift_cards, savings_accounts_total, loyalty_balance], function (err, result) {
+  var sql = "INSERT INTO savings (cash, vouchers, gift_cards, savings_accounts_total, loyalty_balance, other_wallets_balance) VALUES (?, ?, ?, ?, ?, ?)";
+  con.query(sql, [cash, vouchers, gift_cards, savings_accounts_total, loyalty_balance, other_wallets_balance], function (err, result) {
     if (err) {
       console.log(err);
       res.json({status: "NOK", error: "Error inserting savings."});

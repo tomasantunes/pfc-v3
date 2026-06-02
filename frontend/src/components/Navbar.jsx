@@ -72,6 +72,9 @@ export default function Navbar() {
                 <li class="nav-item">
                     <NavLink to="/polymarket" className="nav-link">Polymarket</NavLink>
                 </li>
+                <li class="nav-item">
+                    <NavLink to="/other" className="nav-link">{i18n("Other")}</NavLink>
+                </li>
             </ul>
             </div>
             <div class="me-3">

@@ -151,4 +151,13 @@ router.get('/expense-tracker', (req, res) => {
   }
 });
 
+router.get('/other', (req, res) => {
+  if(req.session.isLoggedIn) {
+    res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+  }
+  else {
+    res.redirect('/login');
+  }
+});
+
 module.exports = router;

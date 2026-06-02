@@ -36,6 +36,11 @@ router.get("/get-average-monthly-expense", async (req, res) => {
 
         SELECT date, ABS(value) * -1 AS amount
         FROM coinbase_expenses
+
+        UNION ALL
+
+        SELECT date, ABS(amount) * -1 AS amount
+        FROM extra_expenses
       ) t
       WHERE date < DATE_FORMAT(CURDATE(), '%Y-%m-01')
       GROUP BY ym
@@ -59,7 +64,8 @@ router.get("/get-average-daily-expense", async (req, res) => {
         IFNULL((SELECT MIN(data_mov) FROM bpi_mov), CURDATE()),
         IFNULL((SELECT MIN(data_mov) FROM santander_mov), CURDATE()),
         IFNULL((SELECT MIN(data_inicio) FROM revolut_mov), CURDATE()),
-        IFNULL((SELECT MIN(date) FROM coinbase_expenses), CURDATE())
+        IFNULL((SELECT MIN(date) FROM coinbase_expenses), CURDATE()),
+        IFNULL((SELECT MIN(date) FROM extra_expenses), CURDATE())
       ) AS first_date
     `);
 
@@ -78,6 +84,8 @@ router.get("/get-average-daily-expense", async (req, res) => {
         SELECT SUM(ABS(montante)) AS valor FROM revolut_mov WHERE montante < 0 AND is_expense = 1
         UNION ALL
         SELECT SUM(ABS(value)) AS valor FROM coinbase_expenses
+        UNION ALL
+        SELECT SUM(ABS(amount)) AS valor FROM extra_expenses
       ) t
     `);
 
@@ -170,10 +178,27 @@ router.get("/get-expense-last-12-months", async (req, res) => {
     LIMIT 12;
   `);
 
+  const [rows5] = await con2.execute(`
+    SELECT 
+        YEAR(date) AS yr,
+        MONTH(date) AS mnth,
+        SUM(ABS(amount)) AS monthly_sum
+    FROM extra_expenses
+    WHERE
+        (
+          YEAR(date) <> YEAR(CURDATE())
+          OR MONTH(date) <> MONTH(CURDATE())
+        )
+    GROUP BY YEAR(date), MONTH(date)
+    ORDER BY yr DESC, mnth DESC
+    LIMIT 12;
+  `);
+
   const expenseLast12MonthsBpi = rows1;
   const expenseLast12MonthsSantander = rows2;
   const expenseLast12MonthsRevolut = rows3;
   const expenseLast12MonthsCoinbase = rows4;
+  const expenseLast12MonthsExtra = rows5;
   const expenseLast12Months = [];
 
   for (let i = 0; i < 12; i++) {
@@ -186,11 +211,13 @@ router.get("/get-expense-last-12-months", async (req, res) => {
     const santanderEntry = expenseLast12MonthsSantander.find(entry => entry.yr === year && entry.mnth === month);
     const revolutEntry = expenseLast12MonthsRevolut.find(entry => entry.yr === year && entry.mnth === month);
     const coinbaseEntry = expenseLast12MonthsCoinbase.find(entry => entry.yr === year && entry.mnth === month);
-
+    const extraEntry = expenseLast12MonthsExtra.find(entry => entry.yr === year && entry.mnth === month);
+    
     const totalExpense = (bpiEntry ? Number(bpiEntry.monthly_sum) : 0) +
                         (santanderEntry ? Number(santanderEntry.monthly_sum) : 0) +
                         (revolutEntry ? Number(revolutEntry.monthly_sum) : 0) +
-                        (coinbaseEntry ? Number(coinbaseEntry.monthly_sum) : 0);
+                        (coinbaseEntry ? Number(coinbaseEntry.monthly_sum) : 0) +
+                        (extraEntry ? Number(extraEntry.monthly_sum) : 0);
 
     expenseLast12Months.push({
       yr: year,
@@ -260,6 +287,50 @@ router.get("/get-yearly-outflows", async (req, res) => {
   } catch(err) {
     console.log(err);
     res.json({status: "NOK", error: "Error getting yearly outflows."});
+  }
+});
+
+router.get("/get-extra-expenses", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  try {
+    const [rows] = await con2.execute(`
+      SELECT id, amount, date
+      FROM extra_expenses
+      ORDER BY date DESC
+    `);
+    res.json({status: "OK", data: rows});
+  } catch(err) {
+    console.log(err);
+    res.json({status: "NOK", error: "Error getting extra expenses."});
+  }
+});
+
+router.post("/insert-extra-expense", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  const {extraExpense, extraExpenseDate} = req.body;
+
+  if (!extraExpense || !extraExpenseDate) {
+    res.json({status: "NOK", error: "Missing required fields."});
+    return;
+  }
+
+  try {
+    await con2.execute(`
+      INSERT INTO extra_expenses (amount, date)
+      VALUES (?, ?)
+    `, [extraExpense, extraExpenseDate]);
+    res.json({status: "OK"});
+  } catch(err) {
+    console.log(err);
+    res.json({status: "NOK", error: "Error inserting extra expense."});
   }
 });
 
