@@ -32,7 +32,31 @@ export default function NetWorthChart({title, netWorthData}) {
       size: 5
     },
     dataLabels: {
-      enabled: true
+      enabled: true,
+      formatter: function (val, opts) {
+        const index = opts.dataPointIndex;
+        const data = opts.w.config.series[opts.seriesIndex].data;
+
+        let percentage = 0;
+
+        if (index > 0) {
+          const prev = data[index - 1];
+
+          if (prev !== 0) {
+            percentage = ((val * 100) / prev) - 100;
+          }
+        }
+
+        const percentageText =
+          percentage >= 0
+            ? `+${percentage.toFixed(2)}%`
+            : `${percentage.toFixed(2)}%`;
+
+        return [
+          `${val.toLocaleString("pt-PT")}€`,
+          `(${percentageText})`
+        ];
+      }
     },
     colors: ["#00BFFF"]
   };
