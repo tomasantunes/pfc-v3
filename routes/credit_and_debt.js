@@ -22,6 +22,7 @@ router.post("/update-credit-and-debt-data", async (req, res) => {
       credit_limit: 0,
       total_debt: 0,
       monthly_debt_payment: 0,
+      last_credit_payment: 0,
       interest_rate: 0,
       time_to_payoff_months: 0
     };
@@ -34,10 +35,12 @@ router.post("/update-credit-and-debt-data", async (req, res) => {
         credit_limit,
         total_debt,
         monthly_debt_payment,
+        last_credit_payment,
         interest_rate,
         time_to_payoff_months
     )
     VALUES (
+      ?,
       ?,
       ?,
       ?,
@@ -50,6 +53,7 @@ router.post("/update-credit-and-debt-data", async (req, res) => {
     {key: "credit_limit", val: lastCreditAndDebtSnapshot[0].credit_limit},
     {key: "total_debt", val: lastCreditAndDebtSnapshot[0].total_debt},
     {key: "monthly_debt_payment", val: lastCreditAndDebtSnapshot[0].monthly_debt_payment},
+    {key: "last_credit_payment", val: lastCreditAndDebtSnapshot[0].last_credit_payment},
     {key: "interest_rate", val: lastCreditAndDebtSnapshot[0].interest_rate},
     {key: "time_to_payoff_months", val: lastCreditAndDebtSnapshot[0].time_to_payoff_months}
   ];
@@ -85,6 +89,7 @@ router.get("/get-credit-and-debt-data", async (req, res) => {
       credit_limit: 0,
       total_debt: 0,
       monthly_debt_payment: 0,
+      last_credit_payment: 0,
       interest_rate: 0,
       time_to_payoff_months: 0
     }});

@@ -74,6 +74,7 @@ export default function Home() {
     credit_limit: "",
     total_debt: "",
     monthly_debt_payment: "",
+    last_credit_payment: "",
     interest_rate: "",
     time_to_payoff_months: ""
   });
@@ -282,6 +283,13 @@ export default function Home() {
     }));
   }
 
+  function changeLastCreditPayment(newVal) {
+    setCreditAndDebtData(prev => ({
+      ...prev,
+      last_credit_payment: newVal
+    }));
+  }
+
   function changeInterestRate(newVal) {
     setCreditAndDebtData(prev => ({
       ...prev,
@@ -360,6 +368,8 @@ export default function Home() {
       var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#totalDebtModal'))
       modal.hide();
       var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#monthlyDebtPaymentModal'))
+      modal.hide();
+      var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#lastCreditPaymentModal'))
       modal.hide();
       var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#creditLimitModal'))
       modal.hide();
@@ -470,6 +480,11 @@ export default function Home() {
 
   function showMonthlyDebtPayment() {
     var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#monthlyDebtPaymentModal'))
+    modal.show();
+  }
+
+  function showLastCreditPayment() {
+    var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector('#lastCreditPaymentModal'))
     modal.show();
   }
 
@@ -928,6 +943,7 @@ export default function Home() {
               <p><b>{i18n("Credit Limit")}: </b> {creditAndDebtData.credit_limit}€ <div className="pencil-btn" onClick={showCreditLimit}><i className="fa-solid fa-pencil"></i></div></p>
               <p><b>{i18n("Total Debt")}: </b> {creditAndDebtData.total_debt}€ <div className="pencil-btn" onClick={showTotalDebt}><i className="fa-solid fa-pencil"></i></div></p>
               <p><b>{i18n("Monthly Debt Payment")}: </b> {creditAndDebtData.monthly_debt_payment}€ <div className="pencil-btn" onClick={showMonthlyDebtPayment}><i className="fa-solid fa-pencil"></i></div></p>
+              <p><b>{i18n("Last Credit Payment")}: </b> {creditAndDebtData.last_credit_payment}€ <div className="pencil-btn" onClick={showLastCreditPayment}><i className="fa-solid fa-pencil"></i></div></p>
               <p><b>{i18n("Interest Rate")}: </b> {creditAndDebtData.interest_rate}% <div className="pencil-btn" onClick={showInterestRate}><i className="fa-solid fa-pencil"></i></div></p>
               <p><b>{i18n("Time to Payoff (Months)")}: </b> {creditAndDebtData.time_to_payoff_months} <div className="pencil-btn" onClick={showTimeToPayoffMonths}><i className="fa-solid fa-pencil"></i></div></p>
             </div>
@@ -1110,6 +1126,12 @@ export default function Home() {
         value={creditAndDebtData.monthly_debt_payment}
         setValue={changeMonthlyDebtPayment}
         updateField={() => updateCreditAndDebtField("monthly_debt_payment", creditAndDebtData.monthly_debt_payment)}
+      />
+      <TextInputModal
+        id="lastCreditPaymentModal"
+        value={creditAndDebtData.last_credit_payment}
+        setValue={changeLastCreditPayment}
+        updateField={() => updateCreditAndDebtField("last_credit_payment", creditAndDebtData.last_credit_payment)}
       />
       <TextInputModal
         id="interestRateModal"

@@ -146,6 +146,7 @@ var translations = {
     "Credit Limit": {"en-us": "Credit Limit", "pt-pt": "Limite de Crédito"},
     "Total Debt": {"en-us": "Total Debt", "pt-pt": "Dívida Total"},
     "Monthly Debt Payment": {"en-us": "Monthly Debt Payment", "pt-pt": "Pagamento Mensal de Dívida"},
+    "Last Credit Payment": {"en-us": "Last Credit Payment", "pt-pt": "Ultimo Pagamento de Credito"},
     "Interest Rate": {"en-us": "Interest Rate", "pt-pt": "Taxa de Juro"},
     "Time to Payoff (Months)": {"en-us": "Time to Payoff (Months)", "pt-pt": "Tempo para Quitar (Meses)"},
     "Close": {"en-us": "Close", "pt-pt": "Fechar"},

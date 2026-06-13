@@ -227,6 +227,8 @@ CREATE TABLE credit_and_debt (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+ALTER TABLE credit_and_debt ADD COLUMN last_credit_payment DECIMAL(17, 2);
+
 CREATE TABLE inventory (
     id INT(11) AUTO_INCREMENT PRIMARY KEY,
     item_name VARCHAR(255) NOT NULL,
