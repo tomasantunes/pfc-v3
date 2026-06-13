@@ -49,6 +49,7 @@ var translations = {
     "Profit": {"en-us": "Profit", "pt-pt": "Lucro"},
     "Positions": {"en-us": "Positions", "pt-pt": "Posições"},
     "Name": {"en-us": "Name", "pt-pt": "Nome"},
+    "Asset Type": {"en-us": "Asset Type", "pt-pt": "Tipo de Ativo"},
     "Price": {"en-us": "Price", "pt-pt": "Preço"},
     "Quantity": {"en-us": "Quantity", "pt-pt": "Quantidade"},
     "Return": {"en-us": "Return", "pt-pt": "Retorno"},

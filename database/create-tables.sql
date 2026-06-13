@@ -276,3 +276,8 @@ CREATE TABLE extra_expenses (
     date DATE NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+ALTER TABLE t212_portfolio_snapshot_positions ADD COLUMN asset_type VARCHAR(256) DEFAULT NULL;
+ALTER TABLE revolut_portfolio_snapshot_positions ADD COLUMN asset_type VARCHAR(256) DEFAULT NULL;
+ALTER TABLE t212_account_activity ADD COLUMN asset_type VARCHAR(256) DEFAULT NULL;
+ALTER TABLE revolut_account_activity ADD COLUMN asset_type VARCHAR(256) DEFAULT NULL;

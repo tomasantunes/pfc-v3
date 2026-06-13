@@ -19,6 +19,7 @@ export default function Trading212() {
   const [newPositions, setNewPositions] = useState([]);
   const [newPosition, setNewPosition] = useState({
     name: "",
+    asset_type: "",
     price: "",
     quantity: "",
     value: "",
@@ -27,6 +28,7 @@ export default function Trading212() {
   const [newMovementDate, setNewMovementDate] = useState("");
   const [newMovementType, setNewMovementType] = useState("buy");
   const [newMovementName, setNewMovementName] = useState("");
+  const [newMovementAssetType, setNewMovementAssetType] = useState("");
   const [newMovementQuantity, setNewMovementQuantity] = useState("");
   const [newMovementPrice, setNewMovementPrice] = useState("");
   const [newMovementValue, setNewMovementValue] = useState("");
@@ -40,6 +42,10 @@ export default function Trading212() {
 
   function changeNewMovementName(e) {
     setNewMovementName(e.target.value);
+  }
+
+  function changeNewMovementAssetType(e) {
+    setNewMovementAssetType(e.target.value);
   }
 
   function changeNewMovementQuantity(e) {
@@ -63,6 +69,7 @@ export default function Trading212() {
       date: toLocaleISOString(newMovementDate).substring(0, 10),
       type: newMovementType,
       name: newMovementName,
+      asset_type: newMovementAssetType,
       quantity: newMovementQuantity,
       price: newMovementPrice,
       value: newMovementValue,
@@ -76,6 +83,7 @@ export default function Trading212() {
         setNewMovementDate("");
         setNewMovementType("buy");
         setNewMovementName("");
+        setNewMovementAssetType("");
         setNewMovementQuantity("");
         setNewMovementPrice("");
         setNewMovementValue("");
@@ -103,6 +111,13 @@ export default function Trading212() {
     setNewPosition({
       ...newPosition,
       name: e.target.value
+    });
+  }
+
+  function changeNewPositionAssetType(e) {
+    setNewPosition({
+      ...newPosition,
+      asset_type: e.target.value
     });
   }
 
@@ -141,6 +156,7 @@ export default function Trading212() {
     ]);
     setNewPosition({
       name: "",
+      asset_type: "",
       price: "",
       quantity: "",
       value: "",
@@ -282,6 +298,10 @@ export default function Trading212() {
               <input type="text" className="form-control" value={newMovementName} onChange={changeNewMovementName} />
           </div>
           <div className="form-group mb-2">
+              <label><b>{i18n("Asset Type")}</b></label>
+              <input type="text" className="form-control" value={newMovementAssetType} onChange={changeNewMovementAssetType} />
+          </div>
+          <div className="form-group mb-2">
               <label><b>{i18n("Quantity")}</b></label>
               <input type="text" className="form-control" value={newMovementQuantity} onChange={changeNewMovementQuantity} />
           </div>
@@ -304,7 +324,7 @@ export default function Trading212() {
       </div>
       <div className="row t212-form mb-3">
         {accountActivity &&
-          <EditableExpandableGroupedTable tableData={accountActivity} tableHeaders={["Movement Date", "Name", "Type", "Quantity", "Price", "Value", "Return"]} title={i18n("Account Activity")} onSave={handleUpdateMovement} />
+          <EditableExpandableGroupedTable tableData={accountActivity} tableHeaders={["Movement Date", "Name", "Asset Type", "Type", "Quantity", "Price", "Value", "Return"]} title={i18n("Account Activity")} onSave={handleUpdateMovement} />
         }
       </div>
       <div className="row t212-form mb-3">
@@ -326,6 +346,7 @@ export default function Trading212() {
                 <thead>
                     <tr>
                         <th>{i18n("Name")}</th>
+                        <th>{i18n("Asset Type")}</th>
                         <th>{i18n("Price")}</th>
                         <th>{i18n("Quantity")}</th>
                         <th>{i18n("Value")}</th>
@@ -337,6 +358,7 @@ export default function Trading212() {
                   {newPositions.map((position, index) => (
                     <tr key={index}>
                       <td><input type="text" className="form-control" value={position.name} onChange={(e) => handlePositionChange(index, "name", e.target.value)}/></td>
+                      <td><input type="text" className="form-control" value={position.asset_type} onChange={(e) => handlePositionChange(index, "asset_type", e.target.value)}/></td>
                       <td><input type="text" className="form-control" value={position.price} onChange={(e) => handlePositionChange(index, "price", e.target.value)}/></td>
                       <td><input type="text" className="form-control" value={position.quantity} onChange={(e) => handlePositionChange(index, "quantity", e.target.value)}/></td>
                       <td><input type="text" className="form-control" value={position.value} onChange={(e) => handlePositionChange(index, "value", e.target.value)}/></td>
@@ -348,6 +370,7 @@ export default function Trading212() {
                 <tfoot>
                     <tr>
                         <td><input type="text" className="form-control" value={newPosition.name} onChange={changeNewPositionName} /></td>
+                        <td><input type="text" className="form-control" value={newPosition.asset_type} onChange={changeNewPositionAssetType} /></td>
                         <td><input type="text" className="form-control" value={newPosition.price} onChange={changeNewPositionPrice} /></td>
                         <td><input type="text" className="form-control" value={newPosition.quantity} onChange={changeNewPositionQuantity} /></td>
                         <td><input type="text" className="form-control" value={newPosition.value} onChange={changeNewPositionValue} /></td>
@@ -364,7 +387,7 @@ export default function Trading212() {
       </div>
       <div className="row t212-form mb-3">
         {portfolioSnapshots &&
-          <ExpandableGroupedTable tableData={portfolioSnapshots} tableHeaders={["Name", "Price", "Quantity", "Value", "Return"]} title={i18n("Portfolio Snapshots")} />
+          <ExpandableGroupedTable tableData={portfolioSnapshots} tableHeaders={["Name", "Asset Type", "Price", "Quantity", "Value", "Return"]} title={i18n("Portfolio Snapshots")} />
         }
       </div>
     </div>

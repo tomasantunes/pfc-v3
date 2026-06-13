@@ -33,8 +33,8 @@ router.post("/insert-portfolio-snapshot-t212", async (req, res) => {
     var headerId = result1[0].insertId;
 
     for (var i in positions) {
-      var sql2 = "INSERT INTO t212_portfolio_snapshot_positions (snapshot_id, name, price, quantity, value, `return`) VALUES (?, ?, ?, ?, ?, ?)";
-      await con2.query(sql2, [headerId, positions[i].name, positions[i].price, positions[i].quantity, positions[i].value, positions[i].return]);
+      var sql2 = "INSERT INTO t212_portfolio_snapshot_positions (snapshot_id, name, asset_type, price, quantity, value, `return`) VALUES (?, ?, ?, ?, ?, ?, ?)";
+      await con2.query(sql2, [headerId, positions[i].name, positions[i].asset_type, positions[i].price, positions[i].quantity, positions[i].value, positions[i].return]);
     }
   }
   catch (err) {
@@ -53,13 +53,14 @@ router.post("/insert-account-movement-t212", (req, res) => {
   var date = req.body.date;
   var type = req.body.type;
   var name = req.body.name;
+  var assetType = req.body.asset_type;
   var quantity = req.body.quantity;
   var price = req.body.price;
   var value = req.body.value;
   var ret = req.body.return;
 
-  var sql = "INSERT INTO t212_account_activity (date_mov, type, name, quantity, price, value, `return`) VALUES (?, ?, ?, ?, ?, ?, ?)";
-  con.query(sql, [date, type, name, quantity, price, value, ret], function(err, result) {
+  var sql = "INSERT INTO t212_account_activity (date_mov, type, name, asset_type, quantity, price, value, `return`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+  con.query(sql, [date, type, name, assetType, quantity, price, value, ret], function(err, result) {
     if (err) {
       console.log(err);
       res.json({status: "NOK", error: "There was an error inserting the account movement."});
@@ -80,6 +81,7 @@ router.get("/get-account-activity-t212", async (req, res) => {
             id,
             date_mov,
             name,
+            asset_type,
             type,
             quantity,
             price,
@@ -116,14 +118,15 @@ router.post("/update-account-movement-t212", (req, res) => {
     date_mov: req.body.date_mov,
     type: req.body.type,
     name: req.body.name,
+    asset_type: req.body.asset_type,
     quantity: req.body.quantity,
     price: req.body.price,
     value: req.body.value,
     return: req.body.return
   };
 
-  var sql = "UPDATE t212_account_activity SET date_mov = ?, type = ?, name = ?, quantity = ?, price = ?, value = ?, `return` = ? WHERE id = ?";
-  con.query(sql, [updatedValues.date_mov, updatedValues.type, updatedValues.name, updatedValues.quantity, updatedValues.price, updatedValues.value, updatedValues.return, id], function(err, result) {
+  var sql = "UPDATE t212_account_activity SET date_mov = ?, type = ?, name = ?, asset_type = ?, quantity = ?, price = ?, value = ?, `return` = ? WHERE id = ?";
+  con.query(sql, [updatedValues.date_mov, updatedValues.type, updatedValues.name, updatedValues.asset_type, updatedValues.quantity, updatedValues.price, updatedValues.value, updatedValues.return, id], function(err, result) {
     if (err) {
       console.log(err);
       res.json({status: "NOK", error: "There was an error updating the account movement."});
@@ -146,6 +149,7 @@ router.get("/get-portfolio-snapshots-t212", async (req, res) => {
           h.balance,
           h.profit,
           p.name,
+          p.asset_type,
           p.price,
           p.quantity,
           p.value,
@@ -170,6 +174,7 @@ router.get("/get-portfolio-snapshots-t212", async (req, res) => {
           groupedData[key].push({
               id: row.id,
               name: row.name,
+              asset_type: row.asset_type,
               price: parseFloat(row.price),
               quantity: parseFloat(row.quantity),
               value: parseFloat(row.value),

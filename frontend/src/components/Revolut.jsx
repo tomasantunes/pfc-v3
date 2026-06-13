@@ -19,6 +19,7 @@ export default function Revolut() {
   const [newMovementDate, setNewMovementDate] = useState("");
   const [newMovementType, setNewMovementType] = useState("buy");
   const [newMovementName, setNewMovementName] = useState("");
+  const [newMovementAssetType, setNewMovementAssetType] = useState("");
   const [newMovementQuantity, setNewMovementQuantity] = useState("");
   const [newMovementPrice, setNewMovementPrice] = useState("");
   const [newMovementValue, setNewMovementValue] = useState("");
@@ -29,6 +30,7 @@ export default function Revolut() {
   const [newPositions, setNewPositions] = useState([]);
   const [newPosition, setNewPosition] = useState({
     name: "",
+    asset_type: "",
     price: "",
     quantity: "",
     value: "",
@@ -42,6 +44,10 @@ export default function Revolut() {
 
   function changeNewMovementName(e) {
     setNewMovementName(e.target.value);
+  }
+
+  function changeNewMovementAssetType(e) {
+    setNewMovementAssetType(e.target.value);
   }
 
   function changeNewMovementQuantity(e) {
@@ -80,6 +86,7 @@ export default function Revolut() {
       date: toLocaleISOString(newMovementDate).substring(0, 10),
       type: newMovementType,
       name: newMovementName,
+      asset_type: newMovementAssetType,
       quantity: newMovementQuantity,
       price: newMovementPrice,
       value: newMovementValue,
@@ -93,6 +100,7 @@ export default function Revolut() {
         setNewMovementDate("");
         setNewMovementType("buy");
         setNewMovementName("");
+        setNewMovementAssetType("");
         setNewMovementQuantity("");
         setNewMovementPrice("");
         setNewMovementValue("");
@@ -165,6 +173,13 @@ export default function Revolut() {
     });
   }
 
+  function changeNewPositionAssetType(e) {
+    setNewPosition({
+      ...newPosition,
+      asset_type: e.target.value
+    });
+  }
+
   function changeNewPositionPrice(e) {
     setNewPosition({
       ...newPosition,
@@ -200,6 +215,7 @@ export default function Revolut() {
     ]);
     setNewPosition({
       name: "",
+      asset_type: "",
       price: "",
       quantity: "",
       value: "",
@@ -384,6 +400,10 @@ export default function Revolut() {
                 <input type="text" className="form-control" value={newMovementName} onChange={changeNewMovementName} />
             </div>
             <div className="form-group mb-2">
+                <label><b>{i18n("Asset Type")}</b></label>
+                <input type="text" className="form-control" value={newMovementAssetType} onChange={changeNewMovementAssetType} />
+            </div>
+            <div className="form-group mb-2">
                 <label><b>{i18n("Quantity")}</b></label>
                 <input type="text" className="form-control" value={newMovementQuantity} onChange={changeNewMovementQuantity} />
             </div>
@@ -406,7 +426,7 @@ export default function Revolut() {
         </div>
         <div className="row revolut-form mb-3">
           {accountActivity &&
-            <EditableExpandableGroupedTable tableData={accountActivity} tableHeaders={["Movement Date", "Name", "Type", "Quantity", "Price", "Value", "Return"]} title={i18n("Account Activity")} onSave={handleUpdateMovement} />
+            <EditableExpandableGroupedTable tableData={accountActivity} tableHeaders={["Movement Date", "Name", "Asset Type", "Type", "Quantity", "Price", "Value", "Return"]} title={i18n("Account Activity")} onSave={handleUpdateMovement} />
           }
         </div>
         <div className="row revolut-form mb-3">
@@ -428,6 +448,7 @@ export default function Revolut() {
                   <thead>
                       <tr>
                           <th>{i18n("Name")}</th>
+                          <th>{i18n("Asset Type")}</th>
                           <th>{i18n("Price")}</th>
                           <th>{i18n("Quantity")}</th>
                           <th>{i18n("Value")}</th>
@@ -439,6 +460,7 @@ export default function Revolut() {
                     {newPositions.map((position) => (
                       <tr>
                         <td>{position.name}</td>
+                        <td>{position.asset_type}</td>
                         <td>{position.price}</td>
                         <td>{position.quantity}</td>
                         <td>{position.value}</td>
@@ -450,6 +472,7 @@ export default function Revolut() {
                   <tfoot>
                       <tr>
                           <td><input type="text" className="form-control" value={newPosition.name} onChange={changeNewPositionName} /></td>
+                          <td><input type="text" className="form-control" value={newPosition.asset_type} onChange={changeNewPositionAssetType} /></td>
                           <td><input type="text" className="form-control" value={newPosition.price} onChange={changeNewPositionPrice} /></td>
                           <td><input type="text" className="form-control" value={newPosition.quantity} onChange={changeNewPositionQuantity} /></td>
                           <td><input type="text" className="form-control" value={newPosition.value} onChange={changeNewPositionValue} /></td>
@@ -466,7 +489,7 @@ export default function Revolut() {
         </div>
         <div className="row revolut-form mb-3">
           {portfolioSnapshots && 
-            <ExpandableGroupedTable tableData={portfolioSnapshots} tableHeaders={["Name", "Price", "Quantity", "Value", "Return"]} title={i18n("Portfolio Snapshots")} />
+            <ExpandableGroupedTable tableData={portfolioSnapshots} tableHeaders={["Name", "Asset Type", "Price", "Quantity", "Value", "Return"]} title={i18n("Portfolio Snapshots")} />
           }
         </div>
       </div>
