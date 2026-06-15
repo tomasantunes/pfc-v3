@@ -78,6 +78,7 @@ export default function Home() {
     interest_rate: "",
     time_to_payoff_months: ""
   });
+  const [isExportingMonthlyReport, setIsExportingMonthlyReport] = useState(false);
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
 
   function getNetWorth() {
@@ -863,6 +864,32 @@ export default function Home() {
     }
   }
 
+  function exportMonthlyReport() {
+    setIsExportingMonthlyReport(true);
+    axios.get(config.BASE_URL + "/export-monthly-report", {
+      responseType: "blob"
+    })
+    .then(function(response) {
+      const contentDisposition = response.headers["content-disposition"];
+      const filenameMatch = contentDisposition?.match(/filename="?([^"]+)"?/);
+      const filename = filenameMatch ? filenameMatch[1] : "monthly-report.pdf";
+      const url = window.URL.createObjectURL(new Blob([response.data], {type: "application/pdf"}));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", filename);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    })
+    .catch(function(err) {
+      showError(err.message);
+    })
+    .finally(function() {
+      setIsExportingMonthlyReport(false);
+    });
+  }
+
   useEffect(() => {
     checkLogin();
     getNetWorth();
@@ -892,6 +919,17 @@ export default function Home() {
         <div className="row">
           <div className="row text-center my-4">
             <h1>{i18n("Dashboard")}</h1>
+          </div>
+          <div className="row mb-3">
+            <div className="col-12 d-flex justify-content-end">
+              <button
+                className="btn btn-primary"
+                onClick={exportMonthlyReport}
+                disabled={isExportingMonthlyReport}
+              >
+                {isExportingMonthlyReport ? i18n("Exporting...") : i18n("Export Monthly Report")}
+              </button>
+            </div>
           </div>
           <div className="col-md-4">
             <div className="dashboard-section mb-3">
