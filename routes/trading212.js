@@ -167,11 +167,16 @@ router.get("/get-portfolio-snapshots-t212", async (req, res) => {
       const key = `${row.snapshot_date} - Balance: ${row.balance} - Profit: ${row.profit}`;
 
       if (!groupedData[key]) {
-          groupedData[key] = [];
+          groupedData[key] = {
+              snapshot_id: row.id,
+              balance: row.balance,
+              profit: row.profit,
+              items: []
+          };
       }
 
       if (row.name) {
-          groupedData[key].push({
+          groupedData[key].items.push({
               id: row.id,
               name: row.name,
               asset_type: row.asset_type,
@@ -184,6 +189,50 @@ router.get("/get-portfolio-snapshots-t212", async (req, res) => {
   });
 
   res.json({status: "OK", data: groupedData});
+});
+
+router.post("/update-portfolio-snapshot-t212", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  const snapshotId = req.body.id;
+  const balance = req.body.balance;
+  const profit = req.body.profit;
+  const positions = req.body.positions || [];
+  const connection = await con2.getConnection();
+
+  try {
+    await connection.beginTransaction();
+
+    await connection.query(
+      "UPDATE t212_portfolio_snapshot_headers SET balance = ?, profit = ? WHERE id = ?",
+      [balance, profit, snapshotId]
+    );
+    await connection.query(
+      "DELETE FROM t212_portfolio_snapshot_positions WHERE snapshot_id = ?",
+      [snapshotId]
+    );
+
+    for (var i in positions) {
+      await connection.query(
+        "INSERT INTO t212_portfolio_snapshot_positions (snapshot_id, name, asset_type, price, quantity, value, `return`) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        [snapshotId, positions[i].name, positions[i].asset_type, positions[i].price, positions[i].quantity, positions[i].value, positions[i].return]
+      );
+    }
+
+    await connection.commit();
+    res.json({status: "OK", data: "Portfolio snapshot has been updated successfully."});
+  }
+  catch (err) {
+    await connection.rollback();
+    console.log(err);
+    res.json({status: "NOK", error: "There was an error updating the portfolio snapshot."});
+  }
+  finally {
+    connection.release();
+  }
 });
 
 router.get("/get-t212-yearly-profit", async (req, res) => {

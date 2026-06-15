@@ -260,6 +260,25 @@ export default function Trading212() {
     updateMovement(itemId, updatedValues);
   };
 
+  const handleUpdatePortfolioSnapshot = (snapshotId, updatedValues) => {
+    axios.post(config.BASE_URL + "/update-portfolio-snapshot-t212", {
+      id: snapshotId,
+      ...updatedValues
+    })
+    .then(function (response) {
+      if (response.data.status == "OK") {
+        MySwal.fire("Portfolio snapshot has been updated.");
+        loadPortfolioSnapshots();
+      }
+      else {
+        MySwal.fire("Error: " + response.data.error);
+      }
+    })
+    .catch(function(err) {
+      MySwal.fire("Error: " + err.message);
+    });
+  };
+
   const handlePositionChange = (index, field, value) => {
     const updated = [...newPositions];
     updated[index] = {
@@ -387,7 +406,7 @@ export default function Trading212() {
       </div>
       <div className="row t212-form mb-3">
         {portfolioSnapshots &&
-          <ExpandableGroupedTable tableData={portfolioSnapshots} tableHeaders={["Name", "Asset Type", "Price", "Quantity", "Value", "Return"]} title={i18n("Portfolio Snapshots")} />
+          <ExpandableGroupedTable tableData={portfolioSnapshots} tableHeaders={["Name", "Asset Type", "Price", "Quantity", "Value", "Return"]} title={i18n("Portfolio Snapshots")} onSaveSnapshot={handleUpdatePortfolioSnapshot} />
         }
       </div>
     </div>

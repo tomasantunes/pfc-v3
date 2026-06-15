@@ -158,6 +158,25 @@ export default function Revolut() {
     });
   }
 
+  const handleUpdatePortfolioSnapshot = (snapshotId, updatedValues) => {
+    axios.post(config.BASE_URL + "/update-portfolio-snapshot-revolut", {
+      id: snapshotId,
+      ...updatedValues
+    })
+    .then(function (response) {
+      if (response.data.status == "OK") {
+        MySwal.fire("Portfolio snapshot has been updated.");
+        loadPortfolioSnapshots();
+      }
+      else {
+        MySwal.fire("Error: " + response.data.error);
+      }
+    })
+    .catch(function(err) {
+      MySwal.fire("Error: " + err.message);
+    });
+  };
+
   function changeNewBalance(e) {
     setNewBalance(e.target.value);
   }
@@ -489,7 +508,7 @@ export default function Revolut() {
         </div>
         <div className="row revolut-form mb-3">
           {portfolioSnapshots && 
-            <ExpandableGroupedTable tableData={portfolioSnapshots} tableHeaders={["Name", "Asset Type", "Price", "Quantity", "Value", "Return"]} title={i18n("Portfolio Snapshots")} />
+            <ExpandableGroupedTable tableData={portfolioSnapshots} tableHeaders={["Name", "Asset Type", "Price", "Quantity", "Value", "Return"]} title={i18n("Portfolio Snapshots")} onSaveSnapshot={handleUpdatePortfolioSnapshot} />
           }
         </div>
       </div>
