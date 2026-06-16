@@ -45,6 +45,15 @@ class SimplePdf {
     this.raw(`BT /${font} ${size} Tf ${fmt(x)} ${fmt(PAGE_HEIGHT - y)} Td (${escapeText(value)}) Tj ET`);
   }
 
+  textWidth(value, size = 10) {
+    return String(value ?? "").length * size * 0.52;
+  }
+
+  textRight(value, rightX, y, options = {}) {
+    const size = options.size || 10;
+    this.text(value, rightX - this.textWidth(value, size), y, options);
+  }
+
   line(x1, y1, x2, y2) {
     this.raw(`${fmt(x1)} ${fmt(PAGE_HEIGHT - y1)} m ${fmt(x2)} ${fmt(PAGE_HEIGHT - y2)} l S`);
   }
@@ -75,8 +84,9 @@ class SimplePdf {
 
   keyValue(label, value) {
     this.ensureSpace(18);
+    const valueRightX = PAGE_WIDTH - MARGIN;
     this.text(`${label}:`, MARGIN, this.y, {size: 10, bold: true});
-    this.text(value, 220, this.y, {size: 10});
+    this.textRight(value, valueRightX, this.y, {size: 10});
     this.y += 16;
   }
 
@@ -131,6 +141,7 @@ class SimplePdf {
       const coords = points.map((point, index) => ({
         x: x + (points.length > 1 ? index * step : width / 2),
         y: y + height - (((Number(point.value) || 0) - min) / span) * (height - 20) - 10,
+        index,
         label: point.label,
         value: Number(point.value) || 0
       }));
@@ -139,10 +150,26 @@ class SimplePdf {
       this.raw(coords.map((coord, index) => `${fmt(coord.x)} ${fmt(PAGE_HEIGHT - coord.y)} ${index === 0 ? "m" : "l"}`).join(" ") + " S");
       this.setFill(0.05, 0.44, 0.75);
       coords.forEach((coord) => {
+        let percentage = 0;
+
+        if (coord.index > 0) {
+          const prev = values[coord.index - 1];
+
+          if (prev !== 0) {
+            percentage = ((coord.value * 100) / prev) - 100;
+          }
+        }
+
+        const percentageText =
+          percentage >= 0
+            ? `+${percentage.toFixed(2)}%`
+            : `${percentage.toFixed(2)}%`;
+
         this.rect(coord.x - 2, coord.y - 2, 4, 4, true);
         this.setFill(0, 0, 0);
         this.text(coord.label, coord.x - 18, y + height + 14, {size: 7});
         this.text(formatCurrency(coord.value), coord.x - 24, coord.y - 8, {size: 7});
+        this.text(`(${percentageText})`, coord.x - 14, coord.y, {size: 7});
         this.setFill(0.05, 0.44, 0.75);
       });
       this.setFill(0, 0, 0);

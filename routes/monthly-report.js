@@ -184,7 +184,7 @@ router.get("/export-monthly-report", async (req, res) => {
     const expenses = await getLast12MonthsExpenses();
     const lastMonthExpense = numberValue(expenses[0]?.monthly_sum);
     const incomePerMonth = numberValue(reportData.estimated.incomePerMonth);
-    const expenseBenefitsMonthly = numberValue(reportData.estimated.expenseBenefitsPerYear) / 12;
+    const expenseBenefitsMonthly = numberValue(reportData.estimated.benefitsPerYear) / 12;
     const portfolioDistribution = buildPortfolioDistribution(
       reportData.distributionRows,
       reportData.cryptocurrency,
@@ -224,6 +224,7 @@ router.get("/export-monthly-report", async (req, res) => {
     pdf.keyValue("Last credit payment", formatCurrency(reportData.credit.last_credit_payment));
     pdf.keyValue("Expense benefits per month", formatCurrency(expenseBenefitsMonthly));
 
+    pdf.addPage();
     pdf.heading("Portfolio Distribution");
     pdf.table(
       ["Asset Type", "Amount", "Percentage"],
