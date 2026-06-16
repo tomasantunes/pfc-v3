@@ -47,7 +47,7 @@ Esta aplicação assume que o BPI é a conta principal e as outras são secundá
 - Carregar no botão "Escolher ficheiro"
 - Selecionar o ficheiro do extrato descarregado anteriormente
 - Clicar no botão "Import XLS"
-- Depois de receber confirmação que o ficheiro foi importado corretamente, pode definir certos movimentos como sendo ou não sendo despesas clicando no botão da última coluna.
+- Depois de receber confirmação que o ficheiro foi importado corretamente, pode definir certos movimentos como sendo ou não sendo despesas clicando no botão da última coluna, para o caso de ter realizado transferências para outras contas, aí não deve considerar como despesa.
 
 #### Adicionar movimento BPI
 
@@ -96,7 +96,8 @@ Esta aplicação assume que o BPI é a conta principal e as outras são secundá
 #### Inserir movimento de conta Revolut
 
 - Caso realize alguma transação no mercado da bolsa no Revolut terá que adicionar um movimento de conta na página Revolut.
-- Preencha os campos "Data Mov.", "Tipo", "Nome", "Quantidade", "Preço", "Valor" e "Retorno".
+- Preencha os campos "Data Mov.", "Tipo", "Nome", "Tipo de Ativo", "Quantidade", "Preço", "Valor" e "Retorno".
+- No campo "Tipo de Ativo" pode escrever se é ETF, Index Fund, Stock ou Commodity. 
 - O campo "Quantidade" é o número de ações.
 - O campo "Preço" é o preço por cada ação (em euros).
 - O campo "Valor" é o preço vezes a quantidade (em euros).
@@ -114,7 +115,7 @@ Esta aplicação assume que o BPI é a conta principal e as outras são secundá
 
 - Preencher o campo "Balance" com o saldo total da conta Trading212 em euros.
 - Preencher o campo "Profit" com o retorno, seja ele positivo ou negativo.
-- Para cada posição que tiver de momento preencher os campos "Name" (Nome da ação), "Price" (preço atual da ação), "Quantity" (quantidade de ações), "Value" (valor atual da posição) e "Return" (lucro ou perda atual da ação).
+- Para cada posição que tiver de momento preencher os campos "Name" (Nome da ação), "Tipo de Ativo" (ETF, Index Fund, Stock ou Commodity), "Price" (preço atual da ação), "Quantity" (quantidade de ações), "Value" (valor atual da posição) e "Return" (lucro ou perda atual da ação).
 - Clicar no botão "Add" para cada posição.
 - Quando terminar clique em "Submit" para inserir o snapshot do seu portfolio na base de dados.
 
@@ -145,12 +146,40 @@ Esta aplicação assume que o BPI é a conta principal e as outras são secundá
 
 ##### Retornos
 
-- O Património inclui os saldos da Trading 212 e do Revolut de acordo com os resumos de portfolio e no Revolut também a conta à ordem.
+- O Património inclui os saldos da Trading 212 e do Revolut de acordo com os resumos de portfolio e no Revolut também as contas à ordem do Santander, BPI e Revolut, mais poupanças e dinheiro.
 - As vendas da T212, se forem reinvestidas irão-se refletir no saldo T212. Se não terão que ser transferidas para o BPI ou Santander de modo a serem refletidas no Património.
 - No Revolut poderá transferir o valor dessas vendas para a conta à ordem Revolut e será contabilizado ou poderá reinvestir.
-- Se tiver dinheiro na conta de ações da Revolut que não esteja investido (ativo Euros) este não será contabilizado a não ser que o preencha nos resumos de portfolio.
+- Se tiver dinheiro na conta de ações da Revolut que não esteja investido (ativo Euros) este não será contabilizado a não ser que o preencha em "Saldo de outras carteiras" na página "Poupanças".
 - A atividade de conta na T212 e no Revolut serve para determinar as vendas por ano. Não tem impacto no património.
 - O lucro de criptomoedas também está incluído no património de acordo com os resumos do Coinbase, Binance e Polymarket. Este valor é ao longo de todo o tempo e não apenas por ano.
 - O Valor Total do Inventário não está incluído no Património.
 - Os campos que têm um lápis à frente podem ser editados.
 - Em cada mês depois de importar os extratos e preencher os resumos deverá clicar no botão "Guardar Património" debaixo do gráfico do património de modo a poder visualizar a variação do património ao longo dos meses.
+
+##### Despesas
+
+Pode ver um gráfico com a despesa total dos últimos 12 meses que é contada a partir das saídas do BPI mais o valor de despesa em benefícios preenchido.
+
+##### Exportar relatorio mensal
+
+Se clicar em "Exportar relatório mensal" será descarregado um PDF com o relatório financeiro do mês anterior.
+
+### Outros
+
+Na página Outros pode adicionar despesas extra que tenha em outras contas sem ser o BPI ou o Coinbase.
+
+### Inventário
+
+O inventário tem que ser submetido a partir da aplicação Science RPG e no PFC pode definir o preço unitário de cada item.
+
+### Objetivos
+
+Na página Objetivos pode escrever objetivos SMART para as suas finanmças pessoais.
+
+### Rastreador de Despesas
+
+Nesta página pode visualizar os dados da aplicação mobile Expense Tracker.
+
+### Orçamentos
+
+Nesta página pode definir orçamentos com a receita total e as despesas por categoria e ver um gráfico circular para esse orçamento. 
