@@ -76,7 +76,7 @@ export default function Santander() {
               {extraExpenses.map((expense, index) => (
                 <tr key={index}>
                   <td>{expense.date}</td>
-                  <td>{expense.expense}</td>
+                  <td>{expense.amount}</td>
                 </tr>
               ))}
             </tbody>
