@@ -286,4 +286,43 @@ router.get("/get-yearly-inflows", async (req, res) => {
   }
 });
 
+router.get("/get-extra-revenue", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var sql = "SELECT * FROM extra_revenue";
+
+  con.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+      return res.json({status: "NOK", data: "There was an error fetching extra revenue."});
+    }
+
+    return res.json({status: "OK", data: result});
+  });
+});
+
+router.post("/insert-extra-revenue", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var amount = req.body.extraRevenueAmount;
+  var date = req.body.extraRevenueDate;
+
+  var sql = "INSERT INTO extra_revenue (amount, date) VALUES (?, ?)";
+
+  con.query(sql, [amount, date], function(err, result) {
+    if (err) {
+      console.log(err);
+      return res.json({status: "NOK", data: "There was an error inserting extra revenue."});
+    }
+
+    res.json({status: "OK", data: "Extra revenue has been inserted successfully."});
+  });
+});
+
 module.exports = router;
