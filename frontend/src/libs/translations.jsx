@@ -64,6 +64,7 @@ var translations = {
     "Insert Account Movement": {"en-us": "Insert Account Movement", "pt-pt": "Inserir Movimento de Conta"},
     "Account Activity": {"en-us": "Account Activity", "pt-pt": "Atividade da Conta"},
     "Portfolio Snapshots": {"en-us": "Portfolio Snapshots", "pt-pt": "Resumos do Portfolio"},
+    "Portfolio Distribution": {"en-us": "Portfolio Distribution", "pt-pt": "Distribuição do Portefólio"},
     "Type": {"en-us": "Type", "pt-pt": "Tipo"},
     "Account movement has been submitted.": {"en-us": "Account movement has been submitted.", "pt-pt": "O movimento de conta foi submetido com sucesso."},
     "Dividend": {"en-us": "Dividend", "pt-pt": "Dividendo"},

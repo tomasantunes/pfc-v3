@@ -78,6 +78,7 @@ export default function Home() {
     interest_rate: "",
     time_to_payoff_months: ""
   });
+  const [portfolioDistribution, setPortfolioDistribution] = useState([]);
   const [isExportingMonthlyReport, setIsExportingMonthlyReport] = useState(false);
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
 
@@ -624,6 +625,23 @@ export default function Home() {
     });
   }
 
+  function getPortfolioDistribution() {
+    axios.get(config.BASE_URL + "/get-portfolio-distribution")
+    .then(function(response) {
+      if (response.data.status == "OK") {
+        setPortfolioDistribution(response.data.data);
+      }
+      else {
+        setPortfolioDistribution([]);
+        showError(response.data.error);
+      }
+    })
+    .catch(function(err) {
+      setPortfolioDistribution([]);
+      showError(err.message);
+    });
+  }
+
   function getBenefitsExpenses() {
     if (!estimatedData.benefitsPerYear || estimatedData.benefitsPerYear == "") return;
     setBenefitsAnnualExpense(estimatedData.benefitsPerYear);
@@ -902,6 +920,7 @@ export default function Home() {
     getRevolutYearlyProfit();
     getRevolutCurrentReturn();
     getTotalInventoryValue();
+    getPortfolioDistribution();
     getExpenseLast12Months();
     getEstimatedData();
     getCreditAndDebtData();
@@ -1018,6 +1037,34 @@ export default function Home() {
             </div>
           </div>
           <div className="col-md-8">
+            <div className="dashboard-section mb-3">
+              <h2>{i18n("Portfolio Distribution")}</h2>
+              <div className="table-responsive">
+                <table className="table table-striped table-hover">
+                  <thead>
+                    <tr>
+                      <th>{i18n("Asset Type")}</th>
+                      <th className="text-end">{i18n("Amount")}</th>
+                      <th className="text-end">{i18n("Percentage")}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {portfolioDistribution.map((row) => (
+                      <tr key={row.assetType}>
+                        <td>{row.assetType}</td>
+                        <td className="text-end">
+                          {Number(row.amount).toLocaleString(undefined, {
+                            style: "currency",
+                            currency: "EUR"
+                          })}
+                        </td>
+                        <td className="text-end">{Number(row.percentage).toFixed(2)}%</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
             <div className="dashboard-section mb-3">
               <h2>{i18n("Net Worth Over Time")}</h2>
               <NetWorthChart title={i18n("Net Worth")} netWorthData={netWorthChartData} />

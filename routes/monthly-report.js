@@ -173,6 +173,26 @@ function createdAtLabel(value, fallbackIndex) {
   return `${String(date.getMonth() + 1).padStart(2, "0")}/${date.getFullYear()}`;
 }
 
+router.get("/get-portfolio-distribution", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    return res.json({status: "NOK", error: "Invalid Authorization."});
+  }
+
+  try {
+    const reportData = await getLatestRows();
+    const portfolioDistribution = buildPortfolioDistribution(
+      reportData.distributionRows,
+      reportData.cryptocurrency,
+      reportData.savings
+    );
+
+    res.json({status: "OK", data: portfolioDistribution});
+  } catch (err) {
+    console.error("Error fetching portfolio distribution:", err);
+    res.status(500).json({status: "NOK", error: "Error fetching portfolio distribution."});
+  }
+});
+
 router.get("/export-monthly-report", async (req, res) => {
   if (!req.session.isLoggedIn) {
     res.json({status: "NOK", error: "Invalid Authorization."});
