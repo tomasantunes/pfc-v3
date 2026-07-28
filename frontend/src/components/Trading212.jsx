@@ -5,6 +5,7 @@ import axios from 'axios';
 import config from '../config';
 import ExpandableGroupedTable from './ExpandableGroupedTable';
 import EditableExpandableGroupedTable from './EditableExpandableGroupedTable';
+import PortfolioBalanceChart from './PortfolioBalanceChart';
 import {i18n} from '../libs/translations';
 import { toLocaleISOString } from '../libs/utils';
 import Flatpickr from "react-flatpickr";
@@ -408,6 +409,9 @@ export default function Trading212() {
         {portfolioSnapshots &&
           <ExpandableGroupedTable tableData={portfolioSnapshots} tableHeaders={["Name", "Asset Type", "Price", "Quantity", "Value", "Return"]} title={i18n("Portfolio Snapshots")} onSaveSnapshot={handleUpdatePortfolioSnapshot} />
         }
+      </div>
+      <div className="row t212-form mb-3">
+        <PortfolioBalanceChart portfolioSnapshots={portfolioSnapshots} chartId="t212-portfolio-balance" />
       </div>
     </div>
     </>

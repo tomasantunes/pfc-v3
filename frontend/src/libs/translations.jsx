@@ -65,6 +65,8 @@ var translations = {
     "Account Activity": {"en-us": "Account Activity", "pt-pt": "Atividade da Conta"},
     "Portfolio Snapshots": {"en-us": "Portfolio Snapshots", "pt-pt": "Resumos do Portfolio"},
     "Portfolio Distribution": {"en-us": "Portfolio Distribution", "pt-pt": "Distribuição do Portefólio"},
+    "Portfolio Balance - Last 12 Months": {"en-us": "Portfolio Balance - Last 12 Months", "pt-pt": "Saldo do Portefólio - Últimos 12 Meses"},
+    "No portfolio snapshots in the last 12 months.": {"en-us": "No portfolio snapshots in the last 12 months.", "pt-pt": "Sem resumos do portefólio nos últimos 12 meses."},
     "Type": {"en-us": "Type", "pt-pt": "Tipo"},
     "Account movement has been submitted.": {"en-us": "Account movement has been submitted.", "pt-pt": "O movimento de conta foi submetido com sucesso."},
     "Dividend": {"en-us": "Dividend", "pt-pt": "Dividendo"},

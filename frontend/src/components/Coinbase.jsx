@@ -7,6 +7,7 @@ import Flatpickr from "react-flatpickr";
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import ExpandableGroupedTable from './ExpandableGroupedTable';
+import PortfolioBalanceChart from './PortfolioBalanceChart';
 
 const MySwal = withReactContent(Swal);
 
@@ -261,6 +262,9 @@ export default function Coinbase() {
         {portfolioSnapshots &&
           <ExpandableGroupedTable tableData={portfolioSnapshots} tableHeaders={["Name", "Deposit", "Quantity", "Value"]} title={i18n("Coinbase Snapshots")} />
         }
+      </div>
+      <div className="row">
+        <PortfolioBalanceChart portfolioSnapshots={portfolioSnapshots} chartId="coinbase-portfolio-balance" />
       </div>
       <div className="row">
         <div class="col-12">

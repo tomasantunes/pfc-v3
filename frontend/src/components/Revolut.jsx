@@ -7,6 +7,7 @@ import {i18n} from '../libs/translations';
 import {toLocaleISOString} from '../libs/utils';
 import ExpandableGroupedTable from './ExpandableGroupedTable';
 import EditableExpandableGroupedTable from './EditableExpandableGroupedTable';
+import PortfolioBalanceChart from './PortfolioBalanceChart';
 import Flatpickr from "react-flatpickr";
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -510,6 +511,9 @@ export default function Revolut() {
           {portfolioSnapshots && 
             <ExpandableGroupedTable tableData={portfolioSnapshots} tableHeaders={["Name", "Asset Type", "Price", "Quantity", "Value", "Return"]} title={i18n("Portfolio Snapshots")} onSaveSnapshot={handleUpdatePortfolioSnapshot} />
           }
+        </div>
+        <div className="row revolut-form mb-3">
+          <PortfolioBalanceChart portfolioSnapshots={portfolioSnapshots} chartId="revolut-portfolio-balance" />
         </div>
       </div>
     </>
