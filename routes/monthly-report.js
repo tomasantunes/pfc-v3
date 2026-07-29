@@ -111,9 +111,10 @@ async function getLatestRows() {
       ORDER BY asset_type
     `),
     con2.execute(`
-      SELECT
-        COALESCE((SELECT balance FROM coinbase_portfolio_snapshot_headers ORDER BY created_at DESC LIMIT 1), 0) +
-        COALESCE((SELECT balance FROM binance_portfolio_snapshot_headers ORDER BY created_at DESC LIMIT 1), 0) AS cryptocurrency
+      SELECT COALESCE(
+        (SELECT balance FROM coinbase_portfolio_snapshot_headers ORDER BY created_at DESC LIMIT 1),
+        0
+      ) AS cryptocurrency
     `),
     con2.execute("SELECT cash, savings_accounts_total, other_wallets_balance FROM savings ORDER BY created_at DESC LIMIT 1")
   ]);

@@ -28,18 +28,53 @@ router.get("/expense-tracker/get-expense-by-month", (req, res) => {
     return;
   }
 
-  var sql = `SELECT DATE_FORMAT(created_at, '%Y-%m') AS month, SUM(amount) AS total_expense
-             FROM expense_tracker
-             GROUP BY month
-             ORDER BY month DESC`;
+  var sql = `SELECT
+               DATE_FORMAT(et.created_at, '%Y-%m') AS month,
+               COALESCE(ec.name, 'Uncategorized') AS category_name,
+               SUM(et.amount) AS category_total
+             FROM expense_tracker et
+             LEFT JOIN expense_categories ec ON et.category_id = ec.id
+             GROUP BY month, category_name
+             ORDER BY month DESC, category_total DESC`;
 
   con.query(sql, (err, result) => {
     if (err) {
       console.log("Error fetching monthly expenses:", err);
-      res.json({status: "NOK", error: "Database error."});
+      return res.json({status: "NOK", error: "Database error."});
     }
 
-    res.json({status: "OK", data: result});
+    const rows = Array.isArray(result) ? result : [];
+    const monthlyExpenses = rows.reduce((months, row) => {
+      let month = months.find((entry) => entry.month === row.month);
+
+      if (!month) {
+        month = {
+          month: row.month,
+          total_expense: 0,
+          categories: []
+        };
+        months.push(month);
+      }
+
+      const categoryTotal = Number(row.category_total);
+      month.total_expense += categoryTotal;
+      month.categories.push({
+        category_name: row.category_name,
+        total_expense: categoryTotal
+      });
+
+      return months;
+    }, []);
+
+    monthlyExpenses.forEach((month) => {
+      month.categories.forEach((category) => {
+        category.percentage = month.total_expense > 0
+          ? (category.total_expense * 100) / month.total_expense
+          : 0;
+      });
+    });
+
+    res.json({status: "OK", data: monthlyExpenses});
   });
 });
 

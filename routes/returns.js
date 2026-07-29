@@ -35,13 +35,6 @@ router.get("/get-net-worth", async (req, res) => {
     saldo_coinbase = result3[0][0].balance;
   }
 
-  var sql4 = "SELECT * FROM binance_portfolio_snapshot_headers ORDER BY created_at DESC LIMIT 1";
-  var result4 = await con2.query(sql4);
-  var saldo_binance = 0;
-  if (result4[0].length > 0) {
-    saldo_binance = result4[0][0].balance;
-  }
-
   var sql5 = "SELECT * FROM polymarket_portfolio_snapshot ORDER BY created_at DESC LIMIT 1";
   var result5 = await con2.query(sql5);
   var saldo_polymarket = 0;
@@ -77,7 +70,7 @@ router.get("/get-net-worth", async (req, res) => {
     saldo_revolut = result9[0][0].saldo;
   }
 
-  var total = (Number(saldo_bpi) + Number(saldo_t212) + Number(saldo_coinbase) + Number(saldo_binance) + Number(saldo_polymarket) + Number(saldo_santander) + Number(saldo_savings) + Number(saldo_revolut_stocks) + Number(saldo_revolut)).toFixed(2);
+  var total = (Number(saldo_bpi) + Number(saldo_t212) + Number(saldo_coinbase) + Number(saldo_polymarket) + Number(saldo_santander) + Number(saldo_savings) + Number(saldo_revolut_stocks) + Number(saldo_revolut)).toFixed(2);
 
   res.json({status: "OK", data: total});
 });
@@ -284,45 +277,6 @@ router.get("/get-yearly-inflows", async (req, res) => {
     console.error("Error getting yearly inflows:", error);
     res.json({status: "NOK", error: "Failed to fetch yearly inflows."});
   }
-});
-
-router.get("/get-extra-revenue", (req, res) => {
-  if (!req.session.isLoggedIn) {
-    res.json({status: "NOK", error: "Invalid Authorization."});
-    return;
-  }
-
-  var sql = "SELECT * FROM extra_revenue";
-
-  con.query(sql, function(err, result) {
-    if (err) {
-      console.log(err);
-      return res.json({status: "NOK", data: "There was an error fetching extra revenue."});
-    }
-
-    return res.json({status: "OK", data: result});
-  });
-});
-
-router.post("/insert-extra-revenue", (req, res) => {
-  if (!req.session.isLoggedIn) {
-    res.json({status: "NOK", error: "Invalid Authorization."});
-    return;
-  }
-
-  var amount = req.body.extraRevenueAmount;
-  var date = req.body.extraRevenueDate;
-
-  var sql = "INSERT INTO extra_revenue (amount, date) VALUES (?, ?)";
-
-  con.query(sql, [amount, date], function(err, result) {
-    if (err) {
-      console.log(err);
-      return res.json({status: "NOK", data: "There was an error inserting extra revenue."});
-    }
-
-    res.json({status: "OK", data: "Extra revenue has been inserted successfully."});
-  });
 });
 
 module.exports = router;
