@@ -102,6 +102,70 @@ router.get("/get-average-daily-expense", async (req, res) => {
   }
 });
 
+router.get("/get-average-cash-expenses-last-3-months", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  try {
+    const [rows] = await con2.execute(`
+      SELECT
+        COALESCE(SUM(ABS(amount)), 0) AS total_expenses,
+        DATEDIFF(
+          DATE_FORMAT(CURDATE(), '%Y-%m-01'),
+          DATE_SUB(DATE_FORMAT(CURDATE(), '%Y-%m-01'), INTERVAL 3 MONTH)
+        ) AS number_of_days
+      FROM (
+        SELECT data_mov AS date, valor AS amount
+        FROM bpi_mov
+        WHERE is_expense = 1 AND valor < 0
+
+        UNION ALL
+
+        SELECT data_mov AS date, valor AS amount
+        FROM santander_mov
+        WHERE is_expense = 1 AND valor < 0
+
+        UNION ALL
+
+        SELECT data_inicio AS date, montante AS amount
+        FROM revolut_mov
+        WHERE is_expense = 1 AND montante < 0
+
+        UNION ALL
+
+        SELECT date, value AS amount
+        FROM coinbase_expenses
+
+        UNION ALL
+
+        SELECT date, amount
+        FROM extra_expenses
+      ) expenses
+      WHERE date >= DATE_SUB(DATE_FORMAT(CURDATE(), '%Y-%m-01'), INTERVAL 3 MONTH)
+        AND date < DATE_FORMAT(CURDATE(), '%Y-%m-01')
+    `);
+
+    const totalExpenses = Number(rows[0].total_expenses) || 0;
+    const numberOfDays = Number(rows[0].number_of_days) || 1;
+    const averageDailyExpense = totalExpenses / numberOfDays;
+
+    res.json({
+      status: "OK",
+      data: {
+        monthly: (totalExpenses / 3).toFixed(2),
+        weekly: (averageDailyExpense * 7).toFixed(2),
+        daily: averageDailyExpense.toFixed(2),
+        hourly: (averageDailyExpense / 24).toFixed(2)
+      }
+    });
+  } catch(err) {
+    console.log(err);
+    res.json({status: "NOK", error: "Error getting average cash expenses for the last 3 months."});
+  }
+});
+
 router.get("/get-expense-last-12-months", async (req, res) => {
   if (!req.session.isLoggedIn) {
     res.json({status: "NOK", error: "Invalid Authorization."});

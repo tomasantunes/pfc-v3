@@ -22,6 +22,12 @@ export default function Home() {
   const [averageWeeklyExpense, setAverageWeeklyExpense] = useState("");
   const [averageHourlyExpense, setAverageHourlyExpense] = useState("");
   const [averageAnnualExpense, setAverageAnnualExpense] = useState("");
+  const [averageCashExpensesLast3Months, setAverageCashExpensesLast3Months] = useState({
+    monthly: "0",
+    weekly: "0",
+    daily: "0",
+    hourly: "0"
+  });
   const [cryptoProfit, setCryptoProfit] = useState("");
   const [t212CurrentYearlyProfit, setT212CurrentYearlyProfit] = useState("");
   const [t212CurrentYearBalancePercentage, setT212CurrentYearBalancePercentage] = useState("");
@@ -122,6 +128,21 @@ export default function Home() {
 
   function getAverageAnnualExpense() {
     setAverageAnnualExpense((Number(averageMonthlyExpense) * 12).toFixed(2));
+  }
+
+  function getAverageCashExpensesLast3Months() {
+    axios.get(config.BASE_URL + "/get-average-cash-expenses-last-3-months")
+    .then(function(response) {
+      if (response.data.status == "OK") {
+        setAverageCashExpensesLast3Months(response.data.data);
+      }
+      else {
+        showError(response.data.error);
+      }
+    })
+    .catch(function(err) {
+      showError(err.message);
+    });
   }
 
   function getCryptoProfit() {
@@ -913,6 +934,7 @@ export default function Home() {
     getNetWorth();
     getAverageMonthlyExpense();
     getAverageDailyExpense();
+    getAverageCashExpensesLast3Months();
     getCryptoProfit();
     getT212YearlyProfit();
     getT212CurrentReturn();
@@ -1024,6 +1046,14 @@ export default function Home() {
                 <p><b>{i18n("Average Weekly Expense")}:</b> {averageWeeklyExpense}€</p>
                 <p><b>{i18n("Average Daily Expense")}:</b> {averageDailyExpense}€</p>
                 <p><b>{i18n("Average Hourly Expense")}:</b> {averageHourlyExpense}€</p>
+              </div>
+              <hr />
+              <h3>{i18n("Average Cash Expenses Last 3 Months")}</h3>
+              <div className="row">
+                <p><b>{i18n("Average Monthly Expense")}:</b> {averageCashExpensesLast3Months.monthly}€</p>
+                <p><b>{i18n("Average Weekly Expense")}:</b> {averageCashExpensesLast3Months.weekly}€</p>
+                <p><b>{i18n("Average Daily Expense")}:</b> {averageCashExpensesLast3Months.daily}€</p>
+                <p><b>{i18n("Average Hourly Expense")}:</b> {averageCashExpensesLast3Months.hourly}€</p>
               </div>
               <hr />
               <h3>{i18n("Benefits Expenses")}</h3>

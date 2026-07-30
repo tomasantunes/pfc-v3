@@ -98,6 +98,7 @@ var translations = {
     "Total Hourly Expense": {"en-us": "Total Hourly Expense", "pt-pt": "Despesa Horária Total"},
     "Total Expenses": {"en-us": "Total Expenses", "pt-pt": "Despesas Totais"},
     "Average Cash Expenses": {"en-us": "Average Cash Expenses", "pt-pt": "Despesas Médias em Dinheiro"},
+    "Average Cash Expenses Last 3 Months": {"en-us": "Average Cash Expenses in the Last 3 Months", "pt-pt": "Despesas Médias em Dinheiro nos Últimos 3 Meses"},
     "Benefits Expenses": {"en-us": "Benefits Expenses", "pt-pt": "Despesas de Benefícios"},
     "Revolut Sales 2025": {"en-us": "Revolut Sales 2025", "pt-pt": "Vendas Revolut 2025"},
     "Revolut Current Return": {"en-us": "Revolut Current Return", "pt-pt": "Retorno Atual Revolut"},
