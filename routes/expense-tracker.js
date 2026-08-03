@@ -78,6 +78,76 @@ router.get("/expense-tracker/get-expense-by-month", (req, res) => {
   });
 });
 
+router.get("/expense-tracker/get-summary", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    return res.json({status: "NOK", error: "Invalid Authorization."});
+  }
+
+  try {
+    const [[dailyRows], [summaryRows]] = await Promise.all([
+      con2.execute(`SELECT DATE(created_at) AS expense_date,
+                           SUM(amount) AS total_expense
+                    FROM expense_tracker
+                    WHERE created_at >= CURDATE() - INTERVAL 29 DAY
+                      AND created_at < CURDATE() + INTERVAL 1 DAY
+                    GROUP BY DATE(created_at)
+                    ORDER BY expense_date DESC`),
+      con2.execute(`SELECT
+                      COALESCE(SUM(amount), 0) AS total_expense,
+                      DATE(MIN(created_at)) AS first_date,
+                      DATE(CURDATE()) AS today
+                    FROM expense_tracker`)
+    ]);
+
+    const totalsByDate = new Map(
+      dailyRows.map((row) => [row.expense_date, Number(row.total_expense)])
+    );
+    const summary = summaryRows[0];
+    const currentDate = new Date(`${summary.today}T00:00:00Z`);
+    const dailyExpenses = [];
+
+    for (let dayOffset = 0; dayOffset < 30; dayOffset += 1) {
+      const date = new Date(currentDate);
+      date.setUTCDate(currentDate.getUTCDate() - dayOffset);
+      const expenseDate = date.toISOString().slice(0, 10);
+      dailyExpenses.push({
+        expense_date: expenseDate,
+        total_expense: totalsByDate.get(expenseDate) || 0
+      });
+    }
+
+    let averageMonthlyExpense = 0;
+    let averageDailyExpense = 0;
+
+    if (summary.first_date) {
+      const firstDate = new Date(`${summary.first_date}T00:00:00Z`);
+      const totalExpense = Number(summary.total_expense) || 0;
+      const numberOfMonths = (
+        (currentDate.getUTCFullYear() - firstDate.getUTCFullYear()) * 12
+        + currentDate.getUTCMonth()
+        - firstDate.getUTCMonth()
+        + 1
+      );
+      const numberOfDays = Math.floor((currentDate - firstDate) / (1000 * 60 * 60 * 24)) + 1;
+
+      averageMonthlyExpense = totalExpense / Math.max(numberOfMonths, 1);
+      averageDailyExpense = totalExpense / Math.max(numberOfDays, 1);
+    }
+
+    res.json({
+      status: "OK",
+      data: {
+        daily_expenses: dailyExpenses,
+        average_monthly_expense: averageMonthlyExpense,
+        average_daily_expense: averageDailyExpense
+      }
+    });
+  } catch (err) {
+    console.log("Error fetching expense tracker summary:", err);
+    res.json({status: "NOK", error: "Database error."});
+  }
+});
+
 router.get("/expense-tracker/get-expenses-by-category", (req, res) => {
   if (!req.session.isLoggedIn) {
     res.json({status: "NOK", error: "Invalid Authorization."});

@@ -20,6 +20,9 @@ export default function ExpenseTracker() {
   const [expenses, setExpenses] = useState([]);
   const [expensesByCategory, setExpensesByCategory] = useState([]);
   const [expensesByMonth, setExpensesByMonth] = useState([]);
+  const [dailyExpenses, setDailyExpenses] = useState([]);
+  const [averageMonthlyExpense, setAverageMonthlyExpense] = useState(0);
+  const [averageDailyExpense, setAverageDailyExpense] = useState(0);
   const [expandedMonths, setExpandedMonths] = useState({});
   const [totalExpense, setTotalExpense] = useState(0);
 
@@ -66,10 +69,29 @@ export default function ExpenseTracker() {
     });
   }
 
+  function loadExpenseSummary() {
+    axios.get(config.BASE_URL + "/expense-tracker/get-summary")
+    .then((response) => {
+      if (response.data.status !== "OK") {
+        throw new Error(response.data.error || "Failed to load expense summary.");
+      }
+
+      const summary = response.data.data || {};
+      setDailyExpenses(Array.isArray(summary.daily_expenses) ? summary.daily_expenses : []);
+      setAverageMonthlyExpense(Number(summary.average_monthly_expense) || 0);
+      setAverageDailyExpense(Number(summary.average_daily_expense) || 0);
+    })
+    .catch((error) => {
+      console.error("Error loading expense summary:", error);
+      MySwal.fire("Error: " + error.message);
+    });
+  }
+
   useEffect(() => {
     loadExpenses();
     loadExpensesByCategory();
     loadExpensesByMonth();
+    loadExpenseSummary();
   }, []);
 
   return (
@@ -79,6 +101,50 @@ export default function ExpenseTracker() {
         <div className="row mb-3">
           <h1>{i18n("Expense Tracker")}</h1>
           <h3>{i18n("Total Expense")}: {totalExpense.toFixed(2)}€</h3>
+        </div>
+        <div className="row mb-3">
+          <div className="col-md-6">
+            <h2>{i18n("Expense Summary")}</h2>
+            <table className="table table-striped table-bordered align-middle">
+              <thead className="table-dark">
+                <tr>
+                  <th>{i18n("Label")}</th>
+                  <th>{i18n("Value")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{i18n("Average Monthly Expense")}</td>
+                  <td>{averageMonthlyExpense.toFixed(2)}€</td>
+                </tr>
+                <tr>
+                  <td>{i18n("Average Daily Expense")}</td>
+                  <td>{averageDailyExpense.toFixed(2)}€</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div className="row mb-3">
+          <h2>{i18n("Daily Expenses - Last 30 Days")}</h2>
+          <div className="table-responsive">
+            <table className="table table-striped table-bordered align-middle">
+              <thead className="table-dark">
+                <tr>
+                  <th>{i18n("Date")}</th>
+                  <th>{i18n("Total Expense")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {dailyExpenses.map((expense) => (
+                  <tr key={expense.expense_date}>
+                    <td>{expense.expense_date}</td>
+                    <td>{Number(expense.total_expense).toFixed(2)}€</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
         <div className="row mb-3">
           <h2>{i18n("Expenses By Category")}</h2>
@@ -95,7 +161,7 @@ export default function ExpenseTracker() {
                 <tr key={index}>
                   <td>{expense.category_name}</td>
                   <td>{Number(expense.total_expense).toFixed(2)}€</td>
-                  <td>{((Number(expense.total_expense) * 100) / totalExpense).toFixed(2)}%</td>
+                  <td>{(totalExpense > 0 ? (Number(expense.total_expense) * 100) / totalExpense : 0).toFixed(2)}%</td>
                 </tr>
                 ))}
             </tbody>
