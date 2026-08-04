@@ -4,7 +4,7 @@ import Navbar from './Navbar';
 import axios from 'axios';
 import config from '../config';
 import {i18n} from '../libs/translations';
-import {toLocaleISOString} from '../libs/utils';
+import {dateToISOString} from '../libs/utils';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import Flatpickr from "react-flatpickr";
@@ -30,7 +30,7 @@ export default function Santander() {
   }
 
   function submitExtraExpense() {
-    axios.post(config.BASE_URL + "/insert-extra-expense", {extraExpense, extraExpenseDate: toLocaleISOString(extraExpenseDate).substring(0, 10)})
+    axios.post(config.BASE_URL + "/insert-extra-expense", {extraExpense, extraExpenseDate: dateToISOString(extraExpenseDate).substring(0, 10)})
     .then(function(response) {
       if (response.data.status == "OK") {
         MySwal.fire(i18n("Extra expense has been added successfully."));
@@ -60,7 +60,7 @@ export default function Santander() {
   }
 
   function submitExtraRevenue() {
-    axios.post(config.BASE_URL + "/insert-extra-revenue", {extraRevenueAmount, extraRevenueDate: toLocaleISOString(extraRevenueDate).substring(0, 10)})
+    axios.post(config.BASE_URL + "/insert-extra-revenue", {extraRevenueAmount, extraRevenueDate: dateToISOString(extraRevenueDate).substring(0, 10)})
     .then(function(response) {
       if (response.data.status == "OK") {
         MySwal.fire(i18n("Extra revenue has been added successfully."));
