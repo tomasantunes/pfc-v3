@@ -1,274 +1,212 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import axios from 'axios';
 import config from '../config';
 import Swal from 'sweetalert2';
-import Chart from "react-apexcharts";
+import Chart from 'react-apexcharts';
 import withReactContent from 'sweetalert2-react-content';
 import Navbar from './Navbar';
-import {i18n} from "../libs/translations";
+import {i18n} from '../libs/translations';
 import './Budgets.css';
 
 const MySwal = withReactContent(Swal);
+const emptySubItem = () => ({name: '', quantity: 1, unitPrice: '', totalPrice: 0});
 
 export default function Budgets() {
   const [budgetId, setBudgetId] = useState(null);
-  const [budgetTitle, setBudgetTitle] = useState("");
+  const [budgetTitle, setBudgetTitle] = useState('');
   const [budgets, setBudgets] = useState([]);
   const [rows, setRows] = useState([]);
-  const [newRow, setNewRow] = useState({category: "", amount: ""});
+  const [newCategory, setNewCategory] = useState('');
   const [totalIncome, setTotalIncome] = useState(0);
-  const [totalExpense, setTotalExpense] = useState(0);
-  const [totalBalance, setTotalBalance] = useState(0);
-  const [budgetChartOptions, setBudgetChartOptions] = useState(null);
-  const [budgetChartSeries, setBudgetChartSeries] = useState(null);
 
-  function removeRow(index) {
-    setRows(rows.filter((_, i) => i !== index));
-  }
+  const totalExpense = useMemo(
+    () => rows.reduce((sum, row) => sum + Number(row.amount || 0), 0),
+    [rows]
+  );
+  const totalBalance = (Number(totalIncome || 0) - totalExpense).toFixed(2);
 
-  function addRow() {
-    setRows([...rows, newRow]);
-    setNewRow({category: "", amount: ""});
-    loadPieChart();
-  }
-
-  function calculateTotals() {
-    let expense = 0;
-    let balance = 0;
-    rows.forEach(row => {
-      expense += Number(row.amount) || 0;
-    });
-    balance = totalIncome - expense;
-    setTotalExpense(expense.toFixed(2));
-    setTotalBalance(balance.toFixed(2));
-  }
+  const chartOptions = useMemo(() => ({
+    labels: rows.map(row => row.category),
+    chart: {id: 'budget-chart'},
+    legend: {position: 'bottom'},
+    dataLabels: {
+      enabled: true,
+      formatter: (value, options) => `${value.toFixed(1)}% (${options.w.globals.series[options.seriesIndex].toFixed(2)})`
+    },
+    title: {
+      text: `${i18n('Budget Distribution')}${budgetTitle ? ` - ${budgetTitle}` : ''}`,
+      align: 'center',
+      style: {fontSize: '20px'}
+    }
+  }), [rows, budgetTitle]);
 
   function loadBudgets() {
-    axios.get(config.BASE_URL + "/load-budgets")
-    .then(response => {
-      if (response.data.status === "OK") {
-        console.log(response.data.data);
-        setBudgets(response.data.data);
-        loadPieChart();
-      } else {
-        console.error(response.data.error);
-      }
-    })
-    .catch(error => {
-      console.error("Error loading budgets:", error);
-    });
+    axios.get(config.BASE_URL + '/load-budgets').then(response => {
+      if (response.data.status === 'OK') setBudgets(response.data.data);
+      else console.error(response.data.error);
+    }).catch(error => console.error('Error loading budgets:', error));
+  }
+
+  function addCategory() {
+    if (!newCategory.trim()) return;
+    setRows([...rows, {category: newCategory.trim(), amount: 0, subItems: []}]);
+    setNewCategory('');
+  }
+
+  function removeCategory(index) {
+    setRows(rows.filter((_, rowIndex) => rowIndex !== index));
+  }
+
+  function addSubItem(rowIndex) {
+    setRows(rows.map((row, index) => index === rowIndex
+      ? {...row, subItems: [...(row.subItems || []), emptySubItem()]}
+      : row));
+  }
+
+  function updateSubItem(rowIndex, subItemIndex, field, value) {
+    setRows(rows.map((row, index) => {
+      if (index !== rowIndex) return row;
+      const subItems = (row.subItems || []).map((subItem, itemIndex) => {
+        if (itemIndex !== subItemIndex) return subItem;
+        const updated = {...subItem, [field]: value};
+        updated.totalPrice = Number(updated.quantity || 0) * Number(updated.unitPrice || 0);
+        return updated;
+      });
+      const amount = subItems.reduce((sum, item) => sum + Number(item.totalPrice || 0), 0);
+      return {...row, subItems, amount};
+    }));
+  }
+
+  function removeSubItem(rowIndex, subItemIndex) {
+    setRows(rows.map((row, index) => {
+      if (index !== rowIndex) return row;
+      const subItems = (row.subItems || []).filter((_, itemIndex) => itemIndex !== subItemIndex);
+      const amount = subItems.reduce((sum, item) => sum + Number(item.totalPrice || 0), 0);
+      return {...row, subItems, amount};
+    }));
   }
 
   function saveBudget() {
-    const newBudget = {
+    axios.post(config.BASE_URL + '/save-budget', {
       id: budgetId,
       title: budgetTitle,
-      income: totalIncome,
+      income: Number(totalIncome || 0),
       expense: totalExpense,
-      balance: totalBalance,
-      rows: rows
-    };
-
-    axios.post(config.BASE_URL + "/save-budget", newBudget)
-    .then(response => {
-      if (response.data.status === "OK") {
-        setBudgetTitle("");
-        setTotalIncome(0);
-        setTotalExpense(0);
-        setTotalBalance(0);
-        setRows([]);
-        loadBudgets();
-        MySwal.fire(i18n("Budget saved successfully."));
-      } else {
-        MySwal.fire("Error: " + response.data.error);
-      }
-    })
-    .catch(error => {
-      MySwal.fire("Error: " + error.message);
-    });
+      balance: Number(totalBalance),
+      rows
+    }).then(response => {
+      if (response.data.status !== 'OK') return MySwal.fire('Error: ' + response.data.error);
+      newBudget();
+      loadBudgets();
+      MySwal.fire(i18n('Budget saved successfully.'));
+    }).catch(error => MySwal.fire('Error: ' + error.message));
   }
 
-  function setBudget(idx) {
-    const budget = budgets[idx];
+  function selectBudget(index) {
+    const budget = budgets[index];
     setBudgetId(budget.id);
     setBudgetTitle(budget.title);
     setTotalIncome(budget.income);
-    setTotalExpense(budget.expense);
-    setTotalBalance(budget.balance);
-    setRows(budget.rows);
-    loadPieChart();
-  }
-
-  function loadPieChart() {
-    const options = {
-      labels: rows.map(r => r.category),
-      options: {
-        chart: { 
-          id: 'budget-chart'
-        },
-        legend: { position: 'bottom' }
-      },
-      dataLabels: {
-        enabled: true,
-        formatter: function (val, opts) {
-          const value = opts.w.globals.series[opts.seriesIndex];
-          return val.toFixed(1) + "% (" + value + ")";
-        },
-      },
-      title: {
-        text: i18n('Budget Distribution') + " - " + budgetTitle,
-        align: 'center',
-        style: {
-          fontSize: '20px'
-        }
-      }
-    };
-
-    const series = rows.map(r => Number(r.amount) || 0);
-
-    setBudgetChartOptions(options);
-    setBudgetChartSeries(series);
+    setRows((budget.rows || []).map(row => ({...row, subItems: row.subItems || []})));
   }
 
   function deleteBudget() {
-    if (!budgetTitle) {
-      MySwal.fire(i18n("Please select a budget to delete."));
-      return;
-    }
-    const budget = budgets.find(b => b.title === budgetTitle);
-    if (!budget) {
-      MySwal.fire(i18n("Budget not found."));
-      return;
-    }
-    if (window.confirm(i18n("Are you sure you want to delete the budget:") + ` "${budget.title}"?`)) {
-      axios.post(config.BASE_URL + "/delete-budget", {id: budget.id})
-      .then(response => {
-        if (response.data.status === "OK") {
-          setBudgets(budgets.filter(b => b.id !== budget.id));
-          setBudgetTitle("");
-          setTotalIncome(0);
-          setTotalExpense(0);
-          setTotalBalance(0);
-          setRows([]);
-          MySwal.fire(i18n("Budget deleted successfully."));
-        } else {
-          MySwal.fire("Error: " + response.data.error);
-        }
-      })
-      .catch(error => {
-        MySwal.fire("Error: " + error.message);
-      });
-    }
+    if (!budgetId) return MySwal.fire(i18n('Please select a budget to delete.'));
+    if (!window.confirm(`${i18n('Are you sure you want to delete the budget:')} "${budgetTitle}"?`)) return;
+    axios.post(config.BASE_URL + '/delete-budget', {id: budgetId}).then(response => {
+      if (response.data.status !== 'OK') return MySwal.fire('Error: ' + response.data.error);
+      setBudgets(budgets.filter(budget => budget.id !== budgetId));
+      newBudget();
+      MySwal.fire(i18n('Budget deleted successfully.'));
+    }).catch(error => MySwal.fire('Error: ' + error.message));
   }
 
   function newBudget() {
     setBudgetId(null);
-    setBudgetTitle("");
+    setBudgetTitle('');
     setTotalIncome(0);
-    setTotalExpense(0);
-    setTotalBalance(0);
     setRows([]);
+    setNewCategory('');
   }
 
-  useEffect(() => {
-    loadBudgets();
-    calculateTotals();
-  }, [rows, totalIncome]);
+  useEffect(loadBudgets, []);
 
   return (
     <div className="budgets">
       <Navbar />
-      <div className="container">
-        <div className="row">
-          <div className="col-md-2 pt-4">
-            <h3>{i18n("Budgets")}</h3>
-            <ul>
-              {budgets.map((b, index) => (
-                <li key={index} style={{cursor: "pointer"}} onClick={() => setBudget(index)}>{b.title}</li>
-              ))}
-            </ul>
-          </div>
-          <div className="col-md-4">
-            <div className="main">
-              <h1>{i18n("Budget")}</h1>
-              <div className="form-group mb-2">
-                <label><b>{i18n("Title")}</b></label>
-                <input type="text" className="form-control text-start" value={budgetTitle} onChange={e => setBudgetTitle(e.target.value)} />
-              </div>
-              <h3>{i18n("Expenses")}</h3>
-              <table className="table-fill">
-                <thead>
-                <tr>
-                  <th style={{width: "40%"}}>{i18n("Category")}</th>
-                  <th style={{width: "40%"}} className="text-end">{i18n("Amount")}</th>
-                  <th style={{width: "20%"}}></th>
-                </tr>
-                </thead>
-                <tbody>
-                {rows.map((row, index) => (
-                  <tr key={index}>
-                    <td>
-                      {row.category}
-                    </td>
-                    <td className="text-end">
-                      {row.amount}
-                    </td>
-                    <td>
-                      <button className="btn btn-danger" onClick={() => removeRow(index)}>-</button>
-                    </td>
-                  </tr>
-                ))}
-                </tbody>
-                <tfoot>
-                <tr>
-                  <td><input type="text" className="form-control" value={newRow.category} onChange={e => setNewRow({...newRow, category: e.target.value})} /></td>
-                  <td><input type="text" className="form-control" value={newRow.amount} onChange={e => setNewRow({...newRow, amount: e.target.value})} /></td>
-                  <td><button className="btn btn-primary btn-block" onClick={addRow}>+</button></td>
-                </tr>
-                </tfoot>
+      <div className="container-fluid budgets-layout">
+        <aside className="budget-list">
+          <h3>{i18n('Budgets')}</h3>
+          <ul>
+            {budgets.map((budget, index) => (
+              <li key={budget.id} className={budget.id === budgetId ? 'active' : ''} onClick={() => selectBudget(index)}>
+                {budget.title}
+              </li>
+            ))}
+          </ul>
+        </aside>
 
-              </table>
-              <h3>{i18n("Totals")}</h3>
-              <table className="table-fill">
-                <thead>
-                </thead>
-                <tr>
-                  <td style={{width: "40%"}}>{i18n("Total Income")}</td>
-                  <td style={{width: "40%"}}><input type="text" className="form-control" value={totalIncome} onChange={e => setTotalIncome(e.target.value)} /></td>
-                  <td style={{width: "20%"}}></td>
-                </tr>
-                <tr>
-                  <td>{i18n("Total Expense")}</td>
-                  <td className="text-end">{totalExpense}</td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td>{i18n("Total Balance")}</td>
-                  <td className="text-end">{totalBalance}</td>
-                  <td></td>
-                </tr>
-                <tfoot>
-                </tfoot>
-              </table>
-              <div className="mt-2 text-end">
-                <button className="btn btn-secondary ms-auto" onClick={newBudget}>{i18n("New")}</button>
-                <button className="btn btn-danger ms-2" onClick={deleteBudget}>{i18n("Delete")}</button>
-                <button className="btn btn-primary ms-2" onClick={saveBudget}>{i18n("Save")}</button>
+        <main className="budget-content">
+          <section className="budget-chart-row">
+            {rows.length > 0 && totalExpense > 0
+              ? <Chart options={chartOptions} series={rows.map(row => Number(row.amount || 0))} type="pie" height={330} />
+              : <h3>{i18n('Budget Distribution')}</h3>}
+          </section>
+
+          <section className="main budget-table-row">
+            <div className="budget-heading">
+              <h1>{i18n('Budget')}</h1>
+              <div className="budget-actions">
+                <button className="btn btn-secondary" onClick={newBudget}>{i18n('New')}</button>
+                <button className="btn btn-danger" onClick={deleteBudget}>{i18n('Delete')}</button>
+                <button className="btn btn-primary" onClick={saveBudget}>{i18n('Save')}</button>
               </div>
             </div>
-          </div>
-          <div className="col-md-6 pt-4">
-            {budgetChartOptions && budgetChartSeries &&
-              <Chart
-                options={budgetChartOptions}
-                series={budgetChartSeries}
-                type="pie"
-                width="650"
-              />
-            }
-          </div>
-        </div>
+
+            <div className="budget-summary">
+              <label><b>{i18n('Title')}</b><input type="text" className="form-control" value={budgetTitle} onChange={event => setBudgetTitle(event.target.value)} /></label>
+              <label><b>{i18n('Total Income')}</b><input type="number" step="0.01" className="form-control" value={totalIncome} onChange={event => setTotalIncome(event.target.value)} /></label>
+              <div><b>{i18n('Total Expense')}</b><span>{totalExpense.toFixed(2)}</span></div>
+              <div><b>{i18n('Total Balance')}</b><span>{totalBalance}</span></div>
+            </div>
+
+            <div className="table-responsive">
+              <table className="table-fill budget-detail-table">
+                <thead><tr>
+                  <th>{i18n('Category')}</th><th>{i18n('Sub-item')}</th><th>{i18n('Quantity')}</th>
+                  <th>{i18n('Unit Price')}</th><th>{i18n('Total Price')}</th><th></th>
+                </tr></thead>
+                <tbody>
+                  {rows.map((row, rowIndex) => (
+                    <React.Fragment key={`${row.id || 'new'}-${rowIndex}`}>
+                      <tr className="category-row">
+                        <td><strong>{row.category}</strong></td>
+                        <td colSpan="3"><button className="btn btn-sm btn-outline-primary" onClick={() => addSubItem(rowIndex)}>+ {i18n('Add sub-item')}</button></td>
+                        <td className="text-end"><strong>{Number(row.amount || 0).toFixed(2)}</strong></td>
+                        <td><button className="btn btn-sm btn-danger" onClick={() => removeCategory(rowIndex)}>-</button></td>
+                      </tr>
+                      {(row.subItems || []).map((subItem, subItemIndex) => (
+                        <tr key={`${subItem.id || 'new'}-${subItemIndex}`}>
+                          <td></td>
+                          <td><input className="form-control" value={subItem.name} onChange={event => updateSubItem(rowIndex, subItemIndex, 'name', event.target.value)} /></td>
+                          <td><input type="number" min="0" step="0.01" className="form-control" value={subItem.quantity} onChange={event => updateSubItem(rowIndex, subItemIndex, 'quantity', event.target.value)} /></td>
+                          <td><input type="number" min="0" step="0.01" className="form-control" value={subItem.unitPrice} onChange={event => updateSubItem(rowIndex, subItemIndex, 'unitPrice', event.target.value)} /></td>
+                          <td className="text-end">{Number(subItem.totalPrice || 0).toFixed(2)}</td>
+                          <td><button className="btn btn-sm btn-outline-danger" onClick={() => removeSubItem(rowIndex, subItemIndex)}>-</button></td>
+                        </tr>
+                      ))}
+                    </React.Fragment>
+                  ))}
+                </tbody>
+                <tfoot><tr>
+                  <td><input className="form-control text-start" value={newCategory} placeholder={i18n('Category')} onChange={event => setNewCategory(event.target.value)} onKeyDown={event => event.key === 'Enter' && addCategory()} /></td>
+                  <td colSpan="5"><button className="btn btn-primary" onClick={addCategory}>+ {i18n('Add category')}</button></td>
+                </tr></tfoot>
+              </table>
+            </div>
+          </section>
+        </main>
       </div>
     </div>
-  )
+  );
 }

@@ -200,6 +200,18 @@ CREATE TABLE budget_items (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE budget_sub_items (
+    id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    budget_item_id INT(11) NOT NULL,
+    name VARCHAR(256) NOT NULL,
+    quantity DECIMAL(17,2) NOT NULL DEFAULT 1,
+    unit_price DECIMAL(17,2) NOT NULL DEFAULT 0,
+    total_price DECIMAL(17,2) NOT NULL DEFAULT 0,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_budget_sub_items_budget_item
+        FOREIGN KEY (budget_item_id) REFERENCES budget_items(id) ON DELETE CASCADE
+);
+
 CREATE TABLE goals (
     id INT(11) AUTO_INCREMENT PRIMARY KEY,
     description VARCHAR(512),
@@ -271,13 +283,6 @@ CREATE TABLE expense_categories (
 );
 
 CREATE TABLE extra_expenses (
-    id INT(11) AUTO_INCREMENT PRIMARY KEY,
-    amount DECIMAL(17,2) NOT NULL,
-    date DATE NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE extra_revenue (
     id INT(11) AUTO_INCREMENT PRIMARY KEY,
     amount DECIMAL(17,2) NOT NULL,
     date DATE NOT NULL,

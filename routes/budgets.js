@@ -14,12 +14,17 @@ router.post('/save-budget', async function(req, res, next) {
             );
             const budgetId = result.insertId;
 
-            // Insert budget items
             for (const row of rows) {
-                await con2.execute(
+                const [itemResult] = await con2.execute(
                     'INSERT INTO budget_items (budget_id, category, amount) VALUES (?, ?, ?)',
                     [budgetId, row.category, row.amount]
                 );
+                for (const subItem of (row.subItems || [])) {
+                    await con2.execute(
+                        'INSERT INTO budget_sub_items (budget_item_id, name, quantity, unit_price, total_price) VALUES (?, ?, ?, ?, ?)',
+                        [itemResult.insertId, subItem.name, subItem.quantity, subItem.unitPrice, subItem.totalPrice]
+                    );
+                }
             }
 
             res.json({status: "OK", data: "Budget saved successfully."});
@@ -28,14 +33,23 @@ router.post('/save-budget', async function(req, res, next) {
                 'UPDATE budgets SET title = ?, income = ?, expense = ?, balance = ? WHERE id = ?', 
                 [title, income, expense, balance, id]
             );
+            await con2.execute(
+                'DELETE budget_sub_items FROM budget_sub_items INNER JOIN budget_items ON budget_sub_items.budget_item_id = budget_items.id WHERE budget_items.budget_id = ?',
+                [id]
+            );
             await con2.execute('DELETE FROM budget_items WHERE budget_id = ?', [id]);
 
-            // Insert updated budget items
             for (const row of rows) {
-                await con2.execute(
+                const [itemResult] = await con2.execute(
                     'INSERT INTO budget_items (budget_id, category, amount) VALUES (?, ?, ?)',
                     [id, row.category, row.amount]
                 );
+                for (const subItem of (row.subItems || [])) {
+                    await con2.execute(
+                        'INSERT INTO budget_sub_items (budget_item_id, name, quantity, unit_price, total_price) VALUES (?, ?, ?, ?, ?)',
+                        [itemResult.insertId, subItem.name, subItem.quantity, subItem.unitPrice, subItem.totalPrice]
+                    );
+                }
             }
             res.json({status: "OK", data: "Budget updated successfully."});
         }
@@ -51,6 +65,13 @@ router.get('/load-budgets', async function(req, res, next) {
         
         for (let i in budgets) {
             const [items] = await con2.execute('SELECT * FROM budget_items WHERE budget_id = ?', [budgets[i].id]);
+            for (const item of items) {
+                const [subItems] = await con2.execute(
+                    'SELECT id, name, quantity, unit_price AS unitPrice, total_price AS totalPrice FROM budget_sub_items WHERE budget_item_id = ? ORDER BY id',
+                    [item.id]
+                );
+                item.subItems = subItems;
+            }
             budgets[i].rows = items;
         }
 
@@ -69,6 +90,10 @@ router.post('/delete-budget', async function(req, res, next) {
     }
 
     try {
+        await con2.execute(
+            'DELETE budget_sub_items FROM budget_sub_items INNER JOIN budget_items ON budget_sub_items.budget_item_id = budget_items.id WHERE budget_items.budget_id = ?',
+            [id]
+        );
         await con2.execute('DELETE FROM budget_items WHERE budget_id = ?', [id]);
         await con2.execute('DELETE FROM budgets WHERE id = ?', [id]);
         res.json({status: "OK"});
