@@ -21,8 +21,8 @@ router.post('/save-budget', async function(req, res, next) {
                 );
                 for (const subItem of (row.subItems || [])) {
                     await con2.execute(
-                        'INSERT INTO budget_sub_items (budget_item_id, name, quantity, unit_price, total_price) VALUES (?, ?, ?, ?, ?)',
-                        [itemResult.insertId, subItem.name, subItem.quantity, subItem.unitPrice, subItem.totalPrice]
+                        'INSERT INTO budget_sub_items (budget_item_id, name, unit, quantity, unit_price, total_price) VALUES (?, ?, ?, ?, ?, ?)',
+                        [itemResult.insertId, subItem.name, subItem.unit || null, subItem.quantity, subItem.unitPrice, subItem.totalPrice]
                     );
                 }
             }
@@ -46,8 +46,8 @@ router.post('/save-budget', async function(req, res, next) {
                 );
                 for (const subItem of (row.subItems || [])) {
                     await con2.execute(
-                        'INSERT INTO budget_sub_items (budget_item_id, name, quantity, unit_price, total_price) VALUES (?, ?, ?, ?, ?)',
-                        [itemResult.insertId, subItem.name, subItem.quantity, subItem.unitPrice, subItem.totalPrice]
+                        'INSERT INTO budget_sub_items (budget_item_id, name, unit, quantity, unit_price, total_price) VALUES (?, ?, ?, ?, ?, ?)',
+                        [itemResult.insertId, subItem.name, subItem.unit || null, subItem.quantity, subItem.unitPrice, subItem.totalPrice]
                     );
                 }
             }
@@ -67,7 +67,7 @@ router.get('/load-budgets', async function(req, res, next) {
             const [items] = await con2.execute('SELECT * FROM budget_items WHERE budget_id = ?', [budgets[i].id]);
             for (const item of items) {
                 const [subItems] = await con2.execute(
-                    'SELECT id, name, quantity, unit_price AS unitPrice, total_price AS totalPrice FROM budget_sub_items WHERE budget_item_id = ? ORDER BY id',
+                    'SELECT id, name, unit, quantity, unit_price AS unitPrice, total_price AS totalPrice FROM budget_sub_items WHERE budget_item_id = ? ORDER BY id',
                     [item.id]
                 );
                 item.subItems = subItems;

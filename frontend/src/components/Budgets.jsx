@@ -9,7 +9,7 @@ import {i18n} from '../libs/translations';
 import './Budgets.css';
 
 const MySwal = withReactContent(Swal);
-const emptySubItem = () => ({name: '', quantity: 1, unitPrice: '', totalPrice: 0});
+const emptySubItem = () => ({name: '', unit: '', quantity: 1, unitPrice: '', totalPrice: 0});
 
 export default function Budgets() {
   const [budgetId, setBudgetId] = useState(null);
@@ -173,7 +173,7 @@ export default function Budgets() {
             <div className="table-responsive">
               <table className="table-fill budget-detail-table">
                 <thead><tr>
-                  <th>{i18n('Category')}</th><th>{i18n('Sub-item')}</th><th>{i18n('Quantity')}</th>
+                  <th>{i18n('Category')}</th><th>{i18n('Sub-item')}</th><th>{i18n('Unit')}</th><th>{i18n('Quantity')}</th>
                   <th>{i18n('Unit Price')}</th><th>{i18n('Total Price')}</th><th></th>
                 </tr></thead>
                 <tbody>
@@ -181,7 +181,7 @@ export default function Budgets() {
                     <React.Fragment key={`${row.id || 'new'}-${rowIndex}`}>
                       <tr className="category-row">
                         <td><strong>{row.category}</strong></td>
-                        <td colSpan="3"><button className="btn btn-sm btn-outline-primary" onClick={() => addSubItem(rowIndex)}>+ {i18n('Add sub-item')}</button></td>
+                        <td colSpan="4"><button className="btn btn-sm btn-outline-primary" onClick={() => addSubItem(rowIndex)}>+ {i18n('Add sub-item')}</button></td>
                         <td className="text-end"><strong>{Number(row.amount || 0).toFixed(2)}</strong></td>
                         <td><button className="btn btn-sm btn-danger" onClick={() => removeCategory(rowIndex)}>-</button></td>
                       </tr>
@@ -189,6 +189,7 @@ export default function Budgets() {
                         <tr key={`${subItem.id || 'new'}-${subItemIndex}`}>
                           <td></td>
                           <td><input className="form-control" value={subItem.name} onChange={event => updateSubItem(rowIndex, subItemIndex, 'name', event.target.value)} /></td>
+                          <td><input className="form-control" value={subItem.unit || ''} onChange={event => updateSubItem(rowIndex, subItemIndex, 'unit', event.target.value)} /></td>
                           <td><input type="number" min="0" step="0.01" className="form-control" value={subItem.quantity} onChange={event => updateSubItem(rowIndex, subItemIndex, 'quantity', event.target.value)} /></td>
                           <td><input type="number" min="0" step="0.01" className="form-control" value={subItem.unitPrice} onChange={event => updateSubItem(rowIndex, subItemIndex, 'unitPrice', event.target.value)} /></td>
                           <td className="text-end">{Number(subItem.totalPrice || 0).toFixed(2)}</td>
@@ -200,7 +201,7 @@ export default function Budgets() {
                 </tbody>
                 <tfoot><tr>
                   <td><input className="form-control text-start" value={newCategory} placeholder={i18n('Category')} onChange={event => setNewCategory(event.target.value)} onKeyDown={event => event.key === 'Enter' && addCategory()} /></td>
-                  <td colSpan="5"><button className="btn btn-primary" onClick={addCategory}>+ {i18n('Add category')}</button></td>
+                  <td colSpan="6"><button className="btn btn-primary" onClick={addCategory}>+ {i18n('Add category')}</button></td>
                 </tr></tfoot>
               </table>
             </div>

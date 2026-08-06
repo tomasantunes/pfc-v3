@@ -24,6 +24,8 @@ export default function ExpenseTracker() {
   const [averageMonthlyExpense, setAverageMonthlyExpense] = useState(0);
   const [averageDailyExpense, setAverageDailyExpense] = useState(0);
   const [expandedMonths, setExpandedMonths] = useState({});
+  const [currentMonthClasses, setCurrentMonthClasses] = useState([]);
+  const [expandedClasses, setExpandedClasses] = useState({});
   const [totalExpense, setTotalExpense] = useState(0);
 
   function toggleMonth(month) {
@@ -87,11 +89,21 @@ export default function ExpenseTracker() {
     });
   }
 
+  function loadCurrentMonthClasses() {
+    axios.get(config.BASE_URL + "/expense-tracker/get-current-month-by-class")
+      .then((response) => setCurrentMonthClasses(getResponseRows(response)))
+      .catch((error) => {
+        console.error("Error loading current month expenses by class:", error);
+        MySwal.fire("Error: " + error.message);
+      });
+  }
+
   useEffect(() => {
     loadExpenses();
     loadExpensesByCategory();
     loadExpensesByMonth();
     loadExpenseSummary();
+    loadCurrentMonthClasses();
   }, []);
 
   return (
@@ -121,6 +133,54 @@ export default function ExpenseTracker() {
                   <td>{i18n("Average Daily Expense")}</td>
                   <td>{averageDailyExpense.toFixed(2)}€</td>
                 </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div className="row mb-3">
+          <h2>{i18n("Current Month Expenses By Class")}</h2>
+          <div className="table-responsive">
+            <table className="table table-striped table-bordered align-middle">
+              <thead className="table-dark">
+                <tr>
+                  <th>{i18n("Class / Unit")}</th>
+                  <th>{i18n("Total Expense")}</th>
+                  <th>{i18n("Quantity")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentMonthClasses.map((expenseClass) => (
+                  <React.Fragment key={expenseClass.class_name}>
+                    <tr
+                      className="table-secondary"
+                      onClick={() => setExpandedClasses((current) => ({...current, [expenseClass.class_name]: !current[expenseClass.class_name]}))}
+                      style={{cursor: "pointer"}}
+                      role="button"
+                      tabIndex={0}
+                      aria-expanded={Boolean(expandedClasses[expenseClass.class_name])}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault();
+                          setExpandedClasses((current) => ({...current, [expenseClass.class_name]: !current[expenseClass.class_name]}));
+                        }
+                      }}
+                    >
+                      <td className="fw-bold">
+                        <i className={`fa-solid ${expandedClasses[expenseClass.class_name] ? "fa-chevron-down" : "fa-chevron-right"} me-2`}></i>
+                        {expenseClass.class_name}
+                      </td>
+                      <td className="fw-bold">{Number(expenseClass.total_expense).toFixed(2)}</td>
+                      <td className="fw-bold">{expenseClass.quantity}</td>
+                    </tr>
+                    {expandedClasses[expenseClass.class_name] && (expenseClass.units || []).map((unit) => (
+                      <tr key={`${expenseClass.class_name}-${unit.unit_name}`} className="table-light">
+                        <td className="ps-5">{unit.unit_name}</td>
+                        <td>{Number(unit.total_expense).toFixed(2)}</td>
+                        <td>{unit.quantity}</td>
+                      </tr>
+                    ))}
+                  </React.Fragment>
+                ))}
               </tbody>
             </table>
           </div>

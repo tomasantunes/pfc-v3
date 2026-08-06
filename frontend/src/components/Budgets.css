@@ -135,8 +135,9 @@ th.text-center {
 .budget-summary label, .budget-summary div { display: flex; flex-direction: column; gap: 6px; }
 .budget-summary span { min-height: 38px; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; text-align: right; }
 .budget-detail-table th:nth-child(1) { width: 18%; }
-.budget-detail-table th:nth-child(2) { width: 30%; }
-.budget-detail-table th:nth-child(3), .budget-detail-table th:nth-child(4), .budget-detail-table th:nth-child(5) { width: 15%; }
+.budget-detail-table th:nth-child(2) { width: 23%; }
+.budget-detail-table th:nth-child(3) { width: 17%; }
+.budget-detail-table th:nth-child(4), .budget-detail-table th:nth-child(5), .budget-detail-table th:nth-child(6) { width: 12%; }
 .budget-detail-table th:last-child { width: 7%; }
 .main .category-row td { background: #dfe6ee; }
 

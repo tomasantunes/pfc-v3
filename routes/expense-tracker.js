@@ -170,4 +170,58 @@ router.get("/expense-tracker/get-expenses-by-category", (req, res) => {
   });
 });
 
+router.get("/expense-tracker/get-current-month-by-class", async (req, res) => {
+  if (!req.session.isLoggedIn) {
+    return res.json({status: "NOK", error: "Invalid Authorization."});
+  }
+
+  try {
+    const [rows] = await con2.execute(`
+      SELECT
+        COALESCE(NULLIF(TRIM(\`class\`), ''), 'Unclassified') AS expense_class,
+        COALESCE(NULLIF(TRIM(unit), ''), 'Unspecified') AS expense_unit,
+        SUM(amount) AS total_expense,
+        COUNT(*) AS quantity
+      FROM expense_tracker
+      WHERE created_at >= DATE_FORMAT(CURDATE(), '%Y-%m-01')
+        AND created_at < DATE_FORMAT(CURDATE() + INTERVAL 1 MONTH, '%Y-%m-01')
+      GROUP BY expense_class, expense_unit
+      ORDER BY expense_class, total_expense DESC, expense_unit
+    `);
+
+    const classes = [];
+    const classesByName = new Map();
+
+    rows.forEach((row) => {
+      let classRow = classesByName.get(row.expense_class);
+      if (!classRow) {
+        classRow = {
+          class_name: row.expense_class,
+          total_expense: 0,
+          quantity: 0,
+          units: []
+        };
+        classesByName.set(row.expense_class, classRow);
+        classes.push(classRow);
+      }
+
+      const totalExpense = Number(row.total_expense) || 0;
+      const quantity = Number(row.quantity) || 0;
+      classRow.total_expense += totalExpense;
+      classRow.quantity += quantity;
+      classRow.units.push({
+        unit_name: row.expense_unit,
+        total_expense: totalExpense,
+        quantity
+      });
+    });
+
+    classes.sort((first, second) => second.total_expense - first.total_expense);
+    res.json({status: "OK", data: classes});
+  } catch (err) {
+    console.log("Error fetching current month expenses by class:", err);
+    res.json({status: "NOK", error: "Database error."});
+  }
+});
+
 module.exports = router;
