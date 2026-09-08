@@ -8,6 +8,16 @@ import withReactContent from 'sweetalert2-react-content'
 
 const MySwal = withReactContent(Swal)
 
+function getAvailableMonths() {
+  const today = new Date();
+
+  return Array.from({length: 7}, (_, offset) => {
+    const date = new Date(today.getFullYear(), today.getMonth() - offset, 1);
+    const value = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+    return {value, label: date.toLocaleDateString(undefined, {month: "long", year: "numeric"})};
+  });
+}
+
 function getResponseRows(response) {
   if (response.data.status !== "OK") {
     throw new Error(response.data.error || "Failed to load expense data.");
@@ -25,6 +35,7 @@ export default function ExpenseTracker() {
   const [averageDailyExpense, setAverageDailyExpense] = useState(0);
   const [expandedMonths, setExpandedMonths] = useState({});
   const [currentMonthClasses, setCurrentMonthClasses] = useState([]);
+  const [selectedMonth, setSelectedMonth] = useState(() => getAvailableMonths()[0].value);
   const [expandedClasses, setExpandedClasses] = useState({});
   const [totalExpense, setTotalExpense] = useState(0);
 
@@ -89,11 +100,11 @@ export default function ExpenseTracker() {
     });
   }
 
-  function loadCurrentMonthClasses() {
-    axios.get(config.BASE_URL + "/expense-tracker/get-current-month-by-class")
+  function loadMonthClasses(month) {
+    axios.get(config.BASE_URL + "/expense-tracker/get-current-month-by-class", {params: {month}})
       .then((response) => setCurrentMonthClasses(getResponseRows(response)))
       .catch((error) => {
-        console.error("Error loading current month expenses by class:", error);
+        console.error("Error loading monthly expenses by class:", error);
         MySwal.fire("Error: " + error.message);
       });
   }
@@ -103,8 +114,12 @@ export default function ExpenseTracker() {
     loadExpensesByCategory();
     loadExpensesByMonth();
     loadExpenseSummary();
-    loadCurrentMonthClasses();
   }, []);
+
+  useEffect(() => {
+    loadMonthClasses(selectedMonth);
+    setExpandedClasses({});
+  }, [selectedMonth]);
 
   return (
     <>
@@ -138,7 +153,17 @@ export default function ExpenseTracker() {
           </div>
         </div>
         <div className="row mb-3">
-          <h2>{i18n("Current Month Expenses By Class")}</h2>
+          <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+            <h2 className="mb-0">{i18n("Monthly Expenses By Class")}</h2>
+            <label className="d-flex align-items-center gap-2">
+              <span className="fw-bold">{i18n("Month")}</span>
+              <select className="form-select" value={selectedMonth} onChange={(event) => setSelectedMonth(event.target.value)}>
+                {getAvailableMonths().map((month) => (
+                  <option key={month.value} value={month.value}>{month.label}</option>
+                ))}
+              </select>
+            </label>
+          </div>
           <div className="table-responsive">
             <table className="table table-striped table-bordered align-middle">
               <thead className="table-dark">
@@ -146,6 +171,7 @@ export default function ExpenseTracker() {
                   <th>{i18n("Class / Unit")}</th>
                   <th>{i18n("Total Expense")}</th>
                   <th>{i18n("Quantity")}</th>
+                  <th>{i18n("Budget Limit")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -171,12 +197,14 @@ export default function ExpenseTracker() {
                       </td>
                       <td className="fw-bold">{Number(expenseClass.total_expense).toFixed(2)}</td>
                       <td className="fw-bold">{expenseClass.quantity}</td>
+                      <td></td>
                     </tr>
                     {expandedClasses[expenseClass.class_name] && (expenseClass.units || []).map((unit) => (
                       <tr key={`${expenseClass.class_name}-${unit.unit_name}`} className="table-light">
                         <td className="ps-5">{unit.unit_name}</td>
                         <td>{Number(unit.total_expense).toFixed(2)}</td>
                         <td>{unit.quantity}</td>
+                        <td>{Number(unit.budget_limit).toFixed(0)}</td>
                       </tr>
                     ))}
                   </React.Fragment>

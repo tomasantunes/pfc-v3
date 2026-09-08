@@ -176,6 +176,8 @@ var translations = {
     "Inflow": {"en-us": "Inflow", "pt-pt": "Entradas"},
     "Outflow": {"en-us": "Outflow", "pt-pt": "Saídas"},
     "Expense Tracker": {"en-us": "Expense Tracker", "pt-pt": "Rastreador de Despesas"},
+    "Monthly Expenses By Class": {"en-us": "Monthly Expenses By Class", "pt-pt": "Despesas Mensais por Classe"},
+    "Budget Limit": {"en-us": "Budget Limit", "pt-pt": "Limite do Orçamento"},
     "Expense Summary": {"en-us": "Expense Summary", "pt-pt": "Resumo de Despesas"},
     "Daily Expenses - Last 30 Days": {"en-us": "Daily Expenses - Last 30 Days", "pt-pt": "Despesas Diárias - Últimos 30 Dias"},
     "Label": {"en-us": "Label", "pt-pt": "Indicador"},

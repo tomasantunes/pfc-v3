@@ -176,18 +176,55 @@ router.get("/expense-tracker/get-current-month-by-class", async (req, res) => {
   }
 
   try {
-    const [rows] = await con2.execute(`
+    const selectedMonth = typeof req.query.month === 'string' ? req.query.month : '';
+    const monthMatch = selectedMonth.match(/^(\d{4})-(\d{2})$/);
+
+    if (!monthMatch || Number(monthMatch[2]) < 1 || Number(monthMatch[2]) > 12) {
+      return res.json({status: "NOK", error: "Invalid month."});
+    }
+
+    const [monthRangeRows] = await con2.execute(`
       SELECT
-        COALESCE(NULLIF(TRIM(\`class\`), ''), 'Unclassified') AS expense_class,
-        COALESCE(NULLIF(TRIM(unit), ''), 'Unspecified') AS expense_unit,
-        SUM(amount) AS total_expense,
-        COUNT(*) AS quantity
-      FROM expense_tracker
-      WHERE created_at >= DATE_FORMAT(CURDATE(), '%Y-%m-01')
-        AND created_at < DATE_FORMAT(CURDATE() + INTERVAL 1 MONTH, '%Y-%m-01')
-      GROUP BY expense_class, expense_unit
-      ORDER BY expense_class, total_expense DESC, expense_unit
+        DATE_FORMAT(CURDATE() - INTERVAL 6 MONTH, '%Y-%m') AS earliest_month,
+        DATE_FORMAT(CURDATE(), '%Y-%m') AS current_month
     `);
+    const {earliest_month: earliestMonth, current_month: currentMonth} = monthRangeRows[0];
+
+    if (selectedMonth < earliestMonth || selectedMonth > currentMonth) {
+      return res.json({status: "NOK", error: "Month is outside the available range."});
+    }
+
+    const monthStart = `${selectedMonth}-01`;
+    const [[rows], [budgetRows]] = await Promise.all([
+      con2.execute(`
+      SELECT
+        COALESCE(NULLIF(TRIM(et.\`class\`), ''), 'Unclassified') AS expense_class,
+        COALESCE(NULLIF(TRIM(et.unit), ''), 'Unspecified') AS expense_unit,
+        SUM(et.amount) AS total_expense,
+        COUNT(*) AS quantity
+      FROM expense_tracker et
+      WHERE et.created_at >= ?
+        AND et.created_at < DATE_ADD(?, INTERVAL 1 MONTH)
+      GROUP BY
+        COALESCE(NULLIF(TRIM(et.\`class\`), ''), 'Unclassified'),
+        COALESCE(NULLIF(TRIM(et.unit), ''), 'Unspecified')
+      ORDER BY expense_class, total_expense DESC, expense_unit
+      `, [monthStart, monthStart]),
+      con2.execute(`
+        SELECT
+          unit AS expense_unit,
+          SUM(quantity) AS budget_limit
+        FROM budget_sub_items
+        WHERE unit IS NOT NULL
+        GROUP BY unit
+        ORDER BY unit
+      `)
+    ]);
+
+    const budgetLimits = new Map(budgetRows.map((row) => [
+      String(row.expense_unit).trim().toLocaleLowerCase(),
+      Number(row.budget_limit) || 0
+    ]));
 
     const classes = [];
     const classesByName = new Map();
@@ -212,14 +249,15 @@ router.get("/expense-tracker/get-current-month-by-class", async (req, res) => {
       classRow.units.push({
         unit_name: row.expense_unit,
         total_expense: totalExpense,
-        quantity
+        quantity,
+        budget_limit: budgetLimits.get(String(row.expense_unit).trim().toLocaleLowerCase()) || 0
       });
     });
 
     classes.sort((first, second) => second.total_expense - first.total_expense);
     res.json({status: "OK", data: classes});
   } catch (err) {
-    console.log("Error fetching current month expenses by class:", err);
+    console.log("Error fetching monthly expenses by class:", err);
     res.json({status: "NOK", error: "Database error."});
   }
 });
