@@ -147,6 +147,7 @@ Esta aplicação assume que o BPI é a conta principal e as outras são secundá
 ##### Retornos
 
 - O Património inclui os saldos da Trading 212 e do Revolut de acordo com os resumos de portfolio e no Revolut também as contas à ordem do Santander, BPI e Revolut, mais poupanças e dinheiro.
+- O património é calculado á data atual.
 - As vendas da T212, se forem reinvestidas irão-se refletir no saldo T212. Se não terão que ser transferidas para o BPI ou Santander de modo a serem refletidas no Património.
 - No Revolut poderá transferir o valor dessas vendas para a conta à ordem Revolut e será contabilizado ou poderá reinvestir.
 - Se tiver dinheiro na conta de ações da Revolut que não esteja investido (ativo Euros) este não será contabilizado a não ser que o preencha em "Saldo de outras carteiras" na página "Poupanças".
@@ -166,7 +167,7 @@ Se clicar em "Exportar relatório mensal" será descarregado um PDF com o relat�
 
 ### Outros
 
-Na página Outros pode adicionar despesas extra que tenha em outras contas sem ser o BPI ou o Coinbase.
+Na página Outros pode adicionar despesas extra e rendimentos extra que tenha em outras contas sem ser o BPI ou o Coinbase.
 
 ### Inventário
 
@@ -174,7 +175,7 @@ O inventário tem que ser submetido a partir da aplicação Science RPG e no PFC
 
 ### Objetivos
 
-Na página Objetivos pode escrever objetivos SMART para as suas finanmças pessoais.
+Na página Objetivos pode escrever objetivos SMART para as suas finanças pessoais.
 
 ### Rastreador de Despesas
 
@@ -182,4 +183,4 @@ Nesta página pode visualizar os dados da aplicação mobile Expense Tracker.
 
 ### Orçamentos
 
-Nesta página pode definir orçamentos com a receita total e as despesas por categoria e ver um gráfico circular para esse orçamento. 
+Nesta página pode definir orçamentos com a receita total e as despesas por categoria, classe e unidade e ver um gráfico circular para esse orçamento. 
