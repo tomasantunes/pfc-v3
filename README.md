@@ -142,6 +142,15 @@ Esta aplicação assume que o BPI é a conta principal e as outras são secundá
 - Preencher o campo "Profit" com o retorno atual, seja ele positivo ou negativo.
 - Preencher o campo "Deposit" com o valor total de depósito que efetuou neste site.
 
+#### Crédito e Dívida
+
+- Preencher o campo "Total Debt"
+- Preencher o campo "Last Credit Payment"
+
+#### Guardar Snapshot do Património
+
+- Em cada mês depois de importar os extratos e preencher os resumos deverá clicar no botão "Guardar Património" debaixo do gráfico do património de modo a poder visualizar a variação do património ao longo dos meses.
+
 #### Painel de Estatísticas
 
 ##### Retornos
@@ -155,7 +164,6 @@ Esta aplicação assume que o BPI é a conta principal e as outras são secundá
 - O lucro de criptomoedas também está incluído no património de acordo com os resumos do Coinbase, Binance e Polymarket. Este valor é ao longo de todo o tempo e não apenas por ano.
 - O Valor Total do Inventário não está incluído no Património.
 - Os campos que têm um lápis à frente podem ser editados.
-- Em cada mês depois de importar os extratos e preencher os resumos deverá clicar no botão "Guardar Património" debaixo do gráfico do património de modo a poder visualizar a variação do património ao longo dos meses.
 
 ##### Despesas
 
